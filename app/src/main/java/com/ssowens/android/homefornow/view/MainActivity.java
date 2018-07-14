@@ -1,7 +1,9 @@
-package com.ssowens.android.homefornow;
+package com.ssowens.android.homefornow.view;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.ssowens.android.homefornow.R;
 
 public class MainActivity extends AppCompatActivity {
 
