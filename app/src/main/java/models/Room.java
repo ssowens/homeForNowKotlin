@@ -3,13 +3,18 @@ package models;
 public class Room {
 
     private String type;
-    private TypeEstimate typeEstimate;
+    private TypeEstimated typeEstimated;
     private Description description;
 
-    private class Description {
-        private String land;
-        private String text;
+    public String getType() {
+        return type;
     }
 
+    public TypeEstimated getTypeEstimated() {
+        return typeEstimated;
+    }
 
+    public Description getDescription() {
+        return description;
+    }
 }

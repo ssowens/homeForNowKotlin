@@ -6,22 +6,44 @@ public class Offers {
 
     private String id;
     private String rateCode;
-    private RateFamilyEstimate rateFamilyEstimate;
+    private RateFamilyEstimated rateFamilyEstimated;
     private Room room;
-
+    private Description description;
     private Guests guests;
-
-    private class Guests {
-        private String adults;
-    }
-
     private Price price;
 
-    private class Price {
-        private String currency;
-        private String total;
+    @SerializedName("self")
+    public String hotelUrl;
+
+    public String getId() {
+        return id;
     }
 
-    @SerializedName("self")
-    public String url;
+    public String getRateCode() {
+        return rateCode;
+    }
+
+    public RateFamilyEstimated getRateFamilyEstimated() {
+        return rateFamilyEstimated;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public Description getDescription() {
+        return description;
+    }
+
+    public Guests getGuests() {
+        return guests;
+    }
+
+    public Price getPrice() {
+        return price;
+    }
+
+    public String getHotelUrl() {
+        return hotelUrl;
+    }
 }
