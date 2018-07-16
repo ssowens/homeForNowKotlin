@@ -41,4 +41,7 @@ dependencies {
 
     //Gson
     implementation 'com.google.code.gson:gson:2.8.2'
+
+    // Volley
+    implementation 'com.android.volley:volley:1.0.0'
 }
