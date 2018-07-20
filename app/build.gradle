@@ -11,9 +11,19 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        debug {
+            buildConfigField 'String', "ApiKey", HomeForNow_ApiKey
+            buildConfigField 'String', "AmadeusApiKey", Amadeus_ApiKey
+            buildConfigField 'String', "AmadeusSecret", Amadeus_SecretKey
+            resValue 'string', "api_key", HomeForNow_ApiKey
+        }
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
+            buildConfigField 'String', "ApiKey", HomeForNow_ApiKey
+            buildConfigField 'String', "AmadeusApiKey", Amadeus_ApiKey
+            buildConfigField 'String', "AmadeusSecret", Amadeus_SecretKey
+            resValue 'string', "api_key", HomeForNow_ApiKey
         }
     }
     dataBinding {
