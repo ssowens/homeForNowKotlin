@@ -1,4 +1,4 @@
-package models;
+package com.ssowens.android.homefornow.models;
 
 import java.util.List;
 
