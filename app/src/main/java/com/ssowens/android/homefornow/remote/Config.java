@@ -1,5 +1,7 @@
 package com.ssowens.android.homefornow.remote;
 
+import com.ssowens.android.homefornow.BuildConfig;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -10,9 +12,12 @@ import timber.log.Timber;
  */
 public class Config {
 
-    public static final URL BASE_URL;
-    public static final String searchURL = "/hotel-offers";
+    private static final URL BASE_URL;
+    private static final String searchURL = "/hotel-offers";
     public static final String searchParameter = "?cityCode=PAR\\";
+    public static final String apiKey = BuildConfig.ApiKey;
+    public static final String ameduesApiKey = BuildConfig.AmadeusApiKey;
+    public static final String ameduesSecret = BuildConfig.AmadeusSecret;
 
     static {
         URL url = null;

@@ -1,4 +1,4 @@
-package models;
+package com.ssowens.android.homefornow.models;
 
 class Description {
     private String lang;

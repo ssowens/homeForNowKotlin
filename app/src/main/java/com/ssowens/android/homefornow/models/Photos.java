@@ -1,8 +1,15 @@
-package models;
+package com.ssowens.android.homefornow.models;
 
+import android.databinding.BaseObservable;
+import android.databinding.BindingAdapter;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 import com.google.gson.annotations.SerializedName;
 
-public class Photos {
+public class Photos extends BaseObservable {
+
+    String imageUrl;
 
     private int width;
     private int height;
@@ -41,5 +48,12 @@ public class Photos {
 
     public PictureSrc getPictureSrc() {
         return pictureSrc;
+    }
+
+    @BindingAdapter("imageUrl")
+    public static void loadImage(ImageView view, String imageUrl) {
+        Glide.with(view.getContext())
+                .load(imageUrl)
+                .into(view);
     }
 }

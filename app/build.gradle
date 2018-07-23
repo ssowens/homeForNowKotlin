@@ -9,11 +9,26 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+        dataBinding {
+            enabled = true
+        }
+
     }
     buildTypes {
+        debug {
+            buildConfigField 'String', "ApiKey", HomeForNow_ApiKey
+            buildConfigField 'String', "AmadeusApiKey", Amadeus_ApiKey
+            buildConfigField 'String', "AmadeusSecret", Amadeus_SecretKey
+            resValue 'string', "api_key", HomeForNow_ApiKey
+        }
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
+            buildConfigField 'String', "ApiKey", HomeForNow_ApiKey
+            buildConfigField 'String', "AmadeusApiKey", Amadeus_ApiKey
+            buildConfigField 'String', "AmadeusSecret", Amadeus_SecretKey
+            resValue 'string', "api_key", HomeForNow_ApiKey
         }
     }
     dataBinding {
@@ -43,8 +58,15 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
 
     // Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
 
     // Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    // Card View
+    implementation 'com.android.support:cardview-v7:27.1.1'
+
+    // Universal Loader
+    implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+
 }
