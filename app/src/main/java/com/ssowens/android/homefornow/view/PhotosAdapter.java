@@ -7,10 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ssowens.android.homefornow.databinding.CardViewItemBinding;
+import com.ssowens.android.homefornow.models.Photos;
 
 import java.util.List;
-
-import com.ssowens.android.homefornow.models.Photos;
 
 public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.MyViewHolder> {
 
@@ -50,16 +49,12 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.MyViewHold
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
+
         private CardViewItemBinding binding;
 
-        public MyViewHolder(CardViewItemBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
-        }
-
-        public void bind(Photos item) {
-            binding.setModel(item);
-            binding.executePendingBindings();
+        public MyViewHolder(CardViewItemBinding itemBinding) {
+            super(itemBinding.getRoot());
+            this.binding = itemBinding;
         }
     }
 
