@@ -17,18 +17,18 @@ android {
     }
     buildTypes {
         debug {
-            buildConfigField 'String', "ApiKey", HomeForNow_ApiKey
+            buildConfigField 'String', "PexelsApiKey", Pexels_ApiKey
             buildConfigField 'String', "AmadeusApiKey", Amadeus_ApiKey
             buildConfigField 'String', "AmadeusSecret", Amadeus_SecretKey
-            resValue 'string', "api_key", HomeForNow_ApiKey
+            resValue 'string', "api_key", Pexels_ApiKey
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt')
-            buildConfigField 'String', "ApiKey", HomeForNow_ApiKey
+            buildConfigField 'String', "PexelsApiKey", Pexels_ApiKey
             buildConfigField 'String', "AmadeusApiKey", Amadeus_ApiKey
             buildConfigField 'String', "AmadeusSecret", Amadeus_SecretKey
-            resValue 'string', "api_key", HomeForNow_ApiKey
+            resValue 'string', "api_key", Pexels_ApiKey
         }
     }
     dataBinding {
@@ -56,6 +56,7 @@ dependencies {
 
     // Gson
     implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
 
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
