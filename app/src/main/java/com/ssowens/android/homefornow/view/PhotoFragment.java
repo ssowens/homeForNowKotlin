@@ -14,23 +14,22 @@ import android.view.ViewGroup;
 
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentPhotosBinding;
+import com.ssowens.android.homefornow.listeners.HotelSearchListener;
 import com.ssowens.android.homefornow.models.PexelsImages;
 import com.ssowens.android.homefornow.models.Photos;
-import com.ssowens.android.homefornow.remote.ApiService;
+import com.ssowens.android.homefornow.utils.DataManager;
 
 import java.util.List;
 
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-public class PhotoFragment extends Fragment {
+public class PhotoFragment extends Fragment implements HotelSearchListener {
 
     private FragmentPhotosBinding fragmentPhotosBinding;
     private PhotosAdapter photosAdapter;
     private static final String PEXELS_ENDPOINT = "https://api.pexels.com";
-    private List<Photos> photos;
+    private List<Photos> photosList;
     private PexelsImages pexelsImages;
     private PhotosAdapter.PhotosAdapterListener listener;
+    private DataManager dataManager;
 
     public static PhotoFragment newInstance() {
         PhotoFragment fragment = new PhotoFragment();
@@ -42,12 +41,12 @@ public class PhotoFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(PEXELS_ENDPOINT)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        ApiService service = retrofit.create(ApiService.class);
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(PEXELS_ENDPOINT)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//
+//        ApiService service = retrofit.create(ApiService.class);
 //        Call<PexelsImages> call = service.getImages("hotel");
 //        photosAdapter = new PhotosAdapter(photos, listener);
 //        call.enqueue(new Callback<PexelsImages>() {
@@ -88,4 +87,23 @@ public class PhotoFragment extends Fragment {
                 2));
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        dataManager = DataManager.get(getContext());
+        dataManager.addHotelSearchListener(this);
+        dataManager.fetchHotelSearch();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        dataManager.removeHotelSearchListener(this);
+    }
+
+    @Override
+    public void onHotelSearchFinished() {
+        photosList = dataManager.getPhotosList();
+        photosAdapter.setPhotosList(photosList);
+    }
 }

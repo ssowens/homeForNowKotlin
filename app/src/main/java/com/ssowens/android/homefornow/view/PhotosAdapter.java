@@ -61,4 +61,9 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.MyViewHold
     public interface PhotosAdapterListener {
         void onPhotoClicked(Photos photos);
     }
+
+    public void setPhotosList(List<Photos> photosList) {
+        this.photosList = photosList;
+        notifyDataSetChanged();
+    }
 }
