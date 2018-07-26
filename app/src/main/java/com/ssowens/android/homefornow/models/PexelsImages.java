@@ -17,7 +17,7 @@ public class PexelsImages {
     private String next_page;
 
     @SerializedName("photos")
-    List<Photos> photosList;
+    List<Photo> photoList;
 
     public int getPage() {
         return page;
@@ -39,7 +39,11 @@ public class PexelsImages {
         return next_page;
     }
 
-    public List<Photos> getPhotosList() {
-        return photosList;
+    public List<Photo> getPhotoList() {
+        return photoList;
+    }
+
+    public void setPhotoList(List<Photo> photoList) {
+        this.photoList = photoList;
     }
 }

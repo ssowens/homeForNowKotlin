@@ -10,10 +10,10 @@ import java.util.List;
 public class HotelSearchResponse {
 
     @SerializedName("photos")
-    List<Photos> photosList;
+    List<Photo> photoList;
 
-    public List<Photos> getPhotosList() {
-        return photosList;
+    public List<Photo> getPhotoList() {
+        return photoList;
     }
 
 }

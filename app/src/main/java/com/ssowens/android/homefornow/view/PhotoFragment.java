@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,7 @@ import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentPhotosBinding;
 import com.ssowens.android.homefornow.listeners.HotelSearchListener;
 import com.ssowens.android.homefornow.models.PexelsImages;
-import com.ssowens.android.homefornow.models.Photos;
+import com.ssowens.android.homefornow.models.Photo;
 import com.ssowens.android.homefornow.utils.DataManager;
 
 import java.util.List;
@@ -26,10 +27,11 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
     private FragmentPhotosBinding fragmentPhotosBinding;
     private PhotosAdapter photosAdapter;
     private static final String PEXELS_ENDPOINT = "https://api.pexels.com";
-    private List<Photos> photosList;
+    private List<Photo> photoList;
     private PexelsImages pexelsImages;
     private PhotosAdapter.PhotosAdapterListener listener;
     private DataManager dataManager;
+    private RecyclerView recyclerView;
 
     public static PhotoFragment newInstance() {
         PhotoFragment fragment = new PhotoFragment();
@@ -74,8 +76,8 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        fragmentPhotosBinding = DataBindingUtil.inflate(inflater, R.layout
-                .fragment_photos, container, false);
+        fragmentPhotosBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_photos,
+                container, false);
         Toolbar toolbar = fragmentPhotosBinding.toolbar;
         toolbar.setTitle("HomeForNow");
         initRecyclerView();
@@ -85,6 +87,9 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
     private void initRecyclerView() {
         fragmentPhotosBinding.recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),
                 2));
+//        photosAdapter = new PhotosAdapter((List<Photo>) DataManager.get(getActivity()), listener);
+//        recyclerView.setAdapter(photosAdapter);
+
     }
 
     @Override
@@ -103,7 +108,7 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
 
     @Override
     public void onHotelSearchFinished() {
-        photosList = dataManager.getPhotosList();
-        photosAdapter.setPhotosList(photosList);
+        photoList = dataManager.getPhotoList();
+        photosAdapter.setPhotoList(photoList);
     }
 }

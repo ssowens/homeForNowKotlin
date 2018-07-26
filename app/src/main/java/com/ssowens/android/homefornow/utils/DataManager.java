@@ -6,8 +6,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ssowens.android.homefornow.listeners.HotelSearchListener;
 import com.ssowens.android.homefornow.models.HotelSearchResponse;
-import com.ssowens.android.homefornow.models.Photos;
-import com.ssowens.android.homefornow.remote.ApiService;
+import com.ssowens.android.homefornow.models.Photo;
+import com.ssowens.android.homefornow.services.ApiService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
-import static com.ssowens.android.homefornow.remote.Config.PEXELS_API_KEY;
+import static com.ssowens.android.homefornow.services.Config.PEXELS_API_KEY;
 
 /**
  * Created by Sheila Owens on 7/24/18.
@@ -37,7 +37,7 @@ public class DataManager {
     protected static DataManager sDataManager;
     private Retrofit retrofit;
     private static final String HOTELS_SEARCH = "hotels";
-    private List<Photos> photosList;
+    private List<Photo> photoList;
     private List<HotelSearchListener> hotelSearchListenerList;
 
     public DataManager(Retrofit retrofit) {
@@ -85,6 +85,8 @@ public class DataManager {
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
 
+            sDataManager = new DataManager(retrofit);
+
         }
 
         return sDataManager;
@@ -115,24 +117,33 @@ public class DataManager {
         ApiService apiService = retrofit
                 .create(ApiService.class);
         apiService.getImages(HOTELS_SEARCH)
-                .enqueue((new Callback<HotelSearchResponse>() {
+                .enqueue(new Callback<HotelSearchResponse>() {
                     @Override
                     public void onResponse(Call<HotelSearchResponse> call,
                                            retrofit2.Response<HotelSearchResponse> response) {
-                        photosList = response.body().getPhotosList();
-
+                        //  if (response.body() != null) {
+                        //   } else Timber.i("Sheila - Response body is null");
+                        photoList = response.body().getPhotoList();
+//                        notifySearchListeners();
+                        try {
+                            photoList = response.body().getPhotoList();
+                            notifySearchListeners();
+                        } catch (Exception e) {
+                            Timber.e("Sheila %s", e);
+                            e.printStackTrace();
+                        }
                     }
 
                     @Override
                     public void onFailure(Call<HotelSearchResponse> call, Throwable t) {
                         Timber.e("Failed to fetch hotel search" + "~" + t);
                     }
-                }));
+                });
     }
 
-    // TODO remove the other getPhotoList in Photos
-    public List<Photos> getPhotosList() {
-        return photosList;
+    // TODO remove the other getPhotoList in Photo
+    public List<Photo> getPhotoList() {
+        return photoList;
     }
 
 

@@ -1,4 +1,4 @@
-package com.ssowens.android.homefornow.remote;
+package com.ssowens.android.homefornow.services;
 
 import com.ssowens.android.homefornow.BuildConfig;
 

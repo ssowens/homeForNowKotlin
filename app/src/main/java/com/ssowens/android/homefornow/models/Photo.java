@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.google.gson.annotations.SerializedName;
 
-public class Photos extends BaseObservable {
+public class Photo extends BaseObservable {
 
     String imageUrl;
 
@@ -22,7 +22,7 @@ public class Photos extends BaseObservable {
     @SerializedName("src")
     private PictureSrc pictureSrc;
 
-    public Photos(int width, int height, String photoUrl, String photographer, PictureSrc pictureSrc) {
+    public Photo(int width, int height, String photoUrl, String photographer, PictureSrc pictureSrc) {
         this.width = width;
         this.height = height;
         this.photoUrl = photoUrl;
