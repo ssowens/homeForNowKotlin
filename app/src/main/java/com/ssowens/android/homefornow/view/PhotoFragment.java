@@ -22,11 +22,12 @@ import com.ssowens.android.homefornow.utils.DataManager;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 public class PhotoFragment extends Fragment implements HotelSearchListener {
 
     private FragmentPhotosBinding fragmentPhotosBinding;
     private PhotosAdapter photosAdapter;
-    private static final String PEXELS_ENDPOINT = "https://api.pexels.com";
     private List<Photo> photoList;
     private PexelsImages pexelsImages;
     private PhotosAdapter.PhotosAdapterListener listener;
@@ -43,33 +44,6 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl(PEXELS_ENDPOINT)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//
-//        ApiService service = retrofit.create(ApiService.class);
-//        Call<PexelsImages> call = service.getImages("hotel");
-//        photosAdapter = new PhotosAdapter(photos, listener);
-//        call.enqueue(new Callback<PexelsImages>() {
-//                         @Override
-//                         public void onResponse(Call<PexelsImages> call,
-//                                                Response<PexelsImages> response) {
-//                             try {
-//                                 pexelsImages = response.body();
-//                             } catch (Exception e) {
-//                                 Timber.e(getString(R.string.error_occurred));
-//                                 e.printStackTrace();
-//                             }
-//                         }
-//
-//                         @Override
-//                         public void onFailure(Call<PexelsImages> call, Throwable t) {
-//                             Timber.e(getString(R.string.on_failure_error));
-//                         }
-//                     }
-//
-//        );
     }
 
     @Nullable
@@ -80,16 +54,9 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
                 container, false);
         Toolbar toolbar = fragmentPhotosBinding.toolbar;
         toolbar.setTitle("HomeForNow");
-        initRecyclerView();
-        return fragmentPhotosBinding.getRoot();
-    }
-
-    private void initRecyclerView() {
         fragmentPhotosBinding.recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),
                 2));
-//        photosAdapter = new PhotosAdapter((List<Photo>) DataManager.get(getActivity()), listener);
-//        recyclerView.setAdapter(photosAdapter);
-
+        return fragmentPhotosBinding.getRoot();
     }
 
     @Override
@@ -108,7 +75,10 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
 
     @Override
     public void onHotelSearchFinished() {
+        Timber.i("Sheila");
         photoList = dataManager.getPhotoList();
+        photosAdapter = new PhotosAdapter(photoList, listener);
         photosAdapter.setPhotoList(photoList);
+        recyclerView.setAdapter(photosAdapter);
     }
 }

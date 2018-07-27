@@ -18,7 +18,8 @@ public class PhotoListDeserializer implements JsonDeserializer<HotelSearchRespon
     public HotelSearchResponse deserialize(
             JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
-        JsonElement responseElement = json.getAsJsonObject().get("photos");
+        // TODO LOOP
+        JsonElement responseElement = json.getAsJsonArray().get(0);
         return new Gson().fromJson(responseElement, HotelSearchResponse.class);
     }
 }

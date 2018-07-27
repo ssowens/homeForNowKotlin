@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.ssowens.android.homefornow.BuildConfig;
 import com.ssowens.android.homefornow.listeners.HotelSearchListener;
 import com.ssowens.android.homefornow.models.HotelSearchResponse;
 import com.ssowens.android.homefornow.models.Photo;
@@ -25,25 +26,27 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
-import static com.ssowens.android.homefornow.services.Config.PEXELS_API_KEY;
-
 /**
  * Created by Sheila Owens on 7/24/18.
  */
 public class DataManager {
 
-    private static final String PEXELS_ENDPOINT = "https://api.pexels.com";
+    private static final String PEXELS_ENDPOINT = "https://api.pexels.com/v1/";
     private static final String HEADER_AUTHORIZATION = "Authorization";
+    public static final String PEXELS_API_KEY = BuildConfig.PexelsApiKey;
     protected static DataManager sDataManager;
     private Retrofit retrofit;
     private static final String HOTELS_SEARCH = "hotels";
     private List<Photo> photoList;
     private List<HotelSearchListener> hotelSearchListenerList;
 
-    public DataManager(Retrofit retrofit) {
-        // TODO where does the tokenstore come from
+    DataManager(Retrofit retrofit) {
         this.retrofit = retrofit;
         hotelSearchListenerList = new ArrayList<>();
+    }
+
+    DataManager() {
+        throw new InstantiationError("Default constructor called for singleton");
     }
 
     public void addHotelSearchListener(HotelSearchListener listener) {
@@ -86,15 +89,10 @@ public class DataManager {
                     .build();
 
             sDataManager = new DataManager(retrofit);
-
         }
-
         return sDataManager;
     }
 
-    DataManager() {
-        throw new InstantiationError("Default constructor called for singleton");
-    }
 
     // The Interceptor is used for a parameters that need to be added to the
     // request
@@ -117,19 +115,16 @@ public class DataManager {
         ApiService apiService = retrofit
                 .create(ApiService.class);
         apiService.getImages(HOTELS_SEARCH)
+                // Handles web request asynchronously
                 .enqueue(new Callback<HotelSearchResponse>() {
                     @Override
                     public void onResponse(Call<HotelSearchResponse> call,
                                            retrofit2.Response<HotelSearchResponse> response) {
-                        //  if (response.body() != null) {
-                        //   } else Timber.i("Sheila - Response body is null");
-                        photoList = response.body().getPhotoList();
-//                        notifySearchListeners();
                         try {
                             photoList = response.body().getPhotoList();
                             notifySearchListeners();
                         } catch (Exception e) {
-                            Timber.e("Sheila %s", e);
+                            Timber.e(e, "Sheila ");
                             e.printStackTrace();
                         }
                     }
@@ -145,6 +140,5 @@ public class DataManager {
     public List<Photo> getPhotoList() {
         return photoList;
     }
-
 
 }

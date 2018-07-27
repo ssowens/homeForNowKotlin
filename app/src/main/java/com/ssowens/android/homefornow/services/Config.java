@@ -15,7 +15,6 @@ public class Config {
     private static final URL BASE_URL;
     private static final String SEARCH_URL = "/hotel-offers";
     public static final String SEARCHPARAMETER = "?cityCode=PAR\\";
-    public static final String PEXELS_API_KEY = BuildConfig.PexelsApiKey;
     public static final String AMADEUS_API_KEY = BuildConfig.AmadeusApiKey;
     public static final String AMADEUS_SECRET = BuildConfig.AmadeusSecret;
 
