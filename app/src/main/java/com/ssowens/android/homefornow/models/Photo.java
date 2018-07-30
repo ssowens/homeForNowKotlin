@@ -1,6 +1,7 @@
 package com.ssowens.android.homefornow.models;
 
 import android.databinding.BaseObservable;
+import android.databinding.Bindable;
 import android.databinding.BindingAdapter;
 import android.widget.ImageView;
 
@@ -8,8 +9,6 @@ import com.bumptech.glide.Glide;
 import com.google.gson.annotations.SerializedName;
 
 public class Photo extends BaseObservable {
-
-    String imageUrl;
 
     private int width;
     private int height;
@@ -38,8 +37,9 @@ public class Photo extends BaseObservable {
         return height;
     }
 
+    @Bindable
     public String getPhotoUrl() {
-        return photoUrl;
+        return pictureSrc.getSmall();
     }
 
     public String getPhotographer() {
@@ -50,18 +50,17 @@ public class Photo extends BaseObservable {
         return pictureSrc;
     }
 
-    @BindingAdapter("imageUrl")
-    public static void loadImage(ImageView view, String imageUrl) {
+    @BindingAdapter("photoUrl")
+    public static void loadImage(ImageView view, String photoUrl) {
         Glide.with(view.getContext())
-                .load(imageUrl)
+                .load(photoUrl)
                 .into(view);
     }
 
     @Override
     public String toString() {
         return "Photo{" +
-                "imageUrl='" + imageUrl + '\'' +
-                ", width=" + width +
+                " width=" + width +
                 ", height=" + height +
                 ", photoUrl='" + photoUrl + '\'' +
                 ", photographer='" + photographer + '\'' +

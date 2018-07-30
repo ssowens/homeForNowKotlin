@@ -120,7 +120,7 @@ public class DataManager {
                     @Override
                     public void onResponse(Call<HotelSearchResponse> call,
                                            retrofit2.Response<HotelSearchResponse> response) {
-                        
+
                         photoList = response.body().getPhotoList();
                         Timber.i("Sheila photoList = %s", photoList.toString());
                         notifySearchListeners();
