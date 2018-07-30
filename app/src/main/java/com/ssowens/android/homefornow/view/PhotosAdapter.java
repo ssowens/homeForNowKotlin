@@ -21,6 +21,10 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.MyViewHold
         this.listener = listener;
     }
 
+    public PhotosAdapter(List<Photo> photoList) {
+        this.photoList = photoList;
+    }
+
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

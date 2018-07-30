@@ -20,6 +20,7 @@ import com.ssowens.android.homefornow.models.PexelsImages;
 import com.ssowens.android.homefornow.models.Photo;
 import com.ssowens.android.homefornow.utils.DataManager;
 
+import java.util.Collections;
 import java.util.List;
 
 import timber.log.Timber;
@@ -56,6 +57,8 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
         toolbar.setTitle("HomeForNow");
         fragmentPhotosBinding.recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),
                 2));
+        photosAdapter = new PhotosAdapter(Collections.EMPTY_LIST);
+        fragmentPhotosBinding.recyclerView.setAdapter(photosAdapter);
         return fragmentPhotosBinding.getRoot();
     }
 
@@ -75,10 +78,9 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
 
     @Override
     public void onHotelSearchFinished() {
-        Timber.i("Sheila");
+
         photoList = dataManager.getPhotoList();
-        photosAdapter = new PhotosAdapter(photoList, listener);
+        Timber.i("Sheila photoList ~ %s ", photoList.toString());
         photosAdapter.setPhotoList(photoList);
-        recyclerView.setAdapter(photosAdapter);
     }
 }

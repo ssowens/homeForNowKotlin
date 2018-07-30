@@ -56,4 +56,16 @@ public class Photo extends BaseObservable {
                 .load(imageUrl)
                 .into(view);
     }
+
+    @Override
+    public String toString() {
+        return "Photo{" +
+                "imageUrl='" + imageUrl + '\'' +
+                ", width=" + width +
+                ", height=" + height +
+                ", photoUrl='" + photoUrl + '\'' +
+                ", photographer='" + photographer + '\'' +
+                ", pictureSrc=" + pictureSrc +
+                '}';
+    }
 }

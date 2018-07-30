@@ -120,18 +120,16 @@ public class DataManager {
                     @Override
                     public void onResponse(Call<HotelSearchResponse> call,
                                            retrofit2.Response<HotelSearchResponse> response) {
-                        try {
-                            photoList = response.body().getPhotoList();
-                            notifySearchListeners();
-                        } catch (Exception e) {
-                            Timber.e(e, "Sheila ");
-                            e.printStackTrace();
-                        }
+                        
+                        photoList = response.body().getPhotoList();
+                        Timber.i("Sheila photoList = %s", photoList.toString());
+                        notifySearchListeners();
+
                     }
 
                     @Override
                     public void onFailure(Call<HotelSearchResponse> call, Throwable t) {
-                        Timber.e("Failed to fetch hotel search" + "~" + t);
+                        Timber.e("Failed to fetch hotel search" + " ~ " + t);
                     }
                 });
     }
