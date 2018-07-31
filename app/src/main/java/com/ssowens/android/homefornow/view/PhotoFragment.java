@@ -10,6 +10,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -44,7 +47,7 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -59,7 +62,14 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
                 2));
         photosAdapter = new PhotosAdapter(Collections.EMPTY_LIST);
         fragmentPhotosBinding.recyclerView.setAdapter(photosAdapter);
+        setHasOptionsMenu(true);
         return fragmentPhotosBinding.getRoot();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_fragment_photo, menu);
     }
 
     @Override
@@ -82,5 +92,28 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
         photoList = dataManager.getPhotoList();
         Timber.i("Sheila photoList ~ %s ", photoList.toString());
         photosAdapter.setPhotoList(photoList);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+    private void updateUI() {
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.most_popular:
+                return true;
+            case R.id.top_rated:
+                return true;
+            case R.id.favorite:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

@@ -3,5 +3,8 @@
     <string name="no_internet_service">No Internet Service"</string>
     <string name="error_occurred">Error occurred while processing OnResponse</string>
     <string name="on_failure_error">OnFailure error occurred</string>
+    <string name="top_rated">Top Rated</string>
+    <string name="most_popular">Most Popular</string>
+    <string name="favorites">Favorites</string>
     <string name="photo_by">"Photo by: "</string>
 </resources>
