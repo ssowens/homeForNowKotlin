@@ -7,7 +7,7 @@
 
         <variable
             name="model"
-            type="com.ssowens.android.homefornow.models.Photos" />
+            type="com.ssowens.android.homefornow.models.Photo" />
     </data>
 
     <android.support.v7.widget.CardView
@@ -27,7 +27,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:scaleType="centerCrop"
-                bind:imageUrl="@{model.photoUrl}"
+                bind:photoUrl="@{model.photoUrl}"
                 app:layout_constraintBottom_toTopOf="@+id/supporting_text"
                 app:layout_constraintDimensionRatio="H,16:9"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -46,21 +46,21 @@
                 android:lineSpacingExtra="8dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="#DE000000"
-                android:text="Supporting Text"
+                android:text="@{model.photographer}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/media_image" />
 
-            <ImageButton
-                android:id="@+id/favorite_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#00FFFFFF"
-                android:padding="12dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/media_image"
-                app:srcCompat="@drawable/ic_favorite_black_24dp" />
+            <!--<ImageButton-->
+                <!--android:id="@+id/favorite_button"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="#00FFFFFF"-->
+                <!--android:padding="12dp"-->
+                <!--app:layout_constraintEnd_toEndOf="parent"-->
+                <!--app:layout_constraintTop_toTopOf="@+id/media_image"-->
+                <!--app:srcCompat="@drawable/ic_favorite_black_24dp" />-->
 
         </android.support.constraint.ConstraintLayout>
 

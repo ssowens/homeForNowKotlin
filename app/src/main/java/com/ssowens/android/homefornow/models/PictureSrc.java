@@ -69,4 +69,18 @@ class PictureSrc {
     public String getTiny() {
         return tiny;
     }
+
+    @Override
+    public String toString() {
+        return "PictureSrc{" +
+                "original='" + original + '\'' +
+                ", large='" + large + '\'' +
+                ", large2x='" + large2x + '\'' +
+                ", medium='" + medium + '\'' +
+                ", small='" + small + '\'' +
+                ", portrait='" + portrait + '\'' +
+                ", landscape='" + landscape + '\'' +
+                ", tiny='" + tiny + '\'' +
+                '}';
+    }
 }

@@ -1,4 +1,4 @@
-package com.ssowens.android.homefornow.remote;
+package com.ssowens.android.homefornow.services;
 
 import com.ssowens.android.homefornow.BuildConfig;
 
@@ -13,16 +13,15 @@ import timber.log.Timber;
 public class Config {
 
     private static final URL BASE_URL;
-    private static final String searchURL = "/hotel-offers";
-    public static final String searchParameter = "?cityCode=PAR\\";
-    public static final String apiKey = BuildConfig.ApiKey;
-    public static final String ameduesApiKey = BuildConfig.AmadeusApiKey;
-    public static final String ameduesSecret = BuildConfig.AmadeusSecret;
+    private static final String SEARCH_URL = "/hotel-offers";
+    public static final String SEARCHPARAMETER = "?cityCode=PAR\\";
+    public static final String AMADEUS_API_KEY = BuildConfig.AmadeusApiKey;
+    public static final String AMADEUS_SECRET = BuildConfig.AmadeusSecret;
 
     static {
         URL url = null;
         try {
-            url = new URL("https://test.api.amadeus.com/v1/shopping" + searchURL);
+            url = new URL("https://test.api.amadeus.com/v1/shopping" + SEARCH_URL);
         } catch (MalformedURLException ignored) {
             // TODO: throw a real error
             Timber.e("Please check your internet connection.");

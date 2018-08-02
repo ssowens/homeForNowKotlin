@@ -7,18 +7,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ssowens.android.homefornow.databinding.CardViewItemBinding;
-import com.ssowens.android.homefornow.models.Photos;
+import com.ssowens.android.homefornow.models.Photo;
 
 import java.util.List;
 
 public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.MyViewHolder> {
 
-    private List<Photos> photosList;
+    private List<Photo> photoList;
     private PhotosAdapterListener listener;
 
-    public PhotosAdapter(List<Photos> photosList, PhotosAdapterListener listener) {
-        this.photosList = photosList;
+    public PhotosAdapter(List<Photo> photoList, PhotosAdapterListener listener) {
+        this.photoList = photoList;
         this.listener = listener;
+    }
+
+    public PhotosAdapter(List<Photo> photoList) {
+        this.photoList = photoList;
     }
 
     @NonNull
@@ -32,12 +36,12 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.MyViewHold
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
-        holder.binding.setModel(photosList.get(position));
+        holder.binding.setModel(photoList.get(position));
         holder.binding.mediaImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    listener.onPhotoClicked(photosList.get(position));
+                    listener.onPhotoClicked(photoList.get(position));
                 }
             }
         });
@@ -45,7 +49,7 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.MyViewHold
 
     @Override
     public int getItemCount() {
-        return photosList.size();
+        return photoList.size();
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
@@ -59,6 +63,11 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.MyViewHold
     }
 
     public interface PhotosAdapterListener {
-        void onPhotoClicked(Photos photos);
+        void onPhotoClicked(Photo photo);
+    }
+
+    public void setPhotoList(List<Photo> photoList) {
+        this.photoList = photoList;
+        notifyDataSetChanged();
     }
 }

@@ -1,15 +1,14 @@
 package com.ssowens.android.homefornow.models;
 
 import android.databinding.BaseObservable;
+import android.databinding.Bindable;
 import android.databinding.BindingAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.annotations.SerializedName;
 
-public class Photos extends BaseObservable {
-
-    String imageUrl;
+public class Photo extends BaseObservable {
 
     private int width;
     private int height;
@@ -22,7 +21,7 @@ public class Photos extends BaseObservable {
     @SerializedName("src")
     private PictureSrc pictureSrc;
 
-    public Photos(int width, int height, String photoUrl, String photographer, PictureSrc pictureSrc) {
+    public Photo(int width, int height, String photoUrl, String photographer, PictureSrc pictureSrc) {
         this.width = width;
         this.height = height;
         this.photoUrl = photoUrl;
@@ -38,8 +37,9 @@ public class Photos extends BaseObservable {
         return height;
     }
 
+    @Bindable
     public String getPhotoUrl() {
-        return photoUrl;
+        return pictureSrc.getSmall();
     }
 
     public String getPhotographer() {
@@ -50,10 +50,21 @@ public class Photos extends BaseObservable {
         return pictureSrc;
     }
 
-    @BindingAdapter("imageUrl")
-    public static void loadImage(ImageView view, String imageUrl) {
+    @BindingAdapter("photoUrl")
+    public static void loadImage(ImageView view, String photoUrl) {
         Glide.with(view.getContext())
-                .load(imageUrl)
+                .load(photoUrl)
                 .into(view);
+    }
+
+    @Override
+    public String toString() {
+        return "Photo{" +
+                " width=" + width +
+                ", height=" + height +
+                ", photoUrl='" + photoUrl + '\'' +
+                ", photographer='" + photographer + '\'' +
+                ", pictureSrc=" + pictureSrc +
+                '}';
     }
 }

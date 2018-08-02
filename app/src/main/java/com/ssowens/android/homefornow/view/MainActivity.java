@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
+import com.ssowens.android.homefornow.BuildConfig;
 import com.ssowens.android.homefornow.R;
 
 import timber.log.Timber;
@@ -13,7 +14,9 @@ public class MainActivity extends SingleFragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Timber.plant();
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        }
     }
 
     @Override
