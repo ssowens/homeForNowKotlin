@@ -10,6 +10,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class Photo extends BaseObservable {
 
+    private String id;
     private int width;
     private int height;
 
@@ -57,10 +58,15 @@ public class Photo extends BaseObservable {
                 .into(view);
     }
 
+    public String getId() {
+        return id;
+    }
+
     @Override
     public String toString() {
         return "Photo{" +
-                " width=" + width +
+                "id='" + id + '\'' +
+                ", width=" + width +
                 ", height=" + height +
                 ", photoUrl='" + photoUrl + '\'' +
                 ", photographer='" + photographer + '\'' +

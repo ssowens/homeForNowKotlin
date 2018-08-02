@@ -9,7 +9,13 @@ import retrofit2.http.Query;
 public interface ApiService {
 
     //https://api.pexels.com/v1/search?query=example+query&per_page=15&page=1
+    // Popular
     @GET("search")
-    Call<HotelSearchResponse> getImages(@Query("query") String hotel);
+    Call<HotelSearchResponse> hotelsSearhPopular(@Query("query") String hotel);
+
+    //https://api.pexels.com/v1/curated?per_page=15&page=1
+    // Top Rated
+    @GET("curated")
+    Call<HotelSearchResponse> hotelsSearchTopRated(@Query("curated") String hotel);
 
 }

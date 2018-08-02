@@ -114,7 +114,7 @@ public class DataManager {
     public void fetchHotelSearch() {
         ApiService apiService = retrofit
                 .create(ApiService.class);
-        apiService.getImages(HOTELS_SEARCH)
+        apiService.hotelsSearhPopular(HOTELS_SEARCH)
                 // Handles web request asynchronously
                 .enqueue(new Callback<HotelSearchResponse>() {
                     @Override
@@ -137,6 +137,15 @@ public class DataManager {
     // TODO remove the other getPhotoList in Photo
     public List<Photo> getPhotoList() {
         return photoList;
+    }
+
+    public Photo getHotelPhoto(String photoId) {
+        for (Photo photo : photoList) {
+            if (photo.getId().equals(photoId)) {
+                return photo;
+            }
+        }
+        return null;
     }
 
 }
