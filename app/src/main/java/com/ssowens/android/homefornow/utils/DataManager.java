@@ -6,7 +6,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ssowens.android.homefornow.BuildConfig;
 import com.ssowens.android.homefornow.listeners.HotelSearchListener;
-import com.ssowens.android.homefornow.models.HotelSearchResponse;
+import com.ssowens.android.homefornow.models.HotelPopularSearchResponse;
+import com.ssowens.android.homefornow.models.HotelTopRatedResponse;
 import com.ssowens.android.homefornow.models.Photo;
 import com.ssowens.android.homefornow.services.ApiService;
 
@@ -70,7 +71,7 @@ public class DataManager {
                     // Inform the GsonBuilder that there is a custom deserializer by
                     // registering a type adapter, passing in the class it will
                     // output and the deserializer it should use to create the class.
-                    .registerTypeAdapter(HotelSearchResponse.class,
+                    .registerTypeAdapter(HotelPopularSearchResponse.class,
                             new PhotoListDeserializer())
                     .create();
 
@@ -111,24 +112,47 @@ public class DataManager {
         }
     };
 
-    public void fetchHotelSearch() {
+    public void fetchHotelPopularSearch() {
         ApiService apiService = retrofit
                 .create(ApiService.class);
         apiService.hotelsSearhPopular(HOTELS_SEARCH)
                 // Handles web request asynchronously
-                .enqueue(new Callback<HotelSearchResponse>() {
+                .enqueue(new Callback<HotelPopularSearchResponse>() {
                     @Override
-                    public void onResponse(Call<HotelSearchResponse> call,
-                                           retrofit2.Response<HotelSearchResponse> response) {
+                    public void onResponse(Call<HotelPopularSearchResponse> call,
+                                           retrofit2.Response<HotelPopularSearchResponse> response) {
 
                         photoList = response.body().getPhotoList();
-                        Timber.i("Sheila photoList = %s", photoList.toString());
+                        Timber.i("Sheila popular photoList = %s", photoList.toString());
                         notifySearchListeners();
 
                     }
 
                     @Override
-                    public void onFailure(Call<HotelSearchResponse> call, Throwable t) {
+                    public void onFailure(Call<HotelPopularSearchResponse> call, Throwable t) {
+                        Timber.e("Failed to fetch hotel search" + " ~ " + t);
+                    }
+                });
+    }
+
+    public void fetchHotelTopRatedSearch() {
+        ApiService apiService = retrofit
+                .create(ApiService.class);
+        apiService.hotelsSearchTopRated(HOTELS_SEARCH)
+                // Handles web request asynchronously
+                .enqueue(new Callback<HotelTopRatedResponse>() {
+                    @Override
+                    public void onResponse(Call<HotelTopRatedResponse> call,
+                                           retrofit2.Response<HotelTopRatedResponse> response) {
+
+                        photoList = response.body().getHotelTopRatedList();
+                        Timber.i("Sheila top rated photoList = %s", photoList.toString());
+                        notifySearchListeners();
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<HotelTopRatedResponse> call, Throwable t) {
                         Timber.e("Failed to fetch hotel search" + " ~ " + t);
                     }
                 });

@@ -1,8 +1,16 @@
 package com.ssowens.android.homefornow.models;
 
-/**
- * Created by Sheila Owens on 8/2/18.
- */
-public interface HotelTopRatedResponse {
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+
+public class HotelTopRatedResponse {
+
+    @SerializedName("photos")
+    List<Photo> photoList;
+
+    public List<Photo> getHotelTopRatedList() {
+        return photoList;
+    }
 
 }
