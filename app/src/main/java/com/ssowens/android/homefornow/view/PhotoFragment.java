@@ -1,11 +1,13 @@
 package com.ssowens.android.homefornow.view;
 
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -15,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentPhotosBinding;
@@ -30,6 +33,7 @@ import timber.log.Timber;
 
 public class PhotoFragment extends Fragment implements HotelSearchListener {
 
+    private static final String EXTRA_CURRENT_TOOLBAR_TITLE = "";
     private FragmentPhotosBinding fragmentPhotosBinding;
     private PhotosAdapter photosAdapter;
     private List<Photo> photoList;
@@ -37,6 +41,8 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
     private PhotosAdapter.PhotosAdapterListener listener;
     private DataManager dataManager;
     private RecyclerView recyclerView;
+    private int currentToolbarTitle;
+    private Toolbar toolbar;
 
     public static PhotoFragment newInstance() {
         PhotoFragment fragment = new PhotoFragment();
@@ -56,8 +62,16 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
                              @Nullable Bundle savedInstanceState) {
         fragmentPhotosBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_photos,
                 container, false);
-        Toolbar toolbar = fragmentPhotosBinding.toolbar;
-        toolbar.setTitle("HomeForNow");
+        toolbar = fragmentPhotosBinding.toolbar;
+        if (savedInstanceState == null) {
+            toolbar.setTitle(R.string.most_popular);
+        } else {
+            currentToolbarTitle =
+                    savedInstanceState.getInt(EXTRA_CURRENT_TOOLBAR_TITLE, R.string.toolbar_title);
+        }
+        if (toolbar != null) {
+            ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        }
         fragmentPhotosBinding.recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),
                 2));
         photosAdapter = new PhotosAdapter(Collections.EMPTY_LIST);
@@ -98,6 +112,7 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
     @Override
     public void onResume() {
         super.onResume();
+        updateToolbarTitle();
         updateUI();
     }
 
@@ -106,15 +121,45 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.most_popular:
-                return true;
+                Toast.makeText(getActivity(), "Most Popular selected", Toast.LENGTH_SHORT)
+                        .show();
+                currentToolbarTitle = R.string.most_popular;
+                intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+                break;
             case R.id.top_rated:
-                return true;
+                Toast.makeText(getActivity(), "Top Rated selected", Toast.LENGTH_SHORT)
+                        .show();
+                currentToolbarTitle = R.string.top_rated;
+                intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+                break;
             case R.id.favorite:
-                return true;
+                Toast.makeText(getActivity(), "FavoritesActivity selected", Toast.LENGTH_SHORT)
+                        .show();
+                currentToolbarTitle = R.string.favorites;
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
+        updateToolbarTitle();
+        return true;
+    }
+
+    private void updateToolbarTitle() {
+        Timber.i("Sheila Toolbar title %s", currentToolbarTitle);
+        if (currentToolbarTitle != 0) {
+            toolbar.setTitle(currentToolbarTitle);
+        }
+
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(EXTRA_CURRENT_TOOLBAR_TITLE, currentToolbarTitle);
     }
 }

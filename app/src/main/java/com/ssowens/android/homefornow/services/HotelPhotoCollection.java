@@ -37,13 +37,4 @@ public class HotelPhotoCollection {
         hotelPhotoList.addAll(recipeList);
     }
 
-//    public Photo getHotelPhotel(int id) {
-//        for (Photo photos : hotelPhotoList) {
-//            if (photos.() == id) {
-//                return po;
-//            }
-//        }
-//        return null;
-//    }
-
 }
