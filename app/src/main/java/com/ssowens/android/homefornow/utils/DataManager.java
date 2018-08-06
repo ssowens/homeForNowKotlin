@@ -40,6 +40,7 @@ public class DataManager {
     private static final String HOTELS_SEARCH = "hotels";
     private List<Photo> photoList;
     private List<HotelSearchListener> hotelSearchListenerList;
+    private ApiService apiService;
 
     DataManager(Retrofit retrofit) {
         this.retrofit = retrofit;
@@ -90,6 +91,8 @@ public class DataManager {
                     .build();
 
             sDataManager = new DataManager(retrofit);
+            sDataManager.apiService = retrofit
+                    .create(ApiService.class);
         }
         return sDataManager;
     }
@@ -113,8 +116,6 @@ public class DataManager {
     };
 
     public void fetchHotelPopularSearch() {
-        ApiService apiService = retrofit
-                .create(ApiService.class);
         apiService.hotelsSearhPopular(HOTELS_SEARCH)
                 // Handles web request asynchronously
                 .enqueue(new Callback<HotelPopularSearchResponse>() {
@@ -136,8 +137,6 @@ public class DataManager {
     }
 
     public void fetchHotelTopRatedSearch() {
-        ApiService apiService = retrofit
-                .create(ApiService.class);
         apiService.hotelsSearchTopRated(HOTELS_SEARCH)
                 // Handles web request asynchronously
                 .enqueue(new Callback<HotelTopRatedResponse>() {
