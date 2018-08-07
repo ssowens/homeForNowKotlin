@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentHotelDetailBinding;
+import com.ssowens.android.homefornow.listeners.HotelOffersListener;
 import com.ssowens.android.homefornow.models.Photo;
 import com.ssowens.android.homefornow.utils.DataManager;
 
@@ -19,7 +20,7 @@ import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_
 /**
  * Created by Sheila Owens on 8/2/18.
  */
-public class HotelDetailFragment extends Fragment {
+public class HotelDetailFragment extends Fragment implements HotelOffersListener {
 
     private String hotelId;
     private FragmentHotelDetailBinding fragmentHotelDetailBinding;
@@ -66,5 +67,10 @@ public class HotelDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public void onHotelOffersFinished() {
+        // TODO
     }
 }
