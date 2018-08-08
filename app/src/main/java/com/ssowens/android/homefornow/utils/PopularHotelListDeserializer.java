@@ -13,7 +13,7 @@ import java.lang.reflect.Type;
 /**
  * Created by Sheila Owens on 7/23/18.
  */
-public class PhotoListDeserializer implements JsonDeserializer<HotelPopularSearchResponse> {
+public class PopularHotelListDeserializer implements JsonDeserializer<HotelPopularSearchResponse> {
 
     @Override
     public HotelPopularSearchResponse deserialize(

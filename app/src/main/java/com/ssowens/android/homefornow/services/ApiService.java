@@ -1,7 +1,7 @@
 package com.ssowens.android.homefornow.services;
 
 import com.ssowens.android.homefornow.models.HotelPopularSearchResponse;
-import com.ssowens.android.homefornow.models.HotelTopRatedResponse;
+import com.ssowens.android.homefornow.models.HotelTopRatedSearchResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -15,6 +15,6 @@ public interface ApiService {
 
     // Top Rated Hotels
     @GET("curated")
-    Call<HotelTopRatedResponse> hotelsSearchTopRated(@Query("curated") String hotel);
+    Call<HotelTopRatedSearchResponse> hotelsSearchTopRated(@Query("curated") String hotel);
 
 }

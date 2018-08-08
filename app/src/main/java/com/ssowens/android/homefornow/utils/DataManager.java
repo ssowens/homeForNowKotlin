@@ -7,10 +7,12 @@ import com.google.gson.GsonBuilder;
 import com.ssowens.android.homefornow.BuildConfig;
 import com.ssowens.android.homefornow.listeners.HotelOffersListener;
 import com.ssowens.android.homefornow.listeners.HotelSearchListener;
+import com.ssowens.android.homefornow.listeners.HotelTopRatedSearchListener;
 import com.ssowens.android.homefornow.models.Data;
 import com.ssowens.android.homefornow.models.HotelOffersResponse;
 import com.ssowens.android.homefornow.models.HotelPopularSearchResponse;
-import com.ssowens.android.homefornow.models.HotelTopRatedResponse;
+import com.ssowens.android.homefornow.models.HotelTopRatedPhoto;
+import com.ssowens.android.homefornow.models.HotelTopRatedSearchResponse;
 import com.ssowens.android.homefornow.models.Photo;
 import com.ssowens.android.homefornow.services.ApiService;
 import com.ssowens.android.homefornow.services.HotelOffersApi;
@@ -46,8 +48,10 @@ public class DataManager {
     private static final String HOTELS_SEARCH = "hotels";
     private static final String CITY_CODE = "cityCode";
     private List<Photo> photoList;
+    private List<HotelTopRatedPhoto> hotelTopRatedPhotoList;
     private List<Data> dataList;
     private List<HotelSearchListener> hotelSearchListenerList;
+    private List<HotelTopRatedSearchListener> hotelTopRatedSearchListenerList;
     private List<HotelOffersListener> hotelOffersListenerList;
     private ApiService apiService;
     private HotelOffersApi hotelOffersApi;
@@ -75,6 +79,12 @@ public class DataManager {
         }
     }
 
+    private void notifyTopRatedSearchListeners() {
+        for (HotelTopRatedSearchListener listener : hotelTopRatedSearchListenerList) {
+            listener.onTopRatedSearchFinished();
+        }
+    }
+
     private void notifyHotelOffersListeners() {
         for (HotelOffersListener listener : hotelOffersListenerList) {
             listener.onHotelOffersFinished();
@@ -89,7 +99,11 @@ public class DataManager {
                     // registering a type adapter, passing in the class it will
                     // output and the deserializer it should use to create the class.
                     .registerTypeAdapter(HotelPopularSearchResponse.class,
-                            new PhotoListDeserializer())
+                            new PopularHotelListDeserializer())
+                    .registerTypeAdapter(HotelTopRatedSearchResponse.class,
+                            new TopRatedHotelListDeserializer())
+                    .registerTypeAdapter(HotelOffersResponse.class,
+                            new HotelOffersListDeserializer())
                     .create();
 
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
@@ -97,6 +111,7 @@ public class DataManager {
 
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(sRequestInterceptor)
+                    .addInterceptor(sHotelOffersInterceptor)
                     .addInterceptor(loggingInterceptor)
                     .build();
 
@@ -135,6 +150,21 @@ public class DataManager {
         }
     };
 
+    private static Interceptor sHotelOffersInterceptor = new Interceptor() {
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            HttpUrl url = chain.request().url().newBuilder()
+                    .build();
+
+            Request request = chain.request().newBuilder()
+                    .addHeader(HEADER_AUTHORIZATION, AMADEUS_API_KEY)
+                    .url(url)
+                    .build();
+
+            return chain.proceed(request);
+        }
+    };
+
     public void fetchHotelPopularSearch() {
         apiService.hotelsSearhPopular(HOTELS_SEARCH)
                 // Handles web request asynchronously
@@ -159,19 +189,20 @@ public class DataManager {
     public void fetchHotelTopRatedSearch() {
         apiService.hotelsSearchTopRated(HOTELS_SEARCH)
                 // Handles web request asynchronously
-                .enqueue(new Callback<HotelTopRatedResponse>() {
+                .enqueue(new Callback<HotelTopRatedSearchResponse>() {
                     @Override
-                    public void onResponse(Call<HotelTopRatedResponse> call,
-                                           retrofit2.Response<HotelTopRatedResponse> response) {
+                    public void onResponse(Call<HotelTopRatedSearchResponse> call,
+                                           retrofit2.Response<HotelTopRatedSearchResponse> response) {
 
-                        photoList = response.body().getHotelTopRatedList();
-                        Timber.i("Sheila top rated photoList = %s", photoList.toString());
-                        notifySearchListeners();
+                        hotelTopRatedPhotoList = response.body().getTopRatedPhotoList();
+                        Timber.i("Sheila top rated photoList = %s",
+                                hotelTopRatedPhotoList.toString());
+                        notifyTopRatedSearchListeners();
 
                     }
 
                     @Override
-                    public void onFailure(Call<HotelTopRatedResponse> call, Throwable t) {
+                    public void onFailure(Call<HotelTopRatedSearchResponse> call, Throwable t) {
                         Timber.e("Failed to fetch hotel search" + " ~ " + t);
                     }
                 });
@@ -200,6 +231,10 @@ public class DataManager {
     // TODO remove the other getPhotoList in Photo
     public List<Photo> getPhotoList() {
         return photoList;
+    }
+
+    public List<HotelTopRatedPhoto> getHotelTopRatedPhotoList() {
+        return hotelTopRatedPhotoList;
     }
 
     public Photo getHotelPhoto(String photoId) {

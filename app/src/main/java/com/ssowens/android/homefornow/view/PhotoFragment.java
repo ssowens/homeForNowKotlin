@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentPhotosBinding;
 import com.ssowens.android.homefornow.listeners.HotelSearchListener;
+import com.ssowens.android.homefornow.models.HotelTopRatedPhoto;
 import com.ssowens.android.homefornow.models.PexelsImages;
 import com.ssowens.android.homefornow.models.Photo;
 import com.ssowens.android.homefornow.utils.DataManager;
@@ -37,6 +38,7 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
     private FragmentPhotosBinding fragmentPhotosBinding;
     private PhotosAdapter photosAdapter;
     private List<Photo> photoList;
+    private List<HotelTopRatedPhoto> hotelTopRatedPhotoList;
     private PexelsImages pexelsImages;
     private PhotosAdapter.PhotosAdapterListener listener;
     private DataManager dataManager;
@@ -110,6 +112,7 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
         photosAdapter.setPhotoList(photoList);
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
@@ -163,4 +166,5 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
         super.onSaveInstanceState(outState);
         outState.putInt(EXTRA_CURRENT_TOOLBAR_TITLE, currentToolbarTitle);
     }
+
 }
