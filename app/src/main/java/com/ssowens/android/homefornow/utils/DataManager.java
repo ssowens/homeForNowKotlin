@@ -5,7 +5,7 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ssowens.android.homefornow.BuildConfig;
-import com.ssowens.android.homefornow.listeners.HotelOffersListener;
+import com.ssowens.android.homefornow.listeners.HotelOffersSearchListener;
 import com.ssowens.android.homefornow.listeners.HotelSearchListener;
 import com.ssowens.android.homefornow.listeners.HotelTopRatedSearchListener;
 import com.ssowens.android.homefornow.models.Data;
@@ -46,19 +46,22 @@ public class DataManager {
     protected static DataManager sDataManager;
     private Retrofit retrofit;
     private static final String HOTELS_SEARCH = "hotels";
+    private static final String VACATION_SEARCH = "vacation";
     private static final String CITY_CODE = "cityCode";
     private List<Photo> photoList;
     private List<HotelTopRatedPhoto> hotelTopRatedPhotoList;
     private List<Data> dataList;
     private List<HotelSearchListener> hotelSearchListenerList;
     private List<HotelTopRatedSearchListener> hotelTopRatedSearchListenerList;
-    private List<HotelOffersListener> hotelOffersListenerList;
+    private List<HotelOffersSearchListener> hotelOffersSearchListenerList;
     private ApiService apiService;
     private HotelOffersApi hotelOffersApi;
 
     DataManager(Retrofit retrofit) {
         this.retrofit = retrofit;
         hotelSearchListenerList = new ArrayList<>();
+        hotelTopRatedSearchListenerList = new ArrayList<>();
+
     }
 
     DataManager() {
@@ -71,6 +74,22 @@ public class DataManager {
 
     public void removeHotelSearchListener(HotelSearchListener listener) {
         hotelSearchListenerList.remove(listener);
+    }
+
+    public void addHotelTopRatedSearchListener(HotelTopRatedSearchListener listener) {
+        hotelTopRatedSearchListenerList.add(listener);
+    }
+
+    public void removeHotelTopRatedSearchListener(HotelTopRatedSearchListener listener) {
+        hotelTopRatedSearchListenerList.remove(listener);
+    }
+
+    public void addHotelOffersSearchListener(HotelOffersSearchListener listener) {
+        hotelOffersSearchListenerList.add(listener);
+    }
+
+    public void removeHotelOffersSearchListener(HotelOffersSearchListener listener) {
+        hotelOffersSearchListenerList.remove(listener);
     }
 
     private void notifySearchListeners() {
@@ -86,7 +105,7 @@ public class DataManager {
     }
 
     private void notifyHotelOffersListeners() {
-        for (HotelOffersListener listener : hotelOffersListenerList) {
+        for (HotelOffersSearchListener listener : hotelOffersSearchListenerList) {
             listener.onHotelOffersFinished();
         }
     }
@@ -111,17 +130,16 @@ public class DataManager {
 
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(sRequestInterceptor)
-                    .addInterceptor(sHotelOffersInterceptor)
+                    //  .addInterceptor(sHotelOffersInterceptor)
                     .addInterceptor(loggingInterceptor)
                     .build();
 
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(PEXELS_ENDPOINT)
-                    .baseUrl(AMADEUS_BASE_URL_ENDPOINT)
+                    //      .baseUrl(AMADEUS_BASE_URL_ENDPOINT)
                     .client(client)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
-
 
             sDataManager = new DataManager(retrofit);
             sDataManager.apiService = retrofit
@@ -166,7 +184,7 @@ public class DataManager {
     };
 
     public void fetchHotelPopularSearch() {
-        apiService.hotelsSearhPopular(HOTELS_SEARCH)
+        apiService.hotelsSearchPopular(HOTELS_SEARCH)
                 // Handles web request asynchronously
                 .enqueue(new Callback<HotelPopularSearchResponse>() {
                     @Override
@@ -187,7 +205,7 @@ public class DataManager {
     }
 
     public void fetchHotelTopRatedSearch() {
-        apiService.hotelsSearchTopRated(HOTELS_SEARCH)
+        apiService.hotelsSearchTopRated(VACATION_SEARCH)
                 // Handles web request asynchronously
                 .enqueue(new Callback<HotelTopRatedSearchResponse>() {
                     @Override
@@ -228,12 +246,15 @@ public class DataManager {
                 });
     }
 
-    // TODO remove the other getPhotoList in Photo
     public List<Photo> getPhotoList() {
         return photoList;
     }
 
-    public List<HotelTopRatedPhoto> getHotelTopRatedPhotoList() {
+    public List<HotelTopRatedPhoto> getTopRatedPhotoList() {
+        return hotelTopRatedPhotoList;
+    }
+
+    public List<HotelTopRatedPhoto> getHotelOffersList() {
         return hotelTopRatedPhotoList;
     }
 

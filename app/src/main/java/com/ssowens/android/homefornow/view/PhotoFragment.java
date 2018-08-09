@@ -34,10 +34,8 @@ import timber.log.Timber;
 
 public class PhotoFragment extends Fragment implements HotelSearchListener {
 
-    private static final String EXTRA_CURRENT_TOOLBAR_TITLE = "";
-    private FragmentPhotosBinding fragmentPhotosBinding;
+    public static final String EXTRA_CURRENT_TOOLBAR_TITLE = "current_toolbar_title";
     private PhotosAdapter photosAdapter;
-    private List<Photo> photoList;
     private List<HotelTopRatedPhoto> hotelTopRatedPhotoList;
     private PexelsImages pexelsImages;
     private PhotosAdapter.PhotosAdapterListener listener;
@@ -62,7 +60,7 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        fragmentPhotosBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_photos,
+        FragmentPhotosBinding fragmentPhotosBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_photos,
                 container, false);
         toolbar = fragmentPhotosBinding.toolbar;
         if (savedInstanceState == null) {
@@ -94,8 +92,7 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
         dataManager = DataManager.get(getContext());
         dataManager.addHotelSearchListener(this);
         dataManager.fetchHotelPopularSearch();
-        dataManager.fetchHotelTopRatedSearch();
-        dataManager.fetchHotelOffers();
+        //  dataManager.fetchHotelOffers();
     }
 
     @Override
@@ -106,12 +103,10 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
 
     @Override
     public void onHotelSearchFinished() {
-
-        photoList = dataManager.getPhotoList();
+        List<Photo> photoList = dataManager.getPhotoList();
         Timber.i("Sheila photoList ~ %s ", photoList.toString());
         photosAdapter.setPhotoList(photoList);
     }
-
 
     @Override
     public void onResume() {
@@ -138,7 +133,7 @@ public class PhotoFragment extends Fragment implements HotelSearchListener {
                 Toast.makeText(getActivity(), "Top Rated selected", Toast.LENGTH_SHORT)
                         .show();
                 currentToolbarTitle = R.string.top_rated;
-                intent = new Intent(getActivity(), MainActivity.class);
+                intent = new Intent(getActivity(), TopRatedHotelActivity.class);
                 startActivity(intent);
                 break;
             case R.id.favorite:

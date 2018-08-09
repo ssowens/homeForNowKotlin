@@ -11,10 +11,10 @@ public interface ApiService {
 
     // Popular Hotels
     @GET("search")
-    Call<HotelPopularSearchResponse> hotelsSearhPopular(@Query("query") String hotel);
+    Call<HotelPopularSearchResponse> hotelsSearchPopular(@Query("query") String hotel);
 
     // Top Rated Hotels
-    @GET("curated")
-    Call<HotelTopRatedSearchResponse> hotelsSearchTopRated(@Query("curated") String hotel);
+    @GET("search")
+    Call<HotelTopRatedSearchResponse> hotelsSearchTopRated(@Query("query") String hotel);
 
 }

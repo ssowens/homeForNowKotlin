@@ -24,6 +24,7 @@
         <activity android:name=".view.HotelDetailActivity">
         </activity>
         <activity android:name=".view.FavoritesActivity" />
+        <activity android:name=".view.TopRatedHotelActivity"/>
     </application>
 
 </manifest>
