@@ -8,8 +8,10 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.google.gson.annotations.SerializedName;
 
-public class Photo extends BaseObservable {
-
+/**
+ * Created by Sheila Owens on 8/7/18.
+ */
+public class HotelTopRatedPhoto extends BaseObservable {
     private String id;
     private int width;
     private int height;
@@ -22,7 +24,7 @@ public class Photo extends BaseObservable {
     @SerializedName("src")
     private PictureSrc pictureSrc;
 
-    public Photo(int width, int height, String photoUrl, String photographer, PictureSrc pictureSrc) {
+    public HotelTopRatedPhoto(int width, int height, String photoUrl, String photographer, PictureSrc pictureSrc) {
         this.width = width;
         this.height = height;
         this.photoUrl = photoUrl;
@@ -64,7 +66,7 @@ public class Photo extends BaseObservable {
 
     @Override
     public String toString() {
-        return "Photo{" +
+        return "HotelTopRatedPhoto{" +
                 "id='" + id + '\'' +
                 ", width=" + width +
                 ", height=" + height +

@@ -7,4 +7,6 @@
     <string name="most_popular">Most Popular</string>
     <string name="favorites">Favorites</string>
     <string name="photo_by">"Photo by: "</string>
+    <string name="hotel_picture">Picture of the Hotel</string>
+    <string name="toolbar_title">HomeForNow</string>
 </resources>
