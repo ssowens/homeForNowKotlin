@@ -39,15 +39,20 @@ import timber.log.Timber;
 public class DataManager {
 
     private static final String PEXELS_ENDPOINT = "https://api.pexels.com/v1/";
-    private static final String AMADEUS_BASE_URL_ENDPOINT = "https://test.api.amadeus.com/v1/shopping/";
+    // "https://test.api.amadeus.com/v1/shopping/hotel-offers?cityCode=PAR" -H "Authorization: Bearer ${token}" -k -o hotel_search_curl.json
+    private static final String AMADEUS_BASE_URL_ENDPOINT = "https://test.api.amadeus" +
+            ".com/v1/shopping/";
     private static final String HEADER_AUTHORIZATION = "Authorization";
+    private static final String HEADER_BEARER = "Bearer ";
     public static final String PEXELS_API_KEY = BuildConfig.PexelsApiKey;
     public static final String AMADEUS_API_KEY = BuildConfig.AmadeusApiKey;
+    public static final String AMADEUS_SECRET = BuildConfig.AmadeusSecret;
     protected static DataManager sDataManager;
     private Retrofit retrofit;
+    private Retrofit hotelOffersRetrofit;
     private static final String HOTELS_SEARCH = "hotels";
     private static final String VACATION_SEARCH = "vacation";
-    private static final String CITY_CODE = "cityCode";
+    private static final String CITY_CODE = "ATL";
     private List<Photo> photoList;
     private List<HotelTopRatedPhoto> hotelTopRatedPhotoList;
     private List<Data> dataList;
@@ -57,8 +62,10 @@ public class DataManager {
     private ApiService apiService;
     private HotelOffersApi hotelOffersApi;
 
-    DataManager(Retrofit retrofit) {
+
+    DataManager(Retrofit retrofit, Retrofit hotelOffersRetrofit) {
         this.retrofit = retrofit;
+        this.hotelOffersRetrofit = hotelOffersRetrofit;
         hotelSearchListenerList = new ArrayList<>();
         hotelTopRatedSearchListenerList = new ArrayList<>();
 
@@ -130,18 +137,29 @@ public class DataManager {
 
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(sRequestInterceptor)
-                    //  .addInterceptor(sHotelOffersInterceptor)
                     .addInterceptor(loggingInterceptor)
                     .build();
 
+            // PEXELS
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(PEXELS_ENDPOINT)
-                    //      .baseUrl(AMADEUS_BASE_URL_ENDPOINT)
                     .client(client)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
 
-            sDataManager = new DataManager(retrofit);
+            OkHttpClient hotelOffersClient = new OkHttpClient.Builder()
+                    .addInterceptor(sHotelOffersInterceptor)
+                    .addInterceptor(loggingInterceptor)
+                    .build();
+
+            // AMADEUS
+            Retrofit hotelOffersRetrofit = new Retrofit.Builder()
+                    .baseUrl(AMADEUS_BASE_URL_ENDPOINT)
+                    .client(hotelOffersClient)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+
+            sDataManager = new DataManager(retrofit, hotelOffersRetrofit);
             sDataManager.apiService = retrofit
                     .create(ApiService.class);
             sDataManager.hotelOffersApi = retrofit
@@ -172,10 +190,17 @@ public class DataManager {
         @Override
         public Response intercept(Chain chain) throws IOException {
             HttpUrl url = chain.request().url().newBuilder()
+                    .addQueryParameter("cityCode", "ATL")
+                    .addQueryParameter("radius", "5")
+                    .addQueryParameter("radiusUnit", "KM")
+                    .addQueryParameter("includeClosed", "false")
+                    .addQueryParameter("bestRateOnly", "true")
+                    .addQueryParameter("view", "NONE")
+                    .addQueryParameter("sort", "NONE")
                     .build();
 
             Request request = chain.request().newBuilder()
-                    .addHeader(HEADER_AUTHORIZATION, AMADEUS_API_KEY)
+                    .addHeader(HEADER_AUTHORIZATION, HEADER_BEARER + AMADEUS_API_KEY)
                     .url(url)
                     .build();
 
@@ -227,12 +252,11 @@ public class DataManager {
     }
 
     public void fetchHotelOffers() {
-        hotelOffersApi.hotelOffersSearch(CITY_CODE)
+        hotelOffersApi.hotelOffersSearch()
                 .enqueue(new Callback<HotelOffersResponse>() {
                     @Override
                     public void onResponse(Call<HotelOffersResponse> call,
                                            retrofit2.Response<HotelOffersResponse> response) {
-
 
                         dataList = response.body().getHotelOffersList();
                         Timber.i("Sheila hotelOffersList = %s", dataList.toString());
