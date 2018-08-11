@@ -2,7 +2,7 @@ package com.ssowens.android.homefornow.models;
 
 import java.util.List;
 
-public class Data {
+public class HotelDetailsData {
     private String type;
     private Hotel hotel;
     private boolean available;

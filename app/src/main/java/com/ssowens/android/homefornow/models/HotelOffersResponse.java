@@ -10,9 +10,9 @@ import java.util.List;
 public class HotelOffersResponse {
 
     @SerializedName("data")
-    List<Data> hotelOffersList;
+    List<HotelDetailsData> hotelOffersList;
 
-    public List<Data> getHotelOffersList() {
+    public List<HotelDetailsData> getHotelOffersList() {
         return hotelOffersList;
     }
 }
