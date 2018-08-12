@@ -130,9 +130,6 @@ public class PhotoFragment extends Fragment implements
 
         TokenStore tokenStore = TokenStore.get(getActivity());
         tokenStore.setAccessToken(dataManager.getAccessToken());
-
-//        dataManager.addHotelOffersSearchListener(this);
-//        dataManager.fetchHotelOffers();
     }
 
     @Override

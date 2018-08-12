@@ -139,8 +139,8 @@ public class DataManager {
             // AMADEUS
             OkHttpClient hotelOffersClient = new OkHttpClient.Builder()
                     .connectTimeout(1000, TimeUnit.SECONDS)
-                    .readTimeout(1000, TimeUnit.SECONDS)
                     .writeTimeout(1000, TimeUnit.SECONDS)
+                    .readTimeout(1000, TimeUnit.SECONDS)
                     .addInterceptor(sHotelOffersInterceptor)
                     .addInterceptor(loggingInterceptor)
                     .build();
@@ -338,34 +338,6 @@ public class DataManager {
 //                });
     }
 
-    public void fetchToken(final Callback callbackSuccess) {
-        hotelOffersApi.getAmadeusToken(AMADEUS_CLIENT_CREDENTIALS, AMADEUS_API_KEY, AMADEUS_SECRET)
-                .enqueue(new Callback<AmadeusAccessTokenResponse>() {
-                    @Override
-                    public void onResponse(Call<AmadeusAccessTokenResponse> call,
-                                           retrofit2.Response<AmadeusAccessTokenResponse> response) {
-                        Timber.i("Sheila ~ fetchToken %s", response.body());
-                        if (response.isSuccessful() && response.body() != null) {
-                            amadeusAccessToken = response.body();
-                            String tokenString = "Bearer " + amadeusAccessToken.getAccess_token();
-
-
-                            Timber.i("Sheila token = %s", amadeusAccessToken.getAccess_token());
-
-                            //notifyAccessTokenListeners();
-
-                            fetchHotelOffers();
-
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<AmadeusAccessTokenResponse> call, Throwable t) {
-
-                    }
-                });
-    }
-
     public void getToken(final Callback callbackSuccess) {
         Call<AmadeusAccessTokenResponse> tokenCall =
                 hotelOffersApi.getAmadeusToken(AMADEUS_CLIENT_CREDENTIALS,
@@ -448,12 +420,5 @@ public class DataManager {
             listener.onHotelOffersFinished();
         }
     }
-
-    private void notifyAccessTokenListeners() {
-        for (AccessTokenListener listener : accessTokenListenerList) {
-            listener.onAccessTokenFinished();
-        }
-    }
-
 
 }
