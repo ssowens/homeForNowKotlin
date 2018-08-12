@@ -99,8 +99,8 @@ public class PhotoFragment extends Fragment implements
         dataManager = DataManager.get(getContext());
         dataManager.addHotelSearchListener(this);
         dataManager.fetchHotelPopularSearch();
-        dataManager.addAccessTokenListener(this);
-        dataManager.fetchToken();
+        dataManager.addHotelOffersSearchListener(this);
+        dataManager.fetchHotelOffers();
     }
 
     @Override
@@ -108,7 +108,6 @@ public class PhotoFragment extends Fragment implements
         super.onStop();
         dataManager.removeHotelSearchListener(this);
         dataManager.removeHotelOffersSearchListener(this);
-        dataManager.removeAccessTokenListener(this);
     }
 
     @Override
@@ -132,8 +131,8 @@ public class PhotoFragment extends Fragment implements
         TokenStore tokenStore = TokenStore.get(getActivity());
         tokenStore.setAccessToken(dataManager.getAccessToken());
 
-        dataManager.addHotelOffersSearchListener(this);
-        //dataManager.fetchHotelOffers(dataManager.getAccessToken());
+//        dataManager.addHotelOffersSearchListener(this);
+//        dataManager.fetchHotelOffers();
     }
 
     @Override

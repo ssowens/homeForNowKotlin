@@ -23,6 +23,7 @@ import com.ssowens.android.homefornow.services.HotelOffersApi;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -137,6 +138,9 @@ public class DataManager {
 
             // AMADEUS
             OkHttpClient hotelOffersClient = new OkHttpClient.Builder()
+                    .connectTimeout(1000, TimeUnit.SECONDS)
+                    .readTimeout(1000, TimeUnit.SECONDS)
+                    .writeTimeout(1000, TimeUnit.SECONDS)
                     .addInterceptor(sHotelOffersInterceptor)
                     .addInterceptor(loggingInterceptor)
                     .build();
@@ -203,13 +207,6 @@ public class DataManager {
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
             HttpUrl url = chain.request().url().newBuilder()
-//                    .addQueryParameter("cityCode", "ATL")
-//                    .addQueryParameter("radius", "5")
-//                    .addQueryParameter("radiusUnit", "KM")
-//                    .addQueryParameter("includeClosed", "false")
-//                    .addQueryParameter("bestRateOnly", "true")
-//                    .addQueryParameter("view", "NONE")
-//                    .addQueryParameter("sort", "NONE")
                     .build();
 
             request = request.newBuilder()
@@ -264,7 +261,6 @@ public class DataManager {
                     @Override
                     public void onResponse(Call<HotelTopRatedSearchResponse> call,
                                            retrofit2.Response<HotelTopRatedSearchResponse> response) {
-
                         if (response.body() != null) {
                             hotelTopRatedPhotoList = response.body().getTopRatedPhotoList();
                             Timber.i("Sheila top rated photoList = %s",
@@ -280,30 +276,69 @@ public class DataManager {
                 });
     }
 
-    public void fetchHotelOffers(String tokenString) {
-        hotelOffersApi.hotelOffersSearch(tokenString, "ATL", "5",
-                "KM", "false",
-                "true", "NONE", "NONE")
-                .enqueue(new Callback<HotelOffersResponse>() {
-                    @Override
-                    public void onResponse(Call<HotelOffersResponse> call,
-                                           retrofit2.Response<HotelOffersResponse> response) {
-                        Timber.i("Sheila fetchHotelOffers ~ %s", response.toString());
-                        if (response.body() != null) {
-                            dataList = response.body().getHotelOffersList();
-                            Timber.i("Sheila hotelOffersList = %s", dataList.toString());
-                            notifyHotelOffersListeners();
-                        }
-                    }
+    public void fetchHotelOffers() {
+        getToken(new Callback<AmadeusAccessTokenResponse>() {
+            @Override
+            public void onResponse(Call<AmadeusAccessTokenResponse> tokenCall,
+                                   retrofit2.Response<AmadeusAccessTokenResponse>
+                                           responseToken) {
+                if (responseToken.isSuccessful() && responseToken.body() != null) {
+                    AmadeusAccessTokenResponse token = responseToken.body();
+                    String tokenString = HEADER_BEARER + token.getAccess_token();
+                    Timber.i("Sheila Got the Token %s", token.getAccess_token());
 
-                    @Override
-                    public void onFailure(Call<HotelOffersResponse> call, Throwable t) {
-                        Timber.e("Failed to fetch hotel Offers" + " ~ " + t);
-                    }
-                });
+                    hotelOffersApi.hotelOffersSearch(tokenString, "ATL", "5",
+                            "KM", "false",
+                            "true", "NONE", "NONE")
+                            .enqueue(new Callback<HotelOffersResponse>() {
+                                @Override
+                                public void onResponse(Call<HotelOffersResponse> call,
+                                                       retrofit2.Response<HotelOffersResponse> response) {
+                                    Timber.i("Sheila fetchHotelOffers ~ %s", response.toString());
+                                    if (response.isSuccessful() && response.body() != null) {
+                                        dataList = response.body().getHotelOffersList();
+                                        Timber.i("Sheila hotelOffersList = %s", dataList.toString());
+                                        notifyHotelOffersListeners();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<HotelOffersResponse> call, Throwable t) {
+                                    Timber.e("Failed to fetch Hotel Offers" + " ~ " + t);
+                                }
+                            });
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AmadeusAccessTokenResponse> call, Throwable t) {
+                Timber.e(t, " ~ Failed to fetch token");
+            }
+        });
+//        hotelOffersApi.hotelOffersSearch(tokenString, "ATL", "5",
+//                "KM", "false",
+//                "true", "NONE", "NONE")
+//                .enqueue(new Callback<HotelOffersResponse>() {
+//                    @Override
+//                    public void onResponse(Call<HotelOffersResponse> call,
+//                                           retrofit2.Response<HotelOffersResponse> response) {
+//                        Timber.i("Sheila fetchHotelOffers ~ %s", response.toString());
+//                        if (response.body() != null) {
+//                            dataList = response.body().getHotelOffersList();
+//                            Timber.i("Sheila hotelOffersList = %s", dataList.toString());
+//                            notifyHotelOffersListeners();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<HotelOffersResponse> call, Throwable t) {
+//                        Timber.e("Failed to fetch hotel Offers" + " ~ " + t);
+//                    }
+//                });
     }
 
-    public void fetchToken() {
+    public void fetchToken(final Callback callbackSuccess) {
         hotelOffersApi.getAmadeusToken(AMADEUS_CLIENT_CREDENTIALS, AMADEUS_API_KEY, AMADEUS_SECRET)
                 .enqueue(new Callback<AmadeusAccessTokenResponse>() {
                     @Override
@@ -319,7 +354,7 @@ public class DataManager {
 
                             //notifyAccessTokenListeners();
 
-                            fetchHotelOffers(tokenString);
+                            fetchHotelOffers();
 
                         }
                     }
@@ -332,10 +367,9 @@ public class DataManager {
     }
 
     public void getToken(final Callback callbackSuccess) {
-        /*
-         * client id and client secret go here
-         */
-        Call<AmadeusAccessTokenResponse> tokenCall = hotelOffersApi.getAmadeusToken("", "", "client_credentials");
+        Call<AmadeusAccessTokenResponse> tokenCall =
+                hotelOffersApi.getAmadeusToken(AMADEUS_CLIENT_CREDENTIALS,
+                        AMADEUS_API_KEY, AMADEUS_SECRET);
 
         tokenCall.enqueue(callbackSuccess);
     }
