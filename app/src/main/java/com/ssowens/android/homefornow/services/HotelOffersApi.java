@@ -7,6 +7,7 @@ import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
@@ -22,7 +23,14 @@ public interface HotelOffersApi {
 
     // Hotel Details
     @GET("v1/shopping/hotel-offers")
-    Call<HotelOffersResponse> hotelOffersSearch(@Query("cityCode") String cityCode);
+    Call<HotelOffersResponse> hotelOffersSearch(@Header("Authorization") String authorization,
+                                                @Query("cityCode") String cityCode,
+                                                @Query("radius") String radius,
+                                                @Query("radiusUnit") String radiusUnit,
+                                                @Query("includeClosed") String includeClosed,
+                                                @Query("bestRateOnly") String bestRateOnly,
+                                                @Query("view") String view,
+                                                @Query("sort") String sort);
 
 
     @FormUrlEncoded

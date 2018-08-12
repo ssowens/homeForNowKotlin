@@ -80,7 +80,7 @@ public class DataManager {
     private ApiService apiService;
     private HotelOffersApi hotelOffersApi;
     private static TokenStore sTokenStore;
-    public static String sAccessToken;
+    public String accessToken;
 
     DataManager(TokenStore tokenStore,
                 Retrofit retrofit,
@@ -162,8 +162,7 @@ public class DataManager {
                     .build();
 
             TokenStore tokenStore = TokenStore.get(context);
-            sAccessToken = tokenStore.getAccessToken();
-            Timber.i("this is sheila = tokenstore %s", sAccessToken);
+            //sAccessToken = tokenStore.getAccessToken();
 
             sDataManager = new DataManager(tokenStore, retrofit, hotelOffersRetrofit,
                     accessTokenRetrofit);
@@ -204,16 +203,16 @@ public class DataManager {
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
             HttpUrl url = chain.request().url().newBuilder()
-                    .addQueryParameter("radius", "5")
-                    .addQueryParameter("radiusUnit", "KM")
-                    .addQueryParameter("includeClosed", "false")
-                    .addQueryParameter("bestRateOnly", "true")
-                    .addQueryParameter("view", "NONE")
-                    .addQueryParameter("sort", "NONE")
+//                    .addQueryParameter("cityCode", "ATL")
+//                    .addQueryParameter("radius", "5")
+//                    .addQueryParameter("radiusUnit", "KM")
+//                    .addQueryParameter("includeClosed", "false")
+//                    .addQueryParameter("bestRateOnly", "true")
+//                    .addQueryParameter("view", "NONE")
+//                    .addQueryParameter("sort", "NONE")
                     .build();
 
             request = request.newBuilder()
-                    .addHeader("Authorization", "Bearer " + sAccessToken)
                     .url(url)
                     .build();
 
@@ -243,9 +242,11 @@ public class DataManager {
                     public void onResponse(Call<HotelPopularSearchResponse> call,
                                            retrofit2.Response<HotelPopularSearchResponse> response) {
 
-                        photoList = response.body().getPhotoList();
-                        Timber.i("Sheila popular photoList = %s", photoList.toString());
-                        notifySearchListeners();
+                        if (response.body() != null) {
+                            photoList = response.body().getPhotoList();
+                            Timber.i("Sheila popular photoList = %s", photoList.toString());
+                            notifySearchListeners();
+                        }
 
                     }
 
@@ -264,11 +265,12 @@ public class DataManager {
                     public void onResponse(Call<HotelTopRatedSearchResponse> call,
                                            retrofit2.Response<HotelTopRatedSearchResponse> response) {
 
-                        hotelTopRatedPhotoList = response.body().getTopRatedPhotoList();
-                        Timber.i("Sheila top rated photoList = %s",
-                                hotelTopRatedPhotoList.toString());
-                        notifyTopRatedSearchListeners();
-
+                        if (response.body() != null) {
+                            hotelTopRatedPhotoList = response.body().getTopRatedPhotoList();
+                            Timber.i("Sheila top rated photoList = %s",
+                                    hotelTopRatedPhotoList.toString());
+                            notifyTopRatedSearchListeners();
+                        }
                     }
 
                     @Override
@@ -278,16 +280,20 @@ public class DataManager {
                 });
     }
 
-    public void fetchHotelOffers() {
-        hotelOffersApi.hotelOffersSearch("ATL")
+    public void fetchHotelOffers(String tokenString) {
+        hotelOffersApi.hotelOffersSearch(tokenString, "ATL", "5",
+                "KM", "false",
+                "true", "NONE", "NONE")
                 .enqueue(new Callback<HotelOffersResponse>() {
                     @Override
                     public void onResponse(Call<HotelOffersResponse> call,
                                            retrofit2.Response<HotelOffersResponse> response) {
-                        Timber.i("Sheila ~ %s", response.toString());
-                        dataList = response.body().getHotelOffersList();
-                        Timber.i("Sheila hotelOffersList = %s", dataList.toString());
-                        notifyHotelOffersListeners();
+                        Timber.i("Sheila fetchHotelOffers ~ %s", response.toString());
+                        if (response.body() != null) {
+                            dataList = response.body().getHotelOffersList();
+                            Timber.i("Sheila hotelOffersList = %s", dataList.toString());
+                            notifyHotelOffersListeners();
+                        }
                     }
 
                     @Override
@@ -304,9 +310,18 @@ public class DataManager {
                     public void onResponse(Call<AmadeusAccessTokenResponse> call,
                                            retrofit2.Response<AmadeusAccessTokenResponse> response) {
                         Timber.i("Sheila ~ fetchToken %s", response.body());
-                        amadeusAccessToken = response.body();
-                        Timber.i("Sheila token = %s", amadeusAccessToken.getAccess_token());
-                        notifyAccessTokenListeners();
+                        if (response.isSuccessful() && response.body() != null) {
+                            amadeusAccessToken = response.body();
+                            String tokenString = "Bearer " + amadeusAccessToken.getAccess_token();
+
+
+                            Timber.i("Sheila token = %s", amadeusAccessToken.getAccess_token());
+
+                            //notifyAccessTokenListeners();
+
+                            fetchHotelOffers(tokenString);
+
+                        }
                     }
 
                     @Override
@@ -314,6 +329,15 @@ public class DataManager {
 
                     }
                 });
+    }
+
+    public void getToken(final Callback callbackSuccess) {
+        /*
+         * client id and client secret go here
+         */
+        Call<AmadeusAccessTokenResponse> tokenCall = hotelOffersApi.getAmadeusToken("", "", "client_credentials");
+
+        tokenCall.enqueue(callbackSuccess);
     }
 
     public List<Photo> getPhotoList() {

@@ -133,7 +133,7 @@ public class PhotoFragment extends Fragment implements
         tokenStore.setAccessToken(dataManager.getAccessToken());
 
         dataManager.addHotelOffersSearchListener(this);
-        dataManager.fetchHotelOffers();
+        //dataManager.fetchHotelOffers(dataManager.getAccessToken());
     }
 
     @Override
