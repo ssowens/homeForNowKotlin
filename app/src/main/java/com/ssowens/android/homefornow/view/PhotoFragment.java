@@ -21,21 +21,25 @@ import android.widget.Toast;
 
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentPhotosBinding;
+import com.ssowens.android.homefornow.listeners.AccessTokenListener;
 import com.ssowens.android.homefornow.listeners.HotelOffersSearchListener;
 import com.ssowens.android.homefornow.listeners.HotelSearchListener;
 import com.ssowens.android.homefornow.models.HotelDetailsData;
 import com.ssowens.android.homefornow.models.HotelTopRatedPhoto;
 import com.ssowens.android.homefornow.models.PexelsImages;
 import com.ssowens.android.homefornow.models.Photo;
+import com.ssowens.android.homefornow.models.TokenStore;
 import com.ssowens.android.homefornow.utils.DataManager;
-import com.ssowens.android.homefornow.utils.OauthUriHelper;
 
 import java.util.Collections;
 import java.util.List;
 
 import timber.log.Timber;
 
-public class PhotoFragment extends Fragment implements HotelSearchListener, HotelOffersSearchListener {
+public class PhotoFragment extends Fragment implements
+        HotelSearchListener,
+        HotelOffersSearchListener,
+        AccessTokenListener {
 
     public static final String EXTRA_CURRENT_TOOLBAR_TITLE = "current_toolbar_title";
     private PhotosAdapter photosAdapter;
@@ -95,9 +99,8 @@ public class PhotoFragment extends Fragment implements HotelSearchListener, Hote
         dataManager = DataManager.get(getContext());
         dataManager.addHotelSearchListener(this);
         dataManager.fetchHotelPopularSearch();
-        //dataManager.addHotelOffersSearchListener(this);
+        dataManager.addAccessTokenListener(this);
         dataManager.fetchToken();
-        //dataManager.fetchHotelOffers();
     }
 
     @Override
@@ -105,6 +108,7 @@ public class PhotoFragment extends Fragment implements HotelSearchListener, Hote
         super.onStop();
         dataManager.removeHotelSearchListener(this);
         dataManager.removeHotelOffersSearchListener(this);
+        dataManager.removeAccessTokenListener(this);
     }
 
     @Override
@@ -119,6 +123,17 @@ public class PhotoFragment extends Fragment implements HotelSearchListener, Hote
         List<HotelDetailsData> dataList = dataManager.getDataList();
         Timber.i("Sheila dataList ~ %s ", dataList.toString());
         //photosAdapter.setPhotoList(dataList);
+    }
+
+    @Override
+    public void onAccessTokenFinished() {
+        Timber.i("Sheila my Access Token= %s", dataManager.getAccessToken());
+
+        TokenStore tokenStore = TokenStore.get(getActivity());
+        tokenStore.setAccessToken(dataManager.getAccessToken());
+
+        dataManager.addHotelOffersSearchListener(this);
+        dataManager.fetchHotelOffers();
     }
 
     @Override
@@ -162,7 +177,6 @@ public class PhotoFragment extends Fragment implements HotelSearchListener, Hote
     }
 
     private void updateToolbarTitle() {
-        Timber.i("Sheila Toolbar title %s", currentToolbarTitle);
         if (currentToolbarTitle != 0) {
             toolbar.setTitle(currentToolbarTitle);
         }
@@ -176,17 +190,4 @@ public class PhotoFragment extends Fragment implements HotelSearchListener, Hote
     }
 
 
-    public String getToken(String url) {
-        String token = "";
-        if (url.contains(DataManager.AMADEUS_BASE_URL)) {
-            // TODO GET THE TOKEN
-            OauthUriHelper oauthUriHelper = new OauthUriHelper(url);
-            if (oauthUriHelper.isAuthorized()) {
-                // get the access token for later use
-                String accessToken = oauthUriHelper.getAccessToken();
-                Timber.i("Sheila got the token %s", accessToken);
-            }
-        }
-        return token;
-    }
 }

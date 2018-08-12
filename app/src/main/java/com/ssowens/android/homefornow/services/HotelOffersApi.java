@@ -8,6 +8,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 import static com.ssowens.android.homefornow.utils.DataManager.AMADEUS_AUTHORIZATION_ENDPOINT;
 import static com.ssowens.android.homefornow.utils.DataManager.AMADEUS_CLIENT_ID;
@@ -20,8 +21,8 @@ import static com.ssowens.android.homefornow.utils.DataManager.AMADEUS_GRANT_TYP
 public interface HotelOffersApi {
 
     // Hotel Details
-    @GET("hotel-offers")
-    Call<HotelOffersResponse> hotelOffersSearch();
+    @GET("v1/shopping/hotel-offers")
+    Call<HotelOffersResponse> hotelOffersSearch(@Query("cityCode") String cityCode);
 
 
     @FormUrlEncoded

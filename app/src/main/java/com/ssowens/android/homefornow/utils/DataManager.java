@@ -5,6 +5,7 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ssowens.android.homefornow.BuildConfig;
+import com.ssowens.android.homefornow.listeners.AccessTokenListener;
 import com.ssowens.android.homefornow.listeners.HotelOffersSearchListener;
 import com.ssowens.android.homefornow.listeners.HotelSearchListener;
 import com.ssowens.android.homefornow.listeners.HotelTopRatedSearchListener;
@@ -46,6 +47,7 @@ public class DataManager {
             ".com/v1/shopping/";
     private static final String HEADER_AUTHORIZATION = "Authorization";
     public static final String AMADEUS_BASE_URL = "https://test.api.amadeus.com/";
+    private static final String HEADER_AUTHORIZATION_BEARER = "Authorization: Bearer";
     private static final String HEADER_BEARER = "Bearer ";
     public static final String PEXELS_API_KEY = BuildConfig.PexelsApiKey;
     public static final String AMADEUS_API_KEY = BuildConfig.AmadeusApiKey;
@@ -57,38 +59,41 @@ public class DataManager {
     public static final String AMADEUS_ACCESS_TOKEN = "access_token";
     public static final String AMADEUS_AUTHORIZATION_ENDPOINT = "v1/security/oauth2/token/";
     protected static DataManager sDataManager;
-    private final TokenStore tokenStore;
     private Retrofit retrofit;
     private Retrofit hotelOffersRetrofit;
-    private final Retrofit accesTokenRetrofit;
+    private final Retrofit accessTokenRetrofit;
     private static final String HOTELS_SEARCH = "hotels";
     private static final String VACATION_SEARCH = "vacation";
     private static final String CITY_CODE = "ATL";
     private List<Photo> photoList;
     private List<HotelTopRatedPhoto> hotelTopRatedPhotoList;
     private List<HotelDetailsData> dataList;
+    public HotelDetailsData hotelDetailsData;
+    public AmadeusAccessTokenResponse amadeusAccessToken;
 
     // Listeners List
     private List<HotelSearchListener> hotelSearchListenerList;
     private List<HotelTopRatedSearchListener> hotelTopRatedSearchListenerList;
     private List<HotelOffersSearchListener> hotelOffersSearchListenerList;
+    private List<AccessTokenListener> accessTokenListenerList;
 
     private ApiService apiService;
     private HotelOffersApi hotelOffersApi;
     private static TokenStore sTokenStore;
-
+    public static String sAccessToken;
 
     DataManager(TokenStore tokenStore,
                 Retrofit retrofit,
                 Retrofit hotelOffersRetrofit,
-                Retrofit accesTokenRetrofit) {
-        this.tokenStore = tokenStore;
+                Retrofit accessTokenRetrofit) {
+        sTokenStore = tokenStore;
         this.retrofit = retrofit;
         this.hotelOffersRetrofit = hotelOffersRetrofit;
-        this.accesTokenRetrofit = accesTokenRetrofit;
+        this.accessTokenRetrofit = accessTokenRetrofit;
         hotelSearchListenerList = new ArrayList<>();
         hotelTopRatedSearchListenerList = new ArrayList<>();
         hotelOffersSearchListenerList = new ArrayList<>();
+        accessTokenListenerList = new ArrayList<>();
 
     }
 
@@ -105,14 +110,17 @@ public class DataManager {
                             new TopRatedHotelListDeserializer())
                     .registerTypeAdapter(HotelOffersResponse.class,
                             new HotelOffersListDeserializer())
+                    .registerTypeAdapter(AmadeusAccessTokenResponse.class,
+                            new AccessTokenDeserializer())
                     .create();
+
 
             GsonConverterFactory gsonConverterFactory = GsonConverterFactory.create(gson);
 
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-            // TODO Make on OkHttpClient call, break it out like GsonConverterFactory
+            // TODO Make one OkHttpClient call, break it out like GsonConverterFactory
 
             // PEXELS
             OkHttpClient client = new OkHttpClient.Builder()
@@ -134,16 +142,16 @@ public class DataManager {
                     .build();
 
             // AMADEUS
-            OkHttpClient accessTokenClient = new OkHttpClient.Builder()
-                    .addInterceptor(sAccessToken)
-                    .addInterceptor(loggingInterceptor)
-                    .build();
-
-            // AMADEUS
             Retrofit hotelOffersRetrofit = new Retrofit.Builder()
                     .baseUrl(AMADEUS_BASE_URL)
                     .client(hotelOffersClient)
                     .addConverterFactory(gsonConverterFactory)
+                    .build();
+
+            // AMADEUS
+            OkHttpClient accessTokenClient = new OkHttpClient.Builder()
+                    .addInterceptor(sAccessTokenInterceptor)
+                    .addInterceptor(loggingInterceptor)
                     .build();
 
             // AMADEUS
@@ -154,8 +162,11 @@ public class DataManager {
                     .build();
 
             TokenStore tokenStore = TokenStore.get(context);
+            sAccessToken = tokenStore.getAccessToken();
+            Timber.i("this is sheila = tokenstore %s", sAccessToken);
 
-            sDataManager = new DataManager(tokenStore, retrofit, hotelOffersRetrofit, accessTokenRetrofit);
+            sDataManager = new DataManager(tokenStore, retrofit, hotelOffersRetrofit,
+                    accessTokenRetrofit);
             sDataManager.apiService = retrofit
                     .create(ApiService.class);
             sDataManager.hotelOffersApi = hotelOffersRetrofit
@@ -191,8 +202,8 @@ public class DataManager {
     private static Interceptor sHotelOffersInterceptor = new Interceptor() {
         @Override
         public Response intercept(Chain chain) throws IOException {
+            Request request = chain.request();
             HttpUrl url = chain.request().url().newBuilder()
-                    .addQueryParameter("cityCode", "ATL")
                     .addQueryParameter("radius", "5")
                     .addQueryParameter("radiusUnit", "KM")
                     .addQueryParameter("includeClosed", "false")
@@ -201,8 +212,8 @@ public class DataManager {
                     .addQueryParameter("sort", "NONE")
                     .build();
 
-            Request request = chain.request().newBuilder()
-                    .addHeader(HEADER_AUTHORIZATION, HEADER_BEARER + AMADEUS_API_KEY)
+            request = request.newBuilder()
+                    .addHeader("Authorization", "Bearer " + sAccessToken)
                     .url(url)
                     .build();
 
@@ -210,7 +221,7 @@ public class DataManager {
         }
     };
 
-    private static Interceptor sAccessToken = new Interceptor() {
+    private static Interceptor sAccessTokenInterceptor = new Interceptor() {
         @Override
         public Response intercept(Chain chain) throws IOException {
             HttpUrl url = chain.request().url().newBuilder()
@@ -268,12 +279,12 @@ public class DataManager {
     }
 
     public void fetchHotelOffers() {
-        hotelOffersApi.hotelOffersSearch()
+        hotelOffersApi.hotelOffersSearch("ATL")
                 .enqueue(new Callback<HotelOffersResponse>() {
                     @Override
                     public void onResponse(Call<HotelOffersResponse> call,
                                            retrofit2.Response<HotelOffersResponse> response) {
-                        Timber.i("Sheila ~ %s", response);
+                        Timber.i("Sheila ~ %s", response.toString());
                         dataList = response.body().getHotelOffersList();
                         Timber.i("Sheila hotelOffersList = %s", dataList.toString());
                         notifyHotelOffersListeners();
@@ -292,7 +303,10 @@ public class DataManager {
                     @Override
                     public void onResponse(Call<AmadeusAccessTokenResponse> call,
                                            retrofit2.Response<AmadeusAccessTokenResponse> response) {
-                        Timber.i("Sheila ~ fetchToken %s", response.toString());
+                        Timber.i("Sheila ~ fetchToken %s", response.body());
+                        amadeusAccessToken = response.body();
+                        Timber.i("Sheila token = %s", amadeusAccessToken.getAccess_token());
+                        notifyAccessTokenListeners();
                     }
 
                     @Override
@@ -312,6 +326,10 @@ public class DataManager {
 
     public List<HotelDetailsData> getDataList() {
         return dataList;
+    }
+
+    public String getAccessToken() {
+        return amadeusAccessToken.getAccess_token();
     }
 
     public Photo getHotelPhoto(String photoId) {
@@ -347,6 +365,14 @@ public class DataManager {
         hotelOffersSearchListenerList.remove(listener);
     }
 
+    public void addAccessTokenListener(AccessTokenListener listener) {
+        accessTokenListenerList.add(listener);
+    }
+
+    public void removeAccessTokenListener(AccessTokenListener listener) {
+        accessTokenListenerList.remove(listener);
+    }
+
     private void notifySearchListeners() {
         for (HotelSearchListener listener : hotelSearchListenerList) {
             listener.onHotelSearchFinished();
@@ -362,6 +388,12 @@ public class DataManager {
     private void notifyHotelOffersListeners() {
         for (HotelOffersSearchListener listener : hotelOffersSearchListenerList) {
             listener.onHotelOffersFinished();
+        }
+    }
+
+    private void notifyAccessTokenListeners() {
+        for (AccessTokenListener listener : accessTokenListenerList) {
+            listener.onAccessTokenFinished();
         }
     }
 
