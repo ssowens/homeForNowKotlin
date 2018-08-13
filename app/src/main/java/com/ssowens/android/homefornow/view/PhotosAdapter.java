@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.ssowens.android.homefornow.databinding.CardViewItemBinding;
 import com.ssowens.android.homefornow.models.Photo;
@@ -35,7 +36,7 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.MyViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         holder.binding.setModel(photoList.get(position));
         holder.binding.mediaImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,13 +53,20 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.MyViewHold
         return photoList.size();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    public class MyViewHolder extends RecyclerView.ViewHolder {
 
         private CardViewItemBinding binding;
 
         public MyViewHolder(CardViewItemBinding itemBinding) {
             super(itemBinding.getRoot());
             this.binding = itemBinding;
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(v.getContext(), "Clicked ~ ",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
         }
     }
 
