@@ -46,4 +46,18 @@ public class Offers {
     public String getHotelUrl() {
         return hotelUrl;
     }
+
+    @Override
+    public String toString() {
+        return "Offers{" +
+                "id='" + id + '\'' +
+                ", rateCode='" + rateCode + '\'' +
+                ", rateFamilyEstimated=" + rateFamilyEstimated +
+                ", room=" + room +
+                ", description=" + description +
+                ", guests=" + guests +
+                ", price=" + price +
+                ", hotelUrl='" + hotelUrl + '\'' +
+                '}';
+    }
 }

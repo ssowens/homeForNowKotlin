@@ -1,26 +1,26 @@
 package com.ssowens.android.homefornow.models;
 
-import java.util.List;
+import java.util.Arrays;
 
+/**
+ * Created by Sheila Owens on 8/13/18.
+ */
 public class HotelDetailsData {
-    private String type;
-    private Hotel hotel;
-    private boolean available;
-    List<Offers> offersList;
 
-    public String getType() {
-        return type;
+    private Data[] data;
+
+    public Data[] getData() {
+        return data;
     }
 
-    public Hotel getHotel() {
-        return hotel;
+    public void setData(Data[] data) {
+        this.data = data;
     }
 
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public List<Offers> getOffersList() {
-        return offersList;
+    @Override
+    public String toString() {
+        return "HotelDetailsData{" +
+                "data=" + Arrays.toString(data) +
+                '}';
     }
 }

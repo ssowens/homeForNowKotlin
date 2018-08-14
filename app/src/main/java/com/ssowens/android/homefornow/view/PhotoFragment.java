@@ -24,7 +24,7 @@ import com.ssowens.android.homefornow.databinding.FragmentPhotosBinding;
 import com.ssowens.android.homefornow.listeners.AccessTokenListener;
 import com.ssowens.android.homefornow.listeners.HotelOffersSearchListener;
 import com.ssowens.android.homefornow.listeners.HotelSearchListener;
-import com.ssowens.android.homefornow.models.HotelDetailsData;
+import com.ssowens.android.homefornow.models.Data;
 import com.ssowens.android.homefornow.models.HotelTopRatedPhoto;
 import com.ssowens.android.homefornow.models.PexelsImages;
 import com.ssowens.android.homefornow.models.Photo;
@@ -119,7 +119,7 @@ public class PhotoFragment extends Fragment implements
 
     @Override
     public void onHotelOffersFinished() {
-        List<HotelDetailsData> dataList = dataManager.getDataList();
+        List<Data> dataList = dataManager.getDataList();
         Timber.i("Sheila dataList ~ %s ", dataList.toString());
         //photosAdapter.setPhotoList(dataList);
     }

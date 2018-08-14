@@ -10,7 +10,7 @@ import com.ssowens.android.homefornow.listeners.HotelOffersSearchListener;
 import com.ssowens.android.homefornow.listeners.HotelSearchListener;
 import com.ssowens.android.homefornow.listeners.HotelTopRatedSearchListener;
 import com.ssowens.android.homefornow.models.AmadeusAccessTokenResponse;
-import com.ssowens.android.homefornow.models.HotelDetailsData;
+import com.ssowens.android.homefornow.models.Data;
 import com.ssowens.android.homefornow.models.HotelOffersResponse;
 import com.ssowens.android.homefornow.models.HotelPopularSearchResponse;
 import com.ssowens.android.homefornow.models.HotelTopRatedPhoto;
@@ -65,11 +65,11 @@ public class DataManager {
     private final Retrofit accessTokenRetrofit;
     private static final String HOTELS_SEARCH = "hotels";
     private static final String VACATION_SEARCH = "vacation";
-    private static final String CITY_CODE = "ATL";
+    private static final String CITY_CODE = "LAX";
     private List<Photo> photoList;
     private List<HotelTopRatedPhoto> hotelTopRatedPhotoList;
-    private List<HotelDetailsData> dataList;
-    public HotelDetailsData hotelDetailsData;
+    private List<Data> dataList;
+    public Data data;
     public AmadeusAccessTokenResponse amadeusAccessToken;
 
     // Listeners List
@@ -156,6 +156,9 @@ public class DataManager {
             OkHttpClient accessTokenClient = new OkHttpClient.Builder()
                     .addInterceptor(sAccessTokenInterceptor)
                     .addInterceptor(loggingInterceptor)
+                    .connectTimeout(1000, TimeUnit.SECONDS)
+                    .writeTimeout(1000, TimeUnit.SECONDS)
+                    .readTimeout(1000, TimeUnit.SECONDS)
                     .build();
 
             // AMADEUS
@@ -287,9 +290,9 @@ public class DataManager {
                     String tokenString = HEADER_BEARER + token.getAccess_token();
                     Timber.i("Sheila Got the Token %s", token.getAccess_token());
 
-                    hotelOffersApi.hotelOffersSearch(tokenString, "ATL", "5",
+                    hotelOffersApi.hotelOffersSearch(tokenString, "LAX", "5",
                             "KM", "false",
-                            "true", "NONE", "NONE")
+                            "true", "FULL", "NONE")
                             .enqueue(new Callback<HotelOffersResponse>() {
                                 @Override
                                 public void onResponse(Call<HotelOffersResponse> call,
@@ -316,26 +319,6 @@ public class DataManager {
                 Timber.e(t, " ~ Failed to fetch token");
             }
         });
-//        hotelOffersApi.hotelOffersSearch(tokenString, "ATL", "5",
-//                "KM", "false",
-//                "true", "NONE", "NONE")
-//                .enqueue(new Callback<HotelOffersResponse>() {
-//                    @Override
-//                    public void onResponse(Call<HotelOffersResponse> call,
-//                                           retrofit2.Response<HotelOffersResponse> response) {
-//                        Timber.i("Sheila fetchHotelOffers ~ %s", response.toString());
-//                        if (response.body() != null) {
-//                            dataList = response.body().getHotelOffersList();
-//                            Timber.i("Sheila hotelOffersList = %s", dataList.toString());
-//                            notifyHotelOffersListeners();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<HotelOffersResponse> call, Throwable t) {
-//                        Timber.e("Failed to fetch hotel Offers" + " ~ " + t);
-//                    }
-//                });
     }
 
     public void getToken(final Callback callbackSuccess) {
@@ -354,7 +337,7 @@ public class DataManager {
         return hotelTopRatedPhotoList;
     }
 
-    public List<HotelDetailsData> getDataList() {
+    public List<Data> getDataList() {
         return dataList;
     }
 

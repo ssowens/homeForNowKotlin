@@ -42,4 +42,18 @@ public class Hotel {
     public Float getLongitude() {
         return longitude;
     }
+
+    @Override
+    public String toString() {
+        return "Hotel{" +
+                "type='" + type + '\'' +
+                ", hotelId='" + hotelId + '\'' +
+                ", chainCode='" + chainCode + '\'' +
+                ", dupeId='" + dupeId + '\'' +
+                ", name='" + name + '\'' +
+                ", cityCode='" + cityCode + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                '}';
+    }
 }
