@@ -299,6 +299,7 @@ public class DataManager {
                                     Timber.i("Sheila fetchHotelOffers ~ %s", response.toString());
                                     if (response.isSuccessful() && response.body() != null) {
                                         dataList = response.body().getHotelOffersList();
+                                        //List<Hotel> hotelList = dataList
                                         Timber.i("Sheila hotelOffersList = %s", dataList.toString());
                                         notifyHotelOffersListeners();
                                     }
