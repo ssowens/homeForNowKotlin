@@ -1,8 +1,10 @@
 package com.ssowens.android.homefornow.models;
 
+import android.databinding.BaseObservable;
+
 import com.google.gson.annotations.SerializedName;
 
-public class Offers {
+public class Offers extends BaseObservable{
 
     private String id;
     private String rateCode;

@@ -1,6 +1,10 @@
 package com.ssowens.android.homefornow.models;
 
-public class Hotel {
+import android.databinding.BaseObservable;
+
+import java.util.List;
+
+public class Hotel extends BaseObservable {
 
     private String type;
     private String hotelId;
@@ -10,6 +14,7 @@ public class Hotel {
     private String cityCode;
     private Float latitude;
     private Float longitude;
+    private List<Media> media;
 
     public String getType() {
         return type;
@@ -43,6 +48,10 @@ public class Hotel {
         return longitude;
     }
 
+    public List<Media> getMedia() {
+        return media;
+    }
+
     @Override
     public String toString() {
         return "Hotel{" +
@@ -54,6 +63,7 @@ public class Hotel {
                 ", cityCode='" + cityCode + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
+                ", media=" + media +
                 '}';
     }
 }

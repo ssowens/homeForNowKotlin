@@ -1,14 +1,15 @@
 package com.ssowens.android.homefornow.models;
 
+import android.databinding.BaseObservable;
+
 import java.util.List;
 
-public class Data {
+public class Data extends BaseObservable {
 
     private String type;
     private Hotel hotel;
     private boolean available;
     private List<Offers> offersList;
-    private List<Media> mediaList;
 
     public String getType() {
         return type;
@@ -33,7 +34,6 @@ public class Data {
                 ", hotel=" + hotel +
                 ", available=" + available +
                 ", offersList=" + offersList +
-                ", mediaList=" + mediaList +
                 '}';
     }
 }

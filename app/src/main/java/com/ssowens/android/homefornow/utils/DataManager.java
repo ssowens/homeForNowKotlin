@@ -65,7 +65,6 @@ public class DataManager {
     private final Retrofit accessTokenRetrofit;
     private static final String HOTELS_SEARCH = "hotels";
     private static final String VACATION_SEARCH = "vacation";
-    private static final String CITY_CODE = "LAX";
     private List<Photo> photoList;
     private List<HotelTopRatedPhoto> hotelTopRatedPhotoList;
     private List<Data> dataList;
