@@ -275,7 +275,7 @@ public class DataManager {
                                     if (response.isSuccessful() && response.body() != null) {
                                         dataList = response.body().getHotelOffersList();
                                         Timber.i("Sheila hotelOffersList = %s", dataList.toString());
-                                       // convertData(dataList);
+                                        convertData(dataList);
                                         notifyHotelOffersListeners();
                                     }
                                 }
@@ -294,6 +294,10 @@ public class DataManager {
                 Timber.e(t, " ~ Failed to fetch the token");
             }
         });
+    }
+
+    public void convertData(List<Data> myData) {
+
     }
 
     public void getToken(final Callback callbackSuccess) {
