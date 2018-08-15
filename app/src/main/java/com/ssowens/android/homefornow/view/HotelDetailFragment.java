@@ -28,10 +28,10 @@ public class HotelDetailFragment extends Fragment implements HotelOffersSearchLi
     private Photo photo;
 
     public static HotelDetailFragment newInstance(String hotelId) {
-        HotelDetailFragment fragment = new HotelDetailFragment();
-
         Bundle args = new Bundle();
         args.putString(ARG_HOTEL_ID, hotelId);
+
+        HotelDetailFragment fragment = new HotelDetailFragment();
         fragment.setArguments(args);
 
         return fragment;

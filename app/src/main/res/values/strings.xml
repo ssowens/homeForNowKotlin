@@ -9,4 +9,5 @@
     <string name="photo_by">"Photo by: "</string>
     <string name="hotel_picture">Picture of the Hotel</string>
     <string name="toolbar_title">HomeForNow</string>
+    <string name="datamanager_error">Default constructor called for singleton</string>
 </resources>
