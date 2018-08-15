@@ -7,7 +7,7 @@
 
         <variable
             name="model"
-            type="com.ssowens.android.homefornow.models.Hotel
+            type="com.ssowens.android.homefornow.models.Offers
 " />
     </data>
 
@@ -28,7 +28,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:scaleType="centerCrop"
-                bind:photoUrl="@{model.name}"
+                bind:photoUrl="test"
                 app:layout_constraintBottom_toTopOf="@+id/supporting_text"
                 app:layout_constraintDimensionRatio="H,16:9"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -47,7 +47,7 @@
                 android:lineSpacingExtra="8dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="#DE000000"
-                android:text="@{model.name}"
+                android:text="test"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

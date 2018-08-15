@@ -16,8 +16,8 @@ import android.view.ViewGroup;
 
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentTopRatedHotelsBinding;
-import com.ssowens.android.homefornow.listeners.HotelTopRatedSearchListener;
-import com.ssowens.android.homefornow.models.HotelTopRatedPhoto;
+import com.ssowens.android.homefornow.listeners.HotelOffersSearchListener;
+import com.ssowens.android.homefornow.models.Offers;
 import com.ssowens.android.homefornow.utils.DataManager;
 
 import java.util.Collections;
@@ -30,9 +30,9 @@ import static com.ssowens.android.homefornow.view.PhotoFragment.EXTRA_CURRENT_TO
 /**
  * Created by Sheila Owens on 8/8/18.
  */
-public class TopRatedHotelFragment extends Fragment implements HotelTopRatedSearchListener {
+public class TopRatedHotelFragment extends Fragment implements HotelOffersSearchListener {
 
-    private TopRatedPhotosAdapter topRatedPhotosAdapter;
+    private TopRatedHotelsAdapter topRatedHotelsAdapter;
     private DataManager dataManager;
     private RecyclerView recyclerView;
     private Toolbar toolbar;
@@ -54,7 +54,8 @@ public class TopRatedHotelFragment extends Fragment implements HotelTopRatedSear
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        FragmentTopRatedHotelsBinding fragmentTopRatedHotelsBinding = DataBindingUtil.inflate(inflater, R.layout
+        FragmentTopRatedHotelsBinding fragmentTopRatedHotelsBinding =
+                DataBindingUtil.inflate(inflater, R.layout
                 .fragment_top_rated_hotels, container, false);
         toolbar = fragmentTopRatedHotelsBinding.toolbar;
         if (savedInstanceState == null) {
@@ -69,8 +70,8 @@ public class TopRatedHotelFragment extends Fragment implements HotelTopRatedSear
 
         fragmentTopRatedHotelsBinding.recyclerView.setLayoutManager(new GridLayoutManager
                 (getActivity(), 2));
-        topRatedPhotosAdapter = new TopRatedPhotosAdapter(Collections.EMPTY_LIST);
-        fragmentTopRatedHotelsBinding.recyclerView.setAdapter(topRatedPhotosAdapter);
+        topRatedHotelsAdapter = new TopRatedHotelsAdapter(Collections.EMPTY_LIST);
+        fragmentTopRatedHotelsBinding.recyclerView.setAdapter(topRatedHotelsAdapter);
         return fragmentTopRatedHotelsBinding.getRoot();
     }
 
@@ -78,21 +79,22 @@ public class TopRatedHotelFragment extends Fragment implements HotelTopRatedSear
     public void onStart() {
         super.onStart();
         dataManager = DataManager.get(getContext());
-        dataManager.addHotelTopRatedSearchListener(this);
-        dataManager.fetchHotelTopRatedSearch();
+        dataManager.addHotelOffersSearchListener(this);
+        dataManager.fetchHotelOffers();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        dataManager.removeHotelTopRatedSearchListener(this);
+        dataManager.removeHotelOffersSearchListener(this);
     }
 
     @Override
-    public void onTopRatedSearchFinished() {
-        List<HotelTopRatedPhoto> hotelTopRatedPhotoList = dataManager.getTopRatedPhotoList();
-        Timber.i("Sheila topRatedPhotoList> ~  %s", hotelTopRatedPhotoList.toString());
-        topRatedPhotosAdapter.setTopRatedPhotoList(hotelTopRatedPhotoList);
+    public void onHotelOffersFinished() {
+        Timber.i("Sheila ~ onHotelOffersFinished");
+        List<Offers> hotelTopRatedHotelList = dataManager.getTopRatedHotelsList();
+        Timber.i("Sheila hotelTopRatedHotelList> ~  %s", hotelTopRatedHotelList.toString());
+        topRatedHotelsAdapter.setTopRatedHotelsList(hotelTopRatedHotelList);
     }
 
     @Override
@@ -112,4 +114,5 @@ public class TopRatedHotelFragment extends Fragment implements HotelTopRatedSear
                 return super.onOptionsItemSelected(item);
         }
     }
+
 }

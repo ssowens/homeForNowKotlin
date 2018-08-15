@@ -1,10 +1,8 @@
 package com.ssowens.android.homefornow.models;
 
-import android.databinding.BaseObservable;
-
 import com.google.gson.annotations.SerializedName;
 
-public class Offers extends BaseObservable{
+public class Offers {
 
     private String id;
     private String rateCode;
@@ -51,7 +49,7 @@ public class Offers extends BaseObservable{
         return self;
     }
 
-    public static class Room extends BaseObservable {
+    public static class Room {
 
         private String type;
         private TypeEstimated typeEstimated;
@@ -138,7 +136,7 @@ public class Offers extends BaseObservable{
                 '}';
     }
 
-    public static class Guests extends BaseObservable{
+    public static class Guests {
         private String adults;
 
         public String getAdults() {
@@ -153,7 +151,7 @@ public class Offers extends BaseObservable{
         }
     }
 
-    public static class RateFamilyEstimated extends BaseObservable {
+    public static class RateFamilyEstimated {
         private String code;
         private String type;
 
@@ -174,7 +172,7 @@ public class Offers extends BaseObservable{
         }
     }
 
-    public static class Price extends BaseObservable{
+    public static class Price {
 
         private String currency;
         private String total;

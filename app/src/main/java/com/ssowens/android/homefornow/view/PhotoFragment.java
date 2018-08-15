@@ -22,9 +22,7 @@ import android.widget.Toast;
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentPhotosBinding;
 import com.ssowens.android.homefornow.listeners.AccessTokenListener;
-import com.ssowens.android.homefornow.listeners.HotelOffersSearchListener;
 import com.ssowens.android.homefornow.listeners.HotelSearchListener;
-import com.ssowens.android.homefornow.models.Data;
 import com.ssowens.android.homefornow.models.HotelTopRatedPhoto;
 import com.ssowens.android.homefornow.models.PexelsImages;
 import com.ssowens.android.homefornow.models.Photo;
@@ -38,7 +36,6 @@ import timber.log.Timber;
 
 public class PhotoFragment extends Fragment implements
         HotelSearchListener,
-        HotelOffersSearchListener,
         AccessTokenListener {
 
     public static final String EXTRA_CURRENT_TOOLBAR_TITLE = "current_toolbar_title";
@@ -99,7 +96,6 @@ public class PhotoFragment extends Fragment implements
         dataManager = DataManager.get(getContext());
         dataManager.addHotelSearchListener(this);
         dataManager.fetchHotelPopularSearch();
-        dataManager.addHotelOffersSearchListener(this);
         dataManager.fetchHotelOffers();
     }
 
@@ -107,7 +103,6 @@ public class PhotoFragment extends Fragment implements
     public void onStop() {
         super.onStop();
         dataManager.removeHotelSearchListener(this);
-        dataManager.removeHotelOffersSearchListener(this);
     }
 
     @Override
@@ -115,13 +110,6 @@ public class PhotoFragment extends Fragment implements
         List<Photo> photoList = dataManager.getPhotoList();
         Timber.i("Sheila photoList ~ %s ", photoList.toString());
         photosAdapter.setPhotoList(photoList);
-    }
-
-    @Override
-    public void onHotelOffersFinished() {
-        List<Data> dataList = dataManager.getDataList();
-        Timber.i("Sheila dataList ~ %s ", dataList.toString());
-        //photosAdapter.setPhotoList(dataList);
     }
 
     @Override

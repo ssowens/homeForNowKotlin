@@ -76,6 +76,7 @@ public class Hotel extends BaseObservable {
      */
     public static class Media extends BaseObservable {
 
+
         @SerializedName("uri")
         private String hotelPhotoUrl;
 
