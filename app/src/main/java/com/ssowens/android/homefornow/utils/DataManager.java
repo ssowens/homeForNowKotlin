@@ -10,6 +10,7 @@ import com.ssowens.android.homefornow.listeners.HotelOffersSearchListener;
 import com.ssowens.android.homefornow.listeners.HotelSearchListener;
 import com.ssowens.android.homefornow.models.AmadeusAccessTokenResponse;
 import com.ssowens.android.homefornow.models.Data;
+import com.ssowens.android.homefornow.models.Hotel;
 import com.ssowens.android.homefornow.models.HotelOffersResponse;
 import com.ssowens.android.homefornow.models.HotelPopularSearchResponse;
 import com.ssowens.android.homefornow.models.HotelTopRatedSearchResponse;
@@ -20,6 +21,7 @@ import com.ssowens.android.homefornow.services.ApiService;
 import com.ssowens.android.homefornow.services.HotelOffersApi;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -297,7 +299,15 @@ public class DataManager {
     }
 
     public void convertData(List<Data> myData) {
-
+        // TODO get hotel data to display pictures
+ //       for ( hotel : myData) {
+            List<Hotel> hotels = new ArrayList<>();
+            List<Object> objects = new ArrayList<>();
+            objects.add(dataList.get(0).getHotel().getName());
+            objects.add(dataList.get(0).getHotel().getMedia());
+            objects.addAll(hotels);
+            // TODO populate the adapter
+    //    }
     }
 
     public void getToken(final Callback callbackSuccess) {
