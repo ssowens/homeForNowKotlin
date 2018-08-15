@@ -2,21 +2,20 @@ package com.ssowens.android.homefornow.models;
 
 import android.databinding.BaseObservable;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class Data extends BaseObservable {
 
     private String type;
-    private Hotel[] hotel;
+    private Hotel hotel;
     private boolean available;
-    private List<Offers> offersList;
+    private List<Offers> offers;
 
     public String getType() {
         return type;
     }
 
-    public Hotel[] getHotel() {
+    public Hotel getHotel() {
         return hotel;
     }
 
@@ -25,16 +24,16 @@ public class Data extends BaseObservable {
     }
 
     public List<Offers> getOffersList() {
-        return offersList;
+        return offers;
     }
 
     @Override
     public String toString() {
         return "Data{" +
                 "type='" + type + '\'' +
-                ", hotel=" + Arrays.toString(hotel) +
+                ", hotel=" + hotel +
                 ", available=" + available +
-                ", offersList=" + offersList +
+                ", offers=" + offers +
                 '}';
     }
 }
