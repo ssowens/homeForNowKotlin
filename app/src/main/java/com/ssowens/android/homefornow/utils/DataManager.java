@@ -278,6 +278,7 @@ public class DataManager {
                                         dataList = response.body().getHotelOffersList();
                                         Timber.i("Sheila hotelOffersList = %s", dataList.toString());
                                         convertData(dataList);
+
                                         notifyHotelOffersListeners();
                                     }
                                 }
@@ -299,15 +300,16 @@ public class DataManager {
     }
 
     public void convertData(List<Data> myData) {
+        List<Hotel> hotels = new ArrayList<>();
+        List<Object> objects = new ArrayList<>();
+
         // TODO get hotel data to display pictures
- //       for ( hotel : myData) {
-            List<Hotel> hotels = new ArrayList<>();
-            List<Object> objects = new ArrayList<>();
-            objects.add(dataList.get(0).getHotel().getName());
+        for ( Hotel hotel: myData.get(0)) {
+            hotels.add(dataList.get(0).getHotel().getName();
             objects.add(dataList.get(0).getHotel().getMedia());
-            objects.addAll(hotels);
+            objects.addAll(objects);
             // TODO populate the adapter
-    //    }
+        }
     }
 
     public void getToken(final Callback callbackSuccess) {
