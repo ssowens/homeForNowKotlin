@@ -306,11 +306,15 @@ public class DataManager {
 
         for (int iter = 0; iter < myData.size(); iter++) {
             Hotel hotel = new Hotel();
-            hotel.setType(myData.get(0).getHotel().getType());
-            hotel.setName(myData.get(0).getHotel().getName());
-            hotel.setHotelId(myData.get(0).getHotel().getHotelId());
-            hotel.setCityCode(myData.get(0).getHotel().getCityCode());
+            hotel.setType(myData.get(iter).getHotel().getType());
+            hotel.setName(myData.get(iter).getHotel().getName());
+            hotel.setHotelId(myData.get(iter).getHotel().getHotelId());
+            hotel.setCityCode(myData.get(iter).getHotel().getCityCode());
             //hotel.setMedia(myData.get(0).getHotel().getMedia().get(0).getHotelPhotoUrl());
+            for (Hotel.Media media: hotel.getMedia()) {
+                media.setHotelPhotoUrl(media.getHotelPhotoUrl());
+
+            }
             hotelList.add(hotel);
             Timber.i("Sheila == %s", hotelList.toString());
         }
