@@ -76,6 +76,8 @@ public class DataManager {
     private List<HotelOffersSearchListener> hotelOffersSearchListenerList;
     private List<AccessTokenListener> accessTokenListenerList;
 
+    List<Hotel> hotelList = new ArrayList<>();
+
     private ApiService apiService;
     private HotelOffersApi hotelOffersApi;
     private static TokenStore sTokenStore;
@@ -300,33 +302,13 @@ public class DataManager {
 
     public void convertData(List<Data> myData) {
         List<Data> hotelData = myData;
-        List<Object> objects = new ArrayList<>();
-        List<Hotel> hotelList = new ArrayList<>();
+        //List<Hotel> hotelList = new ArrayList<>();
 
 
         for (int iter = 0; iter < myData.size(); iter++) {
-            Hotel hotel = new Hotel();
-            hotel.setType(myData.get(iter).getHotel().getType());
-            hotel.setName(myData.get(iter).getHotel().getName());
-            hotel.setHotelId(myData.get(iter).getHotel().getHotelId());
-            hotel.setCityCode(myData.get(iter).getHotel().getCityCode());
-            //hotel.setMedia(myData.get(0).getHotel().getMedia().get(0).getHotelPhotoUrl());
-            for (Hotel.Media media: hotel.getMedia()) {
-                media.setHotelPhotoUrl(media.getHotelPhotoUrl());
-
-            }
-            hotelList.add(hotel);
-            Timber.i("Sheila == %s", hotelList.toString());
+            hotelList.add(myData.get(iter).getHotel());
+            Timber.i("Sheila (hotelData) == %s", hotelList.toString());
         }
-
-//        // TODO get hotel data to display pictures
-//        for (Data data: myData) {
-//            objects.add(myData.get(0).getHotel().getName());
-//            objects.add(myData.get(0).getHotel().getMedia());
-//            objects.addAll(hotelData);
-//            Timber.i("Sheila ++++ %s", objects.toString());
-//            // TODO populate the adapter
-//        }
     }
 
     public void getToken(final Callback callbackSuccess) {
@@ -341,8 +323,8 @@ public class DataManager {
         return photoList;
     }
 
-    public List<Offers> getTopRatedHotelsList() {
-        return hotelTopRatedHotelsList;
+    public List<Hotel> getTopRatedHotelsList() {
+        return hotelList;
     }
 
     public List<Data> getDataList() {
@@ -385,7 +367,6 @@ public class DataManager {
     }
 
     private void notifyHotelOffersListeners() {
-        Timber.i("Sheila offer listener called");
         for (HotelOffersSearchListener listener : hotelOffersSearchListenerList) {
             listener.onHotelOffersFinished();
         }

@@ -7,7 +7,7 @@
 
         <variable
             name="model"
-            type="com.ssowens.android.homefornow.models.Offers" />
+            type="com.ssowens.android.homefornow.models.Hotel" />
     </data>
 
     <android.support.v7.widget.CardView

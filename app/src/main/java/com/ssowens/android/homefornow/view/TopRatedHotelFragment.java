@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentTopRatedHotelsBinding;
 import com.ssowens.android.homefornow.listeners.HotelOffersSearchListener;
+import com.ssowens.android.homefornow.models.Hotel;
 import com.ssowens.android.homefornow.models.Offers;
 import com.ssowens.android.homefornow.utils.DataManager;
 
@@ -92,8 +93,7 @@ public class TopRatedHotelFragment extends Fragment implements HotelOffersSearch
     @Override
     public void onHotelOffersFinished() {
         Timber.i("Sheila ~ onHotelOffersFinished");
-        List<Offers> hotelTopRatedHotelList = dataManager.getTopRatedHotelsList();
-        Timber.i("Sheila hotelTopRatedHotelList> ~  %s", hotelTopRatedHotelList.toString());
+        List<Hotel> hotelTopRatedHotelList = dataManager.getTopRatedHotelsList();
         topRatedHotelsAdapter.setTopRatedHotelsList(hotelTopRatedHotelList);
     }
 

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.ssowens.android.homefornow.databinding.TopRatedCardViewItem1Binding;
 import com.ssowens.android.homefornow.models.Data;
+import com.ssowens.android.homefornow.models.Hotel;
 import com.ssowens.android.homefornow.models.Offers;
 
 import java.util.List;
@@ -17,12 +18,12 @@ import java.util.List;
  */
 public class TopRatedHotelsAdapter extends RecyclerView.Adapter<TopRatedHotelsAdapter.MyViewHolder> {
 
-    private List<Offers> hotelTopRatedHotelsList;
+    private List<Hotel> hotelTopRatedHotelsList;
     private TopRatedHotelsAdapterListener listener;
     private Data hotelData;
     private TopRatedCardViewItem1Binding topRatedCardViewItem1Binding;
 
-    public TopRatedHotelsAdapter(List<Offers> hotelTopRatedHotelsList) {
+    public TopRatedHotelsAdapter(List<Hotel> hotelTopRatedHotelsList) {
         this.hotelTopRatedHotelsList = hotelTopRatedHotelsList;
     }
 
@@ -42,14 +43,14 @@ public class TopRatedHotelsAdapter extends RecyclerView.Adapter<TopRatedHotelsAd
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    listener.onPhotoClicked(hotelTopRatedHotelsList.get(position));
+                   // listener.onPhotoClicked(hotelTopRatedHotelsList.get(position));
                 }
             }
         });
     }
 
     private void updateUI() {
-       List<Offers> offersList = hotelData.getOffersList();
+       //List<Hotel> hotelList = hotelData.getOffersList();
     }
 
     @Override
@@ -71,7 +72,7 @@ public class TopRatedHotelsAdapter extends RecyclerView.Adapter<TopRatedHotelsAd
         void onPhotoClicked(Offers hotelTopRatedHotesl);
     }
 
-    public void setTopRatedHotelsList(List<Offers> hotelTopRatedHotelsList) {
+    public void setTopRatedHotelsList(List<Hotel> hotelTopRatedHotelsList) {
         this.hotelTopRatedHotelsList = hotelTopRatedHotelsList;
         notifyDataSetChanged();
     }
