@@ -56,6 +56,42 @@ public class Hotel extends BaseObservable {
         return media;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setHotelId(String hotelId) {
+        this.hotelId = hotelId;
+    }
+
+    public void setChainCode(String chainCode) {
+        this.chainCode = chainCode;
+    }
+
+    public void setDupeId(String dupeId) {
+        this.dupeId = dupeId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setCityCode(String cityCode) {
+        this.cityCode = cityCode;
+    }
+
+    public void setLatitude(Float latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(Float longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setMedia(List<Media> media) {
+        this.media = media;
+    }
+
     @Override
     public String toString() {
         return "Hotel{" +
@@ -89,6 +125,10 @@ public class Hotel extends BaseObservable {
                    .load(photoUrl)
                    .into(view);
        }
+
+        public void setHotelPhotoUrl(String hotelPhotoUrl) {
+            this.hotelPhotoUrl = hotelPhotoUrl;
+        }
 
         @Override
         public String toString() {

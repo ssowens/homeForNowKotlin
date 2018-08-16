@@ -21,7 +21,6 @@ import com.ssowens.android.homefornow.services.ApiService;
 import com.ssowens.android.homefornow.services.HotelOffersApi;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -300,14 +299,28 @@ public class DataManager {
     }
 
     public void convertData(List<Data> myData) {
-        List<Hotel> hotels = new ArrayList<>();
+        List<Data> hotelData = myData;
         List<Object> objects = new ArrayList<>();
+        List<Hotel> hotelList = new ArrayList<>();
 
-        // TODO get hotel data to display pictures
-//        for ( Hotel hotel: myData.get(0)) {
-//            hotels.add(dataList.get(0).getHotel().getName();
-//            objects.add(dataList.get(0).getHotel().getMedia());
-//            objects.addAll(objects);
+
+        for (int iter = 0; iter < myData.size(); iter++) {
+            Hotel hotel = new Hotel();
+            hotel.setType(myData.get(0).getHotel().getType());
+            hotel.setName(myData.get(0).getHotel().getName());
+            hotel.setHotelId(myData.get(0).getHotel().getHotelId());
+            hotel.setCityCode(myData.get(0).getHotel().getCityCode());
+            //hotel.setMedia(myData.get(0).getHotel().getMedia().get(0).getHotelPhotoUrl());
+            hotelList.add(hotel);
+            Timber.i("Sheila == %s", hotelList.toString());
+        }
+
+//        // TODO get hotel data to display pictures
+//        for (Data data: myData) {
+//            objects.add(myData.get(0).getHotel().getName());
+//            objects.add(myData.get(0).getHotel().getMedia());
+//            objects.addAll(hotelData);
+//            Timber.i("Sheila ++++ %s", objects.toString());
 //            // TODO populate the adapter
 //        }
     }
