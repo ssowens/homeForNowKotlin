@@ -36,6 +36,7 @@ public class Hotel extends BaseObservable {
         return dupeId;
     }
 
+
     public String getName() {
         return name;
     }
@@ -120,14 +121,15 @@ public class Hotel extends BaseObservable {
             return hotelPhotoUrl;
         }
 
-        public static void loadImage(ImageView view, String photoUrl) {
-           Glide.with(view.getContext())
-                   .load(photoUrl)
-                   .into(view);
-       }
-
         public void setHotelPhotoUrl(String hotelPhotoUrl) {
             this.hotelPhotoUrl = hotelPhotoUrl;
+        }
+
+        @BindingAdapter("uri")
+        public static void loadImage(ImageView view, String hotelPhotoUrl) {
+            Glide.with(view.getContext())
+                    .load(hotelPhotoUrl)
+                    .into(view);
         }
 
         @Override

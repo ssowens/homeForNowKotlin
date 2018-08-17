@@ -18,7 +18,6 @@ import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentTopRatedHotelsBinding;
 import com.ssowens.android.homefornow.listeners.HotelOffersSearchListener;
 import com.ssowens.android.homefornow.models.Hotel;
-import com.ssowens.android.homefornow.models.Offers;
 import com.ssowens.android.homefornow.utils.DataManager;
 
 import java.util.Collections;
@@ -57,7 +56,7 @@ public class TopRatedHotelFragment extends Fragment implements HotelOffersSearch
                              @Nullable Bundle savedInstanceState) {
         FragmentTopRatedHotelsBinding fragmentTopRatedHotelsBinding =
                 DataBindingUtil.inflate(inflater, R.layout
-                .fragment_top_rated_hotels, container, false);
+                        .fragment_top_rated_hotels, container, false);
         toolbar = fragmentTopRatedHotelsBinding.toolbar;
         if (savedInstanceState == null) {
             toolbar.setTitle(R.string.top_rated);
