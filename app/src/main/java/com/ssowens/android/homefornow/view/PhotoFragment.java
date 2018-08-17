@@ -114,8 +114,6 @@ public class PhotoFragment extends Fragment implements
 
     @Override
     public void onAccessTokenFinished() {
-        Timber.i("Sheila my Access Token= %s", dataManager.getAccessToken());
-
         TokenStore tokenStore = TokenStore.get(getActivity());
         tokenStore.setAccessToken(dataManager.getAccessToken());
     }

@@ -1,6 +1,7 @@
 package com.ssowens.android.homefornow.models;
 
 import android.databinding.BaseObservable;
+import android.databinding.BindingAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
