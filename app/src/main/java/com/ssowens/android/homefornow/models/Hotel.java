@@ -19,6 +19,7 @@ public class Hotel extends BaseObservable {
     private Float latitude;
     private Float longitude;
     private List<Media> media;
+    public String imageUrl;
 
     public String getType() {
         return type;
@@ -55,6 +56,10 @@ public class Hotel extends BaseObservable {
 
     public List<Media> getMedia() {
         return media;
+    }
+
+    public String getImageUrl() {
+        return media.get(0).getHotelPhotoUrl();
     }
 
     public void setType(String type) {
@@ -125,7 +130,8 @@ public class Hotel extends BaseObservable {
             this.hotelPhotoUrl = hotelPhotoUrl;
         }
 
-        @BindingAdapter("uri")
+
+        @BindingAdapter("hotelPhotoUrl")
         public static void loadImage(ImageView view, String hotelPhotoUrl) {
             Glide.with(view.getContext())
                     .load(hotelPhotoUrl)
