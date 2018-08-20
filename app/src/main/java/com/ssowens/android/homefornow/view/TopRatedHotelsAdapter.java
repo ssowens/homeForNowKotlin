@@ -1,5 +1,6 @@
 package com.ssowens.android.homefornow.view;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +14,8 @@ import com.ssowens.android.homefornow.models.Hotel;
 import com.ssowens.android.homefornow.models.Offers;
 
 import java.util.List;
+
+import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_ID;
 
 /**
  * Created by Sheila Owens on 8/8/18.
@@ -62,8 +65,12 @@ public class TopRatedHotelsAdapter extends RecyclerView.Adapter<TopRatedHotelsAd
             binding.mediaImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(v.getContext(), "Clicked => " + binding.getModel().getName() ,
+                    Toast.makeText(v.getContext(), "Clicked => " + binding.getModel().getHotelId() ,
                             Toast.LENGTH_LONG).show();
+
+                    Intent intent = new Intent(v.getContext(), HotelDetailActivity.class);
+                    intent.putExtra(ARG_HOTEL_ID, binding.getModel().getHotelId());
+                    v.getContext().startActivity(intent);
                 }
             });
         }

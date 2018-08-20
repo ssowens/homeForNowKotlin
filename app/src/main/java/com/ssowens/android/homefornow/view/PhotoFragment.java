@@ -96,7 +96,6 @@ public class PhotoFragment extends Fragment implements
         dataManager = DataManager.get(getContext());
         dataManager.addHotelSearchListener(this);
         dataManager.fetchHotelPopularSearch();
-        dataManager.fetchHotelOffers();
     }
 
     @Override

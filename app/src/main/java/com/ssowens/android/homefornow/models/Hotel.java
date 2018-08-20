@@ -16,6 +16,7 @@ public class Hotel extends BaseObservable {
     private String chainCode;
     private String dupeId;
     private String name;
+    private String rating;
     private String cityCode;
     private Float latitude;
     private Float longitude;
@@ -41,6 +42,10 @@ public class Hotel extends BaseObservable {
 
     public String getName() {
         return name;
+    }
+
+    public String getRating() {
+        return rating;
     }
 
     public String getCityCode() {
@@ -107,10 +112,12 @@ public class Hotel extends BaseObservable {
                 ", chainCode='" + chainCode + '\'' +
                 ", dupeId='" + dupeId + '\'' +
                 ", name='" + name + '\'' +
+                ", rating='" + rating + '\'' +
                 ", cityCode='" + cityCode + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", media=" + media +
+                ", imageUrl='" + imageUrl + '\'' +
                 '}';
     }
 

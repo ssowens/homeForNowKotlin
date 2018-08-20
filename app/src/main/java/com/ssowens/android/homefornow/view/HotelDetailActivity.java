@@ -1,9 +1,6 @@
 package com.ssowens.android.homefornow.view;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
@@ -16,12 +13,10 @@ public class HotelDetailActivity extends SingleFragmentActivity {
 
     public static final String ARG_HOTEL_ID = "HotelDetailActivity.HotelId";
 
-    public static Intent newIntent(Context context, String hotelId) {
-        Intent intent = new Intent(context, HotelDetailActivity.class);
-        intent.putExtra(ARG_HOTEL_ID, hotelId);
-        return intent;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
-
     @Override
     protected Fragment createFragment() {
         if (isOnline()) {
@@ -34,15 +29,4 @@ public class HotelDetailActivity extends SingleFragmentActivity {
         }
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        String hotelId = getIntent().getStringExtra(ARG_HOTEL_ID);
-        setContentView(R.layout.activity_hotel_detail);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, HotelDetailFragment.newInstance(hotelId))
-                    .commit();
-        }
-    }
 }

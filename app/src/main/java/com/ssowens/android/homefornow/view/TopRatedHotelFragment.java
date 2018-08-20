@@ -88,7 +88,7 @@ public class TopRatedHotelFragment extends Fragment implements HotelOffersSearch
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.show();
 
-        Handler handle = new Handler() {
+        final Handler handle = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
@@ -102,7 +102,7 @@ public class TopRatedHotelFragment extends Fragment implements HotelOffersSearch
                 try {
                     while (progressDialog.getProgress() <= progressDialog
                             .getMax()) {
-                        Thread.sleep(200);
+                        Thread.sleep(100);
                         handle.sendMessage(handle.obtainMessage());
                         if (progressDialog.getProgress() == progressDialog
                                 .getMax()) {

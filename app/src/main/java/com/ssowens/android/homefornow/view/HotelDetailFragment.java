@@ -5,27 +5,37 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentHotelDetailBinding;
-import com.ssowens.android.homefornow.listeners.HotelOffersSearchListener;
+import com.ssowens.android.homefornow.listeners.HotelDetailListener;
+import com.ssowens.android.homefornow.models.Hotel;
+import com.ssowens.android.homefornow.models.HotelDetailData;
 import com.ssowens.android.homefornow.models.Photo;
 import com.ssowens.android.homefornow.utils.DataManager;
+
+import timber.log.Timber;
 
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_ID;
 
 /**
  * Created by Sheila Owens on 8/2/18.
  */
-public class HotelDetailFragment extends Fragment implements HotelOffersSearchListener {
+public class HotelDetailFragment extends Fragment implements HotelDetailListener {
 
     private String hotelId;
     private FragmentHotelDetailBinding fragmentHotelDetailBinding;
     private DataManager dataManager;
     private Photo photo;
+    private Toolbar toolbar;
+    private HotelDetailData hotelDetailData;
+    private Hotel hotel;
+
 
     public static HotelDetailFragment newInstance(String hotelId) {
         Bundle args = new Bundle();
@@ -40,6 +50,7 @@ public class HotelDetailFragment extends Fragment implements HotelOffersSearchLi
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -48,20 +59,39 @@ public class HotelDetailFragment extends Fragment implements HotelOffersSearchLi
                              @Nullable Bundle savedInstanceState) {
         fragmentHotelDetailBinding = DataBindingUtil.inflate(inflater, R.layout
                 .fragment_hotel_detail, container, false);
+        toolbar = fragmentHotelDetailBinding.toolbar;
+
+        if (toolbar != null) {
+            ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+            //getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         return fragmentHotelDetailBinding.getRoot();
+    }
+
+    private void updateUI() {
+        hotelId = getArguments().getString(ARG_HOTEL_ID);
+        Timber.i("Sheila fetchHotelOffersById = hotelid = %s ", hotelId);
+        dataManager = DataManager.get(getContext());
+        dataManager.addHotelDetailListener(this);
+        dataManager.fetchHotelOffersById(hotelId);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        updateUI();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        hotelId = getArguments().getString(ARG_HOTEL_ID);
-        dataManager = DataManager.get(getContext());
-        photo = dataManager.getHotelPhoto(hotelId);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        dataManager.removeHotelDetailListener(this);
     }
 
     @Override
@@ -70,7 +100,9 @@ public class HotelDetailFragment extends Fragment implements HotelOffersSearchLi
     }
 
     @Override
-    public void onHotelOffersFinished() {
-        // TODO
+    public void onHotelDetailFinished() {
+        hotelDetailData = dataManager.getHotelDetailData();
+        Timber.i("Sheila DATA hotelDetailData %s", hotelDetailData.toString());
+        fragmentHotelDetailBinding.setModel(hotelDetailData);
     }
 }
