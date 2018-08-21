@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:bind="http://schemas.android.com/tools"
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -11,10 +10,10 @@
             type="com.ssowens.android.homefornow.models.HotelDetailData"/>
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorAccent">
+        android:orientation="vertical">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appBar"
@@ -43,12 +42,6 @@
                     app:layout_collapseMode="pin"
                     app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@color/colorAccent"
-                        tools:text="For Test Purposes"/>
-
                 </android.support.v7.widget.Toolbar>
             </android.support.design.widget.CollapsingToolbarLayout>
         </android.support.design.widget.AppBarLayout>
@@ -58,66 +51,89 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
+            android:layout_marginStart="@dimen/activity_margin"
+            android:layout_marginTop="16dp"
             android:text="@{model.hotel.name}"
-            app:layout_constraintBottom_toTopOf="@id/hotel_image"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="20sp"
+            android:textStyle="bold"
             tools:text="DOUBLETREE BY HILTON SAN PEDRO"/>
 
         <ImageView
             android:id="@+id/hotel_image"
             android:layout_width="match_parent"
             android:layout_height="212dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="88dp"
-            android:contentDescription="@string/hotel_picture"
-            app:layout_constraintBottom_toTopOf="@id/room_type"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.477"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/hotel_name"/>
+            android:layout_marginEnd="4dp"
+            android:layout_marginStart="4dp"
+            android:contentDescription="@string/hotel_picture"/>
 
-        <TextView
-            android:id="@+id/room_type"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="74dp"
-            android:layout_marginTop="40dp"
-            android:text="@{model.hotel.type}"
-            android:gravity="center_horizontal"
-            app:layout_constraintBottom_toTopOf="@id/price_per_night"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/hotel_image"
-            tools:text="Room Type - 1 bed"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/num_guests"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_margin"
+                android:layout_weight="1"
+                android:gravity="fill_horizontal"
+                android:text="@{model.hotel.type}"
+                tools:text="# of guests"/>
+
+            <TextView
+                android:id="@+id/room_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@{model.hotel.type}"
+                tools:text="Room Type - 1 bed"/>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/price_per_night"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:layout_marginStart="@dimen/activity_margin"
             android:layout_marginTop="8dp"
             android:text="This is the price"
-            android:gravity="center_horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/hotel_image"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/hotel_name"
             tools:text="Price: $322.80 per night"/>
 
         <TextView
             android:id="@+id/room_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
+            android:layout_marginEnd="@dimen/activity_margin"
+            android:layout_marginStart="@dimen/activity_margin"
+            android:gravity="fill_horizontal"
             android:text="Room Descripton"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.434"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/price_per_night"
-            app:layout_constraintVertical_bias="0.93"
             tools:text="BEST AVAILABLE RATE 1 KG POOL VW MOBILITY ACCESSIBLE TUB NO SMOK SWEET DREAMS EXPERIENCE"/>
 
-    </android.support.constraint.ConstraintLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:orientation="horizontal">
+
+            <RatingBar
+                android:id="@+id/simpleRatingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:minHeight="10dip"
+                android:rating="5"
+                android:scrollbarSize="5dp"/>
+
+            <TextView
+                android:id="@+id/num_of_raters"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:paddingTop="16dp"
+                android:paddingStart="8dp"
+                tools:text="205"/>
+        </LinearLayout>
+    </LinearLayout>
 </layout>
