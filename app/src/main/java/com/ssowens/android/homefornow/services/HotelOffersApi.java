@@ -33,7 +33,7 @@ public interface HotelOffersApi {
                                                 @Query("bestRateOnly") String bestRateOnly,
                                                 @Query("view") String view,
                                                 @Query("sort") String sort,
-                                                @Query("ratings") int rating);
+                                                @Query("rating") int rating);
 
 
     @FormUrlEncoded

@@ -60,7 +60,7 @@ public class DataManager {
     private static final String HEADER_AUTHORIZATION = "Authorization";
     private static final String HEADER_AUTHORIZATION_BEARER = "Authorization: Bearer";
     private static final String HEADER_BEARER = "Bearer ";
-    private static final int HOTEL_RATING = 5;
+    private static final int HOTEL_RATING = 2;
     private static final String HOTEL_VIEW = "FULL";
 
     // KEYS FOR API
@@ -81,6 +81,7 @@ public class DataManager {
     private static final String HOTELS_SEARCH = "hotels";
     private static final String VACATION_SEARCH = "vacation";
     private List<Photo> photoList;
+
     private List<Offers> hotelTopRatedHotelsList;
     private List<Data> dataList;
     private List<Data> dataByIdList;
@@ -286,7 +287,7 @@ public class DataManager {
                     AmadeusAccessTokenResponse token = responseToken.body();
                     String tokenString = HEADER_BEARER + token.getAccess_token();
 
-                    hotelOffersApi.hotelOffersSearch(tokenString, "LAX", "5",
+                    hotelOffersApi.hotelOffersSearch(tokenString, "MIA", "5",
                             "KM", "false",
                             "true", HOTEL_VIEW, "NONE", HOTEL_RATING)
                             .enqueue(new Callback<HotelOffersResponse>() {

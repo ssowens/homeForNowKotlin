@@ -82,7 +82,7 @@ public class TopRatedHotelFragment extends Fragment implements HotelOffersSearch
 
     private void displayProgressDialog() {
         progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setMax(20);
+        progressDialog.setMax(25);
         progressDialog.setMessage(getString(R.string.loading_text));
         progressDialog.setTitle(getString(R.string.top_rated_hotels));
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
