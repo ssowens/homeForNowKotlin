@@ -1,5 +1,7 @@
 package com.ssowens.android.homefornow.models;
 
+import android.text.TextUtils;
+
 import java.util.List;
 
 /**
@@ -12,6 +14,11 @@ public class HotelDetailData {
     private boolean available;
     private List<Offers> offers;
     public String imageUrl;
+    public String guests;
+    public String price;
+    public String description;
+    public String bed;
+    public String bedType;
 
     public String getType() {
         return type;
@@ -34,11 +41,36 @@ public class HotelDetailData {
     }
 
     public String getImageUrl() {
-        return imageUrl;
+        return getHotel().getMedia().get(0).getHotelPhotoUrl();
+    }
+
+    public String getGuests() {
+        if (!TextUtils.isEmpty(getOffers().get(0).getGuests().getAdults()))
+            return getOffers().get(0).getGuests().getAdults() + " " + "guests";
+        return "0";
+    }
+
+    public String getPrice() {
+        String price = "$0.00";
+        if (!TextUtils.isEmpty(getOffers().get(0).getPrice().getTotal())) {
+            price = "$" + getOffers().get(0).getPrice().getTotal()
+                    + " " + getOffers().get(0).getPrice()
+                    .getCurrency();
+        }
+        return price;
     }
 
     public String getDescription() {
-        return offers.get(0).getDescription().getText();
+        return getOffers().get(0).getRoom().getDescription().getText();
+    }
+
+
+    public int getBed() {
+        return getOffers().get(0).getRoom().getTypeEstimated().getBeds();
+    }
+
+    public String getBedType() {
+        return getOffers().get(0).getRoom().getTypeEstimated().getBedType();
     }
 
     @Override
@@ -49,6 +81,11 @@ public class HotelDetailData {
                 ", available=" + available +
                 ", offers=" + offers +
                 ", imageUrl='" + imageUrl + '\'' +
+                ", guests='" + guests + '\'' +
+                ", price='" + price + '\'' +
+                ", description='" + description + '\'' +
+                ", bed='" + bed + '\'' +
+                ", bedType='" + bedType + '\'' +
                 '}';
     }
 }
