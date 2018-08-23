@@ -169,6 +169,7 @@ public class TopRatedHotelFragment extends Fragment
     public void onHotelImageFinished() {
         List<Photo> photoList = dataManager.getPhotoList();
         Timber.i("Sheila onHotelImageFinished photoList ~ %s ", photoList.toString());
+        topRatedHotelsAdapter.setHotelPhotoList(photoList);
         dataManager.addHotelOffersSearchListener(this);
         dataManager.fetchHotelOffers();
 

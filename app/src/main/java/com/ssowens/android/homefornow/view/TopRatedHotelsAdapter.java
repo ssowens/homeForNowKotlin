@@ -12,7 +12,9 @@ import com.ssowens.android.homefornow.databinding.TopRatedCardViewItemBinding;
 import com.ssowens.android.homefornow.models.Data;
 import com.ssowens.android.homefornow.models.Hotel;
 import com.ssowens.android.homefornow.models.Offers;
+import com.ssowens.android.homefornow.models.Photo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_ID;
@@ -23,6 +25,7 @@ import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_
 public class TopRatedHotelsAdapter extends RecyclerView.Adapter<TopRatedHotelsAdapter.MyViewHolder> {
 
     private List<Hotel> hotelTopRatedHotelsList;
+    private List<Photo> hotelPhotoList = new ArrayList<>();
     private TopRatedHotelsAdapterListener listener;
     private Data hotelData;
     private TopRatedCardViewItemBinding topRatedCardViewItemBinding;
@@ -43,6 +46,7 @@ public class TopRatedHotelsAdapter extends RecyclerView.Adapter<TopRatedHotelsAd
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         holder.binding.setModel(hotelTopRatedHotelsList.get(position));
+        if (position < hotelPhotoList.size()) holder.binding.setPhoto((hotelPhotoList.get(position)));
 
     }
 
@@ -83,5 +87,9 @@ public class TopRatedHotelsAdapter extends RecyclerView.Adapter<TopRatedHotelsAd
     public void setTopRatedHotelsList(List<Hotel> hotelTopRatedHotelsList) {
         this.hotelTopRatedHotelsList = hotelTopRatedHotelsList;
         notifyDataSetChanged();
+    }
+
+    public void setHotelPhotoList(List<Photo> hotelPhotoList) {
+        this.hotelPhotoList = hotelPhotoList;
     }
 }
