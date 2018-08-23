@@ -19,8 +19,10 @@ import android.view.ViewGroup;
 
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentTopRatedHotelsBinding;
+import com.ssowens.android.homefornow.listeners.HotelImageListener;
 import com.ssowens.android.homefornow.listeners.HotelOffersSearchListener;
 import com.ssowens.android.homefornow.models.Hotel;
+import com.ssowens.android.homefornow.models.Photo;
 import com.ssowens.android.homefornow.utils.DataManager;
 
 import java.util.Collections;
@@ -33,7 +35,8 @@ import static com.ssowens.android.homefornow.view.PhotoFragment.EXTRA_CURRENT_TO
 /**
  * Created by Sheila Owens on 8/8/18.
  */
-public class TopRatedHotelFragment extends Fragment implements HotelOffersSearchListener {
+public class TopRatedHotelFragment extends Fragment
+        implements HotelOffersSearchListener, HotelImageListener {
 
     private TopRatedHotelsAdapter topRatedHotelsAdapter;
     private DataManager dataManager;
@@ -102,7 +105,7 @@ public class TopRatedHotelFragment extends Fragment implements HotelOffersSearch
                 try {
                     while (progressDialog.getProgress() <= progressDialog
                             .getMax()) {
-                        Thread.sleep(100);
+                        Thread.sleep(300);
                         handle.sendMessage(handle.obtainMessage());
                         if (progressDialog.getProgress() == progressDialog
                                 .getMax()) {
@@ -116,20 +119,25 @@ public class TopRatedHotelFragment extends Fragment implements HotelOffersSearch
         }).start();
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
         dataManager = DataManager.get(getContext());
         displayProgressDialog();
-        dataManager.addHotelOffersSearchListener(this);
-        dataManager.fetchHotelOffers();
+        dataManager.addHotelImageListener(this);
+        dataManager.fetchHotelPhotos();
+
+        // Get the pictures and then get the other data
+//        dataManager.addHotelOffersSearchListener(this);
+//        dataManager.fetchHotelOffers();
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
         dataManager.removeHotelOffersSearchListener(this);
+        dataManager.removeHotelImageListener(this);
     }
 
     @Override
@@ -157,4 +165,12 @@ public class TopRatedHotelFragment extends Fragment implements HotelOffersSearch
         }
     }
 
+    @Override
+    public void onHotelImageFinished() {
+        List<Photo> photoList = dataManager.getPhotoList();
+        Timber.i("Sheila onHotelImageFinished photoList ~ %s ", photoList.toString());
+        dataManager.addHotelOffersSearchListener(this);
+        dataManager.fetchHotelOffers();
+
+    }
 }

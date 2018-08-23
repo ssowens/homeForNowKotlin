@@ -7,8 +7,8 @@ import com.google.gson.GsonBuilder;
 import com.ssowens.android.homefornow.BuildConfig;
 import com.ssowens.android.homefornow.listeners.AccessTokenListener;
 import com.ssowens.android.homefornow.listeners.HotelDetailListener;
+import com.ssowens.android.homefornow.listeners.HotelImageListener;
 import com.ssowens.android.homefornow.listeners.HotelOffersSearchListener;
-import com.ssowens.android.homefornow.listeners.HotelSearchListener;
 import com.ssowens.android.homefornow.models.AmadeusAccessTokenResponse;
 import com.ssowens.android.homefornow.models.Data;
 import com.ssowens.android.homefornow.models.Hotel;
@@ -60,7 +60,7 @@ public class DataManager {
     private static final String HEADER_AUTHORIZATION = "Authorization";
     private static final String HEADER_AUTHORIZATION_BEARER = "Authorization: Bearer";
     private static final String HEADER_BEARER = "Bearer ";
-    private static final int HOTEL_RATING = 2;
+    private static final int HOTEL_RATING = 4;
     private static final String HOTEL_VIEW = "FULL";
 
     // KEYS FOR API
@@ -81,6 +81,7 @@ public class DataManager {
     private static final String HOTELS_SEARCH = "hotels";
     private static final String VACATION_SEARCH = "vacation";
     private List<Photo> photoList;
+    private List<Photo> hotelImageList;
 
     private List<Offers> hotelTopRatedHotelsList;
     private List<Data> dataList;
@@ -90,7 +91,7 @@ public class DataManager {
     public AmadeusAccessTokenResponse amadeusAccessToken;
 
     // Listeners List
-    private List<HotelSearchListener> hotelSearchListenerList;
+    private List<HotelImageListener> hotelImageListenerList;
     private List<HotelOffersSearchListener> hotelOffersSearchListenerList;
     private List<AccessTokenListener> accessTokenListenerList;
     private List<HotelDetailListener> hotelDetailListenerList;
@@ -111,7 +112,7 @@ public class DataManager {
         this.retrofit = retrofit;
         this.hotelOffersRetrofit = hotelOffersRetrofit;
         this.accessTokenRetrofit = accessTokenRetrofit;
-        hotelSearchListenerList = new ArrayList<>();
+        hotelImageListenerList = new ArrayList<>();
         hotelOffersSearchListenerList = new ArrayList<>();
         accessTokenListenerList = new ArrayList<>();
         hotelDetailListenerList = new ArrayList<>();
@@ -264,8 +265,10 @@ public class DataManager {
 
                         if (response.body() != null) {
                             photoList = response.body().getPhotoList();
-                            Timber.i("Sheila popular photoList = %s", photoList.toString());
-                            notifySearchListeners();
+                            Timber.i("Sheila Downloaded popular photoList = %s",
+                                    photoList.toString
+                                            ());
+                            notifyHotelImageListeners();
                         }
 
                     }
@@ -277,6 +280,31 @@ public class DataManager {
                 });
     }
 
+    public void fetchHotelPhotos() {
+        apiService.hotelsSearchPopular(HOTELS_SEARCH)
+                // Handles web request asynchronously
+                .enqueue(new Callback<HotelPopularSearchResponse>() {
+                    @Override
+                    public void onResponse(Call<HotelPopularSearchResponse> call,
+                                           retrofit2.Response<HotelPopularSearchResponse> response) {
+
+                        if (response.body() != null) {
+                            photoList = response.body().getPhotoList();
+                            Timber.i("Sheila Downloaded photoLists = %s",
+                                    photoList.toString());
+                            setupHotelImages(response.body().getPhotoList());
+                            notifyHotelImageListeners();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<HotelPopularSearchResponse> call, Throwable t) {
+                        Timber.e("Failed to fetch hotel photos" + " ~ " + t);
+                    }
+                });
+    }
+
+
     public void fetchHotelOffers() {
         getToken(new Callback<AmadeusAccessTokenResponse>() {
             @Override
@@ -287,7 +315,7 @@ public class DataManager {
                     AmadeusAccessTokenResponse token = responseToken.body();
                     String tokenString = HEADER_BEARER + token.getAccess_token();
 
-                    hotelOffersApi.hotelOffersSearch(tokenString, "MIA", "5",
+                    hotelOffersApi.hotelOffersSearch(tokenString, "ATL", "5",
                             "KM", "false",
                             "true", HOTEL_VIEW, "NONE", HOTEL_RATING)
                             .enqueue(new Callback<HotelOffersResponse>() {
@@ -300,7 +328,6 @@ public class DataManager {
                                         dataList = response.body().getHotelOffersList();
                                         Timber.i("Sheila hotelOffersList = %s", dataList.toString());
                                         convertData(dataList);
-
                                         notifyHotelOffersListeners();
                                     }
                                 }
@@ -310,7 +337,6 @@ public class DataManager {
                                     Timber.e("Failed to fetch Hotel Offers" + " ~ " + t);
                                 }
                             });
-
                 }
             }
 
@@ -363,6 +389,14 @@ public class DataManager {
         });
     }
 
+    private void setupHotelImages(List<Photo> photoList) {
+        if (hotelImageList != null) {
+            hotelImageList.clear();
+        }
+        hotelImageList = photoList;
+        Timber.i("Sheila hotelImageList %s", hotelImageList.toString());
+    }
+
     private void convertDataById(HotelDetailData dataDetail) {
 
         hotelDetail = new HotelDetailData();
@@ -390,8 +424,13 @@ public class DataManager {
         tokenCall.enqueue(callbackSuccess);
     }
 
+
     public List<Photo> getPhotoList() {
         return photoList;
+    }
+
+    public List<Photo> getHotelImageList() {
+        return hotelImageList;
     }
 
     public List<Hotel> getTopRatedHotelsList() {
@@ -419,12 +458,12 @@ public class DataManager {
         return null;
     }
 
-    public void addHotelSearchListener(HotelSearchListener listener) {
-        hotelSearchListenerList.add(listener);
+    public void addHotelImageListener(HotelImageListener listener) {
+        hotelImageListenerList.add(listener);
     }
 
-    public void removeHotelSearchListener(HotelSearchListener listener) {
-        hotelSearchListenerList.remove(listener);
+    public void removeHotelImageListener(HotelImageListener listener) {
+        hotelImageListenerList.remove(listener);
     }
 
     public void addHotelOffersSearchListener(HotelOffersSearchListener listener) {
@@ -435,9 +474,9 @@ public class DataManager {
         hotelOffersSearchListenerList.remove(listener);
     }
 
-    private void notifySearchListeners() {
-        for (HotelSearchListener listener : hotelSearchListenerList) {
-            listener.onHotelSearchFinished();
+    private void notifyHotelImageListeners() {
+        for (HotelImageListener listener : hotelImageListenerList) {
+            listener.onHotelImageFinished();
         }
     }
 
@@ -456,7 +495,7 @@ public class DataManager {
     }
 
     private void notifyHotelDetailListeners() {
-        for(HotelDetailListener listener : hotelDetailListenerList) {
+        for (HotelDetailListener listener : hotelDetailListenerList) {
             listener.onHotelDetailFinished();
         }
     }

@@ -13,11 +13,15 @@ import android.view.ViewGroup;
 
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentHotelDetailBinding;
+import com.ssowens.android.homefornow.databinding.PhotoImageBinding;
 import com.ssowens.android.homefornow.listeners.HotelDetailListener;
+import com.ssowens.android.homefornow.listeners.HotelImageListener;
 import com.ssowens.android.homefornow.models.Hotel;
 import com.ssowens.android.homefornow.models.HotelDetailData;
 import com.ssowens.android.homefornow.models.Photo;
 import com.ssowens.android.homefornow.utils.DataManager;
+
+import java.util.List;
 
 import timber.log.Timber;
 
@@ -26,10 +30,12 @@ import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_
 /**
  * Created by Sheila Owens on 8/2/18.
  */
-public class HotelDetailFragment extends Fragment implements HotelDetailListener {
+public class HotelDetailFragment extends Fragment
+        implements HotelDetailListener, HotelImageListener {
 
     private String hotelId;
     private FragmentHotelDetailBinding fragmentHotelDetailBinding;
+    private PhotoImageBinding photoImageBinding;
     private DataManager dataManager;
     private Photo photo;
     private Toolbar toolbar;
@@ -59,7 +65,10 @@ public class HotelDetailFragment extends Fragment implements HotelDetailListener
                              @Nullable Bundle savedInstanceState) {
         fragmentHotelDetailBinding = DataBindingUtil.inflate(inflater, R.layout
                 .fragment_hotel_detail, container, false);
+        photoImageBinding = DataBindingUtil.inflate(inflater, R.layout.photo_image, container,
+                false);
         toolbar = fragmentHotelDetailBinding.toolbar;
+
 
         if (toolbar != null) {
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
@@ -86,12 +95,15 @@ public class HotelDetailFragment extends Fragment implements HotelDetailListener
     @Override
     public void onStart() {
         super.onStart();
+        dataManager.addHotelImageListener(this);
+        dataManager.fetchHotelPhotos();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         dataManager.removeHotelDetailListener(this);
+        dataManager.removeHotelImageListener(this);
     }
 
     @Override
@@ -104,5 +116,12 @@ public class HotelDetailFragment extends Fragment implements HotelDetailListener
         hotelDetailData = dataManager.getHotelDetailData();
         Timber.i("Sheila DATA hotelDetailData %s", hotelDetailData.toString());
         fragmentHotelDetailBinding.setModel(hotelDetailData);
+
+    }
+
+    @Override
+    public void onHotelImageFinished() {
+        List<Photo> photoList = dataManager.getPhotoList();
+        Timber.i("Sheila onHotelImageFinished photoList ~ %s ", photoList.toString());
     }
 }

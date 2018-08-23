@@ -1,5 +1,6 @@
 package com.ssowens.android.homefornow.models;
 
+import android.databinding.BindingAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -39,6 +40,10 @@ public class Photo {
         return pictureSrc.getSmall();
     }
 
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
     public String getPhotographer() {
         return photographer;
     }
@@ -47,6 +52,7 @@ public class Photo {
         return pictureSrc;
     }
 
+    @BindingAdapter("photoUrl")
     public static void loadImage(ImageView view, String photoUrl) {
         Glide.with(view.getContext())
                 .load(photoUrl)

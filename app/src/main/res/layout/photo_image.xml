@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="model"
+            type="com.ssowens.android.homefornow.models.Photo"/>
+
+    </data>
+
+        <ImageView
+            android:id="@+id/photo_image"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:scaleType="centerCrop"
+            android:src="@{model.photoUrl}"
+            android:background="@color/colorAccent"
+            tools:showIn="@layout/fragment_hotel_detail"
+            android:contentDescription="@string/hotel_picture"/>
+</layout>

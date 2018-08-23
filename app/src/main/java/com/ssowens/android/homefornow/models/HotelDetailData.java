@@ -44,6 +44,7 @@ public class HotelDetailData {
         return getHotel().getMedia().get(0).getHotelPhotoUrl();
     }
 
+
     public String getGuests() {
         if (!TextUtils.isEmpty(getOffers().get(0).getGuests().getAdults()))
             return getOffers().get(0).getGuests().getAdults() + " " + "guests";
