@@ -69,11 +69,11 @@ public class TopRatedHotelsAdapter extends RecyclerView.Adapter<TopRatedHotelsAd
             binding.mediaImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(v.getContext(), "Clicked => " + binding.getModel().getHotelId() ,
+                    Toast.makeText(v.getContext(), "Clicked => " + binding.getPhoto().getId() ,
                             Toast.LENGTH_LONG).show();
 
                     Intent intent = new Intent(v.getContext(), HotelDetailActivity.class);
-                    intent.putExtra(ARG_HOTEL_ID, binding.getModel().getHotelId());
+                    intent.putExtra(ARG_HOTEL_ID, binding.getPhoto().getId());
                     v.getContext().startActivity(intent);
                 }
             });

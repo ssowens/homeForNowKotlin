@@ -2,9 +2,11 @@ package com.ssowens.android.homefornow.services;
 
 import com.ssowens.android.homefornow.models.HotelPopularSearchResponse;
 import com.ssowens.android.homefornow.models.HotelTopRatedSearchResponse;
+import com.ssowens.android.homefornow.models.PhotoByIdResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiService {
@@ -17,4 +19,8 @@ public interface ApiService {
     @GET("search")
     Call<HotelTopRatedSearchResponse> hotelsSearchTopRated(@Query("query") String hotel);
 
+    // Hotel By Id
+    // https://api.pexels.com/v1/photos/:id
+    @GET("photos")
+    Call<PhotoByIdResponse> photoById(@Path("id") String photoId);
 }

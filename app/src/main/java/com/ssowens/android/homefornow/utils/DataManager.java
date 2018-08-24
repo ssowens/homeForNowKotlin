@@ -9,6 +9,7 @@ import com.ssowens.android.homefornow.listeners.AccessTokenListener;
 import com.ssowens.android.homefornow.listeners.HotelDetailListener;
 import com.ssowens.android.homefornow.listeners.HotelImageListener;
 import com.ssowens.android.homefornow.listeners.HotelOffersSearchListener;
+import com.ssowens.android.homefornow.listeners.PhotoByIdListener;
 import com.ssowens.android.homefornow.models.AmadeusAccessTokenResponse;
 import com.ssowens.android.homefornow.models.Data;
 import com.ssowens.android.homefornow.models.Hotel;
@@ -19,6 +20,7 @@ import com.ssowens.android.homefornow.models.HotelPopularSearchResponse;
 import com.ssowens.android.homefornow.models.HotelTopRatedSearchResponse;
 import com.ssowens.android.homefornow.models.Offers;
 import com.ssowens.android.homefornow.models.Photo;
+import com.ssowens.android.homefornow.models.PhotoByIdResponse;
 import com.ssowens.android.homefornow.models.TokenStore;
 import com.ssowens.android.homefornow.services.ApiService;
 import com.ssowens.android.homefornow.services.HotelOffersApi;
@@ -87,6 +89,7 @@ public class DataManager {
     private List<Data> dataList;
     private List<Data> dataByIdList;
     private HotelDetailData hotelDetail;
+    private Photo photo;
     public Data data;
     public AmadeusAccessTokenResponse amadeusAccessToken;
 
@@ -95,6 +98,7 @@ public class DataManager {
     private List<HotelOffersSearchListener> hotelOffersSearchListenerList;
     private List<AccessTokenListener> accessTokenListenerList;
     private List<HotelDetailListener> hotelDetailListenerList;
+    private List<PhotoByIdListener> photoByIdListenerList;
 
     List<Hotel> hotelList = new ArrayList<>();
     List<Hotel> hotelListById = new ArrayList<>();
@@ -134,6 +138,8 @@ public class DataManager {
                             new HotelOffersListDeserializer())
                     .registerTypeAdapter(AmadeusAccessTokenResponse.class,
                             new AccessTokenDeserializer())
+                    .registerTypeAdapter(PhotoByIdResponse.class,
+                            new PhotoListDeserializer())
                     .create();
 
 
@@ -280,6 +286,31 @@ public class DataManager {
                 });
     }
 
+    public void fetchPhotosById() {
+        apiService.photoById(HOTELS_SEARCH)
+                // Handles web request asynchronously
+                .enqueue(new Callback<PhotoByIdResponse>() {
+                    @Override
+                    public void onResponse(Call<PhotoByIdResponse> call,
+                                           retrofit2.Response<PhotoByIdResponse> response) {
+
+                        if (response.body() != null) {
+                            photo = response.body().getPhoto();
+                            Timber.i("Sheila Downloaded photo by id = %s",
+                                    photo.toString
+                                            ());
+                            notifyPhotoByIdListeners();
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<PhotoByIdResponse> call, Throwable t) {
+                        Timber.e("Failed to fetch hotel search" + " ~ " + t);
+                    }
+                });
+    }
+
     public void fetchHotelPhotos() {
         apiService.hotelsSearchPopular(HOTELS_SEARCH)
                 // Handles web request asynchronously
@@ -378,7 +409,6 @@ public class DataManager {
                                     Timber.e("Failed to fetch Hotel Offers By Id" + " ~ " + t);
                                 }
                             });
-
                 }
             }
 
@@ -445,6 +475,10 @@ public class DataManager {
         return hotelDetail;
     }
 
+    public Photo getPhoto() {
+        return photo;
+    }
+
     public String getAccessToken() {
         return amadeusAccessToken.getAccess_token();
     }
@@ -480,10 +514,24 @@ public class DataManager {
         }
     }
 
+    private void notifyPhotoByIdListeners() {
+        for (PhotoByIdListener listener : photoByIdListenerList) {
+            listener.onPhotoByIdFinished();
+        }
+    }
+
     private void notifyHotelOffersListeners() {
         for (HotelOffersSearchListener listener : hotelOffersSearchListenerList) {
             listener.onHotelOffersFinished();
         }
+    }
+
+    public void addPhotoByIdListener(PhotoByIdListener listener) {
+        photoByIdListenerList.add(listener);
+    }
+
+    public void removePhotoByIdListener(PhotoByIdListener listener) {
+        photoByIdListenerList.remove(listener);
     }
 
     public void addHotelDetailListener(HotelDetailListener listener) {
