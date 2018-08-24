@@ -22,5 +22,5 @@ public interface ApiService {
     // Hotel By Id
     // https://api.pexels.com/v1/photos/:id
     @GET("photos")
-    Call<PhotoByIdResponse> photoById(@Path("id") String photoId);
+    Call<PhotoByIdResponse> photoById(@Path("id") int photoId);
 }

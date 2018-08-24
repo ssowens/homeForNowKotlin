@@ -12,6 +12,7 @@ import com.ssowens.android.homefornow.R;
 public class HotelDetailActivity extends SingleFragmentActivity {
 
     public static final String ARG_HOTEL_ID = "HotelDetailActivity.HotelId";
+    public static final String ARG_PHOTO_ID = "photoId";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -21,6 +22,7 @@ public class HotelDetailActivity extends SingleFragmentActivity {
     protected Fragment createFragment() {
         if (isOnline()) {
             String hotelId = getIntent().getStringExtra(ARG_HOTEL_ID);
+           // int photoId = getIntent().getIntExtras(ARG_PHOTO_ID);
             return HotelDetailFragment.newInstance(hotelId);
         } else {
             Toast.makeText(this, getString(R.string.no_internet_service),

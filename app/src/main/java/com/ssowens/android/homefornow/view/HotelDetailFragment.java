@@ -96,7 +96,7 @@ public class HotelDetailFragment extends Fragment
     public void onStart() {
         super.onStart();
         dataManager.addPhotoByIdListener(this);
-        dataManager.fetchPhotosById();
+        dataManager.fetchPhotosById(photo.getId());
     }
 
     @Override
@@ -125,7 +125,7 @@ public class HotelDetailFragment extends Fragment
     @Override
     public void onPhotoByIdFinished() {
         photo = dataManager.getPhoto();
-        Timber.i("Sheila onHotelImageFinished photo ~ %s ", photo.toString());
+        Timber.i("Sheila onPhotoByIdFinished photo ~ %s ", photo.toString());
         setPhoto(photo);
         Timber.i("Sheila Photo photo %s", photo.toString());
         fragmentHotelDetailBinding.setPhoto(photo);

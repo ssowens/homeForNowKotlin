@@ -120,6 +120,7 @@ public class DataManager {
         hotelOffersSearchListenerList = new ArrayList<>();
         accessTokenListenerList = new ArrayList<>();
         hotelDetailListenerList = new ArrayList<>();
+        photoByIdListenerList = new ArrayList<>();
 
     }
 
@@ -286,8 +287,8 @@ public class DataManager {
                 });
     }
 
-    public void fetchPhotosById() {
-        apiService.photoById(HOTELS_SEARCH)
+    public void fetchPhotosById(int photoId) {
+        apiService.photoById(photoId)
                 // Handles web request asynchronously
                 .enqueue(new Callback<PhotoByIdResponse>() {
                     @Override
@@ -306,7 +307,7 @@ public class DataManager {
 
                     @Override
                     public void onFailure(Call<PhotoByIdResponse> call, Throwable t) {
-                        Timber.e("Failed to fetch hotel search" + " ~ " + t);
+                        Timber.e("Failed to fetch photoById" + " ~ " + t);
                     }
                 });
     }
@@ -483,9 +484,9 @@ public class DataManager {
         return amadeusAccessToken.getAccess_token();
     }
 
-    public Photo getHotelPhoto(String photoId) {
+    public Photo getHotelPhoto(int photoId) {
         for (Photo photo : photoList) {
-            if (photo.getId().equals(photoId)) {
+            if (photo.getId() == photoId) {
                 return photo;
             }
         }
