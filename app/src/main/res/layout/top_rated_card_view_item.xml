@@ -7,7 +7,10 @@
 
         <variable
             name="model"
-            type="com.ssowens.android.homefornow.models.HotelTopRatedPhoto" />
+            type="com.ssowens.android.homefornow.models.Hotel" />
+        <variable
+            name="photo"
+            type="com.ssowens.android.homefornow.models.Photo" />
     </data>
 
     <android.support.v7.widget.CardView
@@ -27,7 +30,8 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:scaleType="centerCrop"
-                bind:photoUrl="@{model.photoUrl}"
+                bind:photoUrl="@{photo.photoUrl}"
+                android:paddingBottom="16dp"
                 app:layout_constraintBottom_toTopOf="@+id/supporting_text"
                 app:layout_constraintDimensionRatio="H,16:9"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -46,7 +50,7 @@
                 android:lineSpacingExtra="8dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="#DE000000"
-                android:text="@{model.photographer}"
+                android:text="@{model.name}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

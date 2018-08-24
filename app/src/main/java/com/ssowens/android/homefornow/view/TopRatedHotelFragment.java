@@ -1,7 +1,10 @@
 package com.ssowens.android.homefornow.view;
 
+import android.app.ProgressDialog;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,8 +19,10 @@ import android.view.ViewGroup;
 
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentTopRatedHotelsBinding;
-import com.ssowens.android.homefornow.listeners.HotelTopRatedSearchListener;
-import com.ssowens.android.homefornow.models.HotelTopRatedPhoto;
+import com.ssowens.android.homefornow.listeners.HotelImageListener;
+import com.ssowens.android.homefornow.listeners.HotelOffersSearchListener;
+import com.ssowens.android.homefornow.models.Hotel;
+import com.ssowens.android.homefornow.models.Photo;
 import com.ssowens.android.homefornow.utils.DataManager;
 
 import java.util.Collections;
@@ -30,13 +35,15 @@ import static com.ssowens.android.homefornow.view.PhotoFragment.EXTRA_CURRENT_TO
 /**
  * Created by Sheila Owens on 8/8/18.
  */
-public class TopRatedHotelFragment extends Fragment implements HotelTopRatedSearchListener {
+public class TopRatedHotelFragment extends Fragment
+        implements HotelOffersSearchListener, HotelImageListener {
 
-    private TopRatedPhotosAdapter topRatedPhotosAdapter;
+    private TopRatedHotelsAdapter topRatedHotelsAdapter;
     private DataManager dataManager;
     private RecyclerView recyclerView;
     private Toolbar toolbar;
     private int currentToolbarTitle;
+    private ProgressDialog progressDialog;
 
     public static TopRatedHotelFragment newInstance() {
         TopRatedHotelFragment fragment = new TopRatedHotelFragment();
@@ -54,8 +61,9 @@ public class TopRatedHotelFragment extends Fragment implements HotelTopRatedSear
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        FragmentTopRatedHotelsBinding fragmentTopRatedHotelsBinding = DataBindingUtil.inflate(inflater, R.layout
-                .fragment_top_rated_hotels, container, false);
+        FragmentTopRatedHotelsBinding fragmentTopRatedHotelsBinding =
+                DataBindingUtil.inflate(inflater, R.layout
+                        .fragment_top_rated_hotels, container, false);
         toolbar = fragmentTopRatedHotelsBinding.toolbar;
         if (savedInstanceState == null) {
             toolbar.setTitle(R.string.top_rated);
@@ -69,30 +77,74 @@ public class TopRatedHotelFragment extends Fragment implements HotelTopRatedSear
 
         fragmentTopRatedHotelsBinding.recyclerView.setLayoutManager(new GridLayoutManager
                 (getActivity(), 2));
-        topRatedPhotosAdapter = new TopRatedPhotosAdapter(Collections.EMPTY_LIST);
-        fragmentTopRatedHotelsBinding.recyclerView.setAdapter(topRatedPhotosAdapter);
+        topRatedHotelsAdapter = new TopRatedHotelsAdapter(Collections.EMPTY_LIST);
+        fragmentTopRatedHotelsBinding.recyclerView.setAdapter(topRatedHotelsAdapter);
+
         return fragmentTopRatedHotelsBinding.getRoot();
+    }
+
+    private void displayProgressDialog() {
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMax(25);
+        progressDialog.setMessage(getString(R.string.loading_text));
+        progressDialog.setTitle(getString(R.string.top_rated_hotels));
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.show();
+
+        final Handler handle = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                progressDialog.incrementProgressBy(1);
+            }
+        };
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while (progressDialog.getProgress() <= progressDialog
+                            .getMax()) {
+                        Thread.sleep(300);
+                        handle.sendMessage(handle.obtainMessage());
+                        if (progressDialog.getProgress() == progressDialog
+                                .getMax()) {
+                            progressDialog.dismiss();
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     @Override
     public void onStart() {
         super.onStart();
         dataManager = DataManager.get(getContext());
-        dataManager.addHotelTopRatedSearchListener(this);
-        dataManager.fetchHotelTopRatedSearch();
+        displayProgressDialog();
+        dataManager.addHotelImageListener(this);
+        dataManager.fetchHotelPhotos();
+
+        // Get the pictures and then get the other data
+//        dataManager.addHotelOffersSearchListener(this);
+//        dataManager.fetchHotelOffers();
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        dataManager.removeHotelTopRatedSearchListener(this);
+        dataManager.removeHotelOffersSearchListener(this);
+        dataManager.removeHotelImageListener(this);
     }
 
     @Override
-    public void onTopRatedSearchFinished() {
-        List<HotelTopRatedPhoto> hotelTopRatedPhotoList = dataManager.getTopRatedPhotoList();
-        Timber.i("Sheila topRatedPhotoList> ~  %s", hotelTopRatedPhotoList.toString());
-        topRatedPhotosAdapter.setTopRatedPhotoList(hotelTopRatedPhotoList);
+    public void onHotelOffersFinished() {
+        Timber.i("Sheila ~ onHotelOffersFinished");
+        List<Hotel> hotelTopRatedHotelList = dataManager.getTopRatedHotelsList();
+        topRatedHotelsAdapter.setTopRatedHotelsList(hotelTopRatedHotelList);
     }
 
     @Override
@@ -111,5 +163,15 @@ public class TopRatedHotelFragment extends Fragment implements HotelTopRatedSear
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onHotelImageFinished() {
+        List<Photo> photoList = dataManager.getPhotoList();
+        Timber.i("Sheila onHotelImageFinished photoList ~ %s ", photoList.toString());
+        topRatedHotelsAdapter.setHotelPhotoList(photoList);
+        dataManager.addHotelOffersSearchListener(this);
+        dataManager.fetchHotelOffers();
+
     }
 }

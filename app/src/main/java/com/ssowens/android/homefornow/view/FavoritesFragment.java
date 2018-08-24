@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import static com.ssowens.android.homefornow.view.FavoritesActivity.EXTRA_HOTEL_ID;
+import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_ID;
 
 
 public class FavoritesFragment extends Fragment {
@@ -17,7 +17,7 @@ public class FavoritesFragment extends Fragment {
         FavoritesFragment fragment = new FavoritesFragment();
 
         Bundle args = new Bundle();
-        args.putString(EXTRA_HOTEL_ID, hotelId);
+        args.putString(ARG_HOTEL_ID, hotelId);
         fragment.setArguments(args);
 
         return fragment;

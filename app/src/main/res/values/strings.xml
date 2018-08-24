@@ -7,7 +7,9 @@
     <string name="most_popular">Most Popular</string>
     <string name="favorites">Favorites</string>
     <string name="photo_by">"Photo by: "</string>
-    <string name="hotel_picture">Picture of the Hotel</string>
+    <string name="hotel_picture">Hotel Image</string>
     <string name="toolbar_title">HomeForNow</string>
     <string name="datamanager_error">Default constructor called for singleton</string>
+    <string name="loading_text">Loading . . . .</string>
+    <string name="top_rated_hotels">Top Rated Hotels</string>
 </resources>

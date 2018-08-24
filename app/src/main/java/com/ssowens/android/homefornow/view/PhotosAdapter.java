@@ -38,14 +38,6 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.MyViewHold
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         holder.binding.setModel(photoList.get(position));
-        holder.binding.mediaImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    listener.onPhotoClicked(photoList.get(position));
-                }
-            }
-        });
     }
 
     @Override
@@ -60,10 +52,12 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.MyViewHold
         public MyViewHolder(CardViewItemBinding itemBinding) {
             super(itemBinding.getRoot());
             this.binding = itemBinding;
-            itemView.setOnClickListener(new View.OnClickListener() {
+
+            binding.mediaImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(v.getContext(), "Clicked ~ ",
+                    Toast.makeText(v.getContext(), "Clicked ~ " +
+                                    binding.getModel().getPhotographer(),
                             Toast.LENGTH_LONG).show();
                 }
             });

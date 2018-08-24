@@ -4,7 +4,7 @@ import android.databinding.BaseObservable;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Offers extends BaseObservable{
+public class Offers extends BaseObservable {
 
     private String id;
     private String rateCode;
@@ -91,7 +91,7 @@ public class Offers extends BaseObservable{
 
         }
 
-        static class Description {
+        static class Description extends BaseObservable {
             private String lang;
             private String text;
 
@@ -138,7 +138,7 @@ public class Offers extends BaseObservable{
                 '}';
     }
 
-    public static class Guests extends BaseObservable{
+    public static class Guests extends BaseObservable {
         private String adults;
 
         public String getAdults() {
@@ -174,7 +174,7 @@ public class Offers extends BaseObservable{
         }
     }
 
-    public static class Price extends BaseObservable{
+    public static class Price extends BaseObservable {
 
         private String currency;
         private String total;

@@ -6,7 +6,6 @@ import java.util.List;
 
 public class PexelsImages {
 
-    // TODO
 
     // Might be able to remove
 

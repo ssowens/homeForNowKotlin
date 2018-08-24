@@ -1,6 +1,7 @@
 package com.ssowens.android.homefornow.models;
 
 import android.databinding.BaseObservable;
+import android.databinding.BindingAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -15,10 +16,12 @@ public class Hotel extends BaseObservable {
     private String chainCode;
     private String dupeId;
     private String name;
+    private String rating;
     private String cityCode;
     private Float latitude;
     private Float longitude;
     private List<Media> media;
+    public String imageUrl;
 
     public String getType() {
         return type;
@@ -36,8 +39,13 @@ public class Hotel extends BaseObservable {
         return dupeId;
     }
 
+
     public String getName() {
         return name;
+    }
+
+    public String getRating() {
+        return rating;
     }
 
     public String getCityCode() {
@@ -56,6 +64,46 @@ public class Hotel extends BaseObservable {
         return media;
     }
 
+    public String getImageUrl() {
+        return media.get(0).getHotelPhotoUrl();
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setHotelId(String hotelId) {
+        this.hotelId = hotelId;
+    }
+
+    public void setChainCode(String chainCode) {
+        this.chainCode = chainCode;
+    }
+
+    public void setDupeId(String dupeId) {
+        this.dupeId = dupeId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setCityCode(String cityCode) {
+        this.cityCode = cityCode;
+    }
+
+    public void setLatitude(Float latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(Float longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setMedia(List<Media> media) {
+        this.media = media;
+    }
+
     @Override
     public String toString() {
         return "Hotel{" +
@@ -64,10 +112,12 @@ public class Hotel extends BaseObservable {
                 ", chainCode='" + chainCode + '\'' +
                 ", dupeId='" + dupeId + '\'' +
                 ", name='" + name + '\'' +
+                ", rating='" + rating + '\'' +
                 ", cityCode='" + cityCode + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", media=" + media +
+                ", imageUrl='" + imageUrl + '\'' +
                 '}';
     }
 
@@ -76,6 +126,7 @@ public class Hotel extends BaseObservable {
      */
     public static class Media extends BaseObservable {
 
+
         @SerializedName("uri")
         private String hotelPhotoUrl;
 
@@ -83,11 +134,17 @@ public class Hotel extends BaseObservable {
             return hotelPhotoUrl;
         }
 
-        public static void loadImage(ImageView view, String photoUrl) {
-           Glide.with(view.getContext())
-                   .load(photoUrl)
-                   .into(view);
-       }
+        public void setHotelPhotoUrl(String hotelPhotoUrl) {
+            this.hotelPhotoUrl = hotelPhotoUrl;
+        }
+
+
+        @BindingAdapter("hotelPhotoUrl")
+        public static void loadImage(ImageView view, String hotelPhotoUrl) {
+            Glide.with(view.getContext())
+                    .load(hotelPhotoUrl)
+                    .into(view);
+        }
 
         @Override
         public String toString() {

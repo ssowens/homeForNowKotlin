@@ -5,8 +5,9 @@ import android.widget.Toast;
 
 import com.ssowens.android.homefornow.R;
 
+import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_ID;
+
 public class FavoritesActivity extends SingleFragmentActivity {
-    public static final String EXTRA_HOTEL_ID = "hotelId";
 
     @Override
     protected Fragment createFragment() {
@@ -14,7 +15,7 @@ public class FavoritesActivity extends SingleFragmentActivity {
         String hotelId;
 
         if (isOnline()) {
-            hotelId = (String) getIntent().getSerializableExtra(EXTRA_HOTEL_ID);
+            hotelId = (String) getIntent().getSerializableExtra(ARG_HOTEL_ID);
             return FavoritesFragment.newInstance(hotelId);
         } else {
             Toast.makeText(this, getString(R.string.no_internet_service),

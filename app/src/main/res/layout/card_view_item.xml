@@ -52,16 +52,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/media_image" />
 
-            <!--<ImageButton-->
-                <!--android:id="@+id/favorite_button"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:background="#00FFFFFF"-->
-                <!--android:padding="12dp"-->
-                <!--app:layout_constraintEnd_toEndOf="parent"-->
-                <!--app:layout_constraintTop_toTopOf="@+id/media_image"-->
-                <!--app:srcCompat="@drawable/ic_favorite_black_24dp" />-->
-
         </android.support.constraint.ConstraintLayout>
 
     </android.support.v7.widget.CardView>
