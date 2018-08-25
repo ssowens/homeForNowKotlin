@@ -1,6 +1,7 @@
 package com.ssowens.android.homefornow.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -59,7 +60,7 @@ public class DataManager {
     // By HOTEL ID
     // https://test.api.amadeus.com/v1/shopping/hotels/DTLAX213/hotel-offers?view=FULL
 
-    private static final String HEADER_AUTHORIZATION = "Authorization";
+    public static final String HEADER_AUTHORIZATION = "Authorization";
     private static final String HEADER_AUTHORIZATION_BEARER = "Authorization: Bearer";
     private static final String HEADER_BEARER = "Bearer ";
     private static final int HOTEL_RATING = 4;
@@ -84,6 +85,7 @@ public class DataManager {
     private static final String VACATION_SEARCH = "vacation";
     private List<Photo> photoList;
     private List<Photo> hotelImageList;
+    private List<Photo> myPhotos;
 
     private List<Offers> hotelTopRatedHotelsList;
     private List<Data> dataList;
@@ -269,45 +271,39 @@ public class DataManager {
                     @Override
                     public void onResponse(Call<HotelPopularSearchResponse> call,
                                            retrofit2.Response<HotelPopularSearchResponse> response) {
-
+                        Log.i("Sheila", "**response body = " + response.toString());
                         if (response.body() != null) {
                             photoList = response.body().getPhotoList();
-                            Timber.i("Sheila Downloaded popular photoList = %s",
-                                    photoList.toString
-                                            ());
                             notifyHotelImageListeners();
                         }
-
                     }
 
                     @Override
                     public void onFailure(Call<HotelPopularSearchResponse> call, Throwable t) {
-                        Timber.e("Failed to fetch hotel search" + " ~ " + t);
+                        Timber.e("** Failed to fetch hotel search" + " ~ " + t);
                     }
                 });
     }
 
-    public void fetchPhotosById(int photoId) {
+    public void fetchPhotosById(String photoId) {
+        Timber.i("Sheila photoId %s", photoId);
         apiService.photoById(photoId)
                 // Handles web request asynchronously
                 .enqueue(new Callback<PhotoByIdResponse>() {
                     @Override
                     public void onResponse(Call<PhotoByIdResponse> call,
                                            retrofit2.Response<PhotoByIdResponse> response) {
-
+//                        Log.i("Sheila", "response body = " + response.body().toString());
+//                        Timber.i("Sheila = response body %s", response.body());
                         if (response.body() != null) {
-                            photo = response.body().getPhoto();
-                            Timber.i("Sheila Downloaded photo by id = %s",
-                                    photo.toString
-                                            ());
+                            myPhotos = response.body().getPhotos();
                             notifyPhotoByIdListeners();
                         }
-
                     }
 
                     @Override
                     public void onFailure(Call<PhotoByIdResponse> call, Throwable t) {
-                        Timber.e("Failed to fetch photoById" + " ~ " + t);
+                        Timber.e("** Failed to fetch photoById" + " ~ " + t);
                     }
                 });
     }
@@ -354,11 +350,9 @@ public class DataManager {
                                 @Override
                                 public void onResponse(Call<HotelOffersResponse> call,
                                                        retrofit2.Response<HotelOffersResponse> response) {
-                                    //Timber.i("Sheila fetchHotelOffers ~ %s", response.toString
-                                    // ());
                                     if (response.isSuccessful() && response.body() != null) {
                                         dataList = response.body().getHotelOffersList();
-                                        Timber.i("Sheila hotelOffersList = %s", dataList.toString());
+
                                         convertData(dataList);
                                         notifyHotelOffersListeners();
                                     }
@@ -380,7 +374,6 @@ public class DataManager {
     }
 
     public void fetchHotelOffersById(final String hotelId) {
-        Timber.i("Sheila hotel ** id = %s", hotelId);
         getToken(new Callback<AmadeusAccessTokenResponse>() {
             @Override
             public void onResponse(Call<AmadeusAccessTokenResponse> tokenCall,
@@ -395,11 +388,8 @@ public class DataManager {
                                 @Override
                                 public void onResponse(Call<HotelDetailResponse> call,
                                                        retrofit2.Response<HotelDetailResponse> response) {
-                                    Timber.i("Sheila hotelOffersSearchById ~ %s", response.toString());
                                     if (response.isSuccessful() && response.body() != null) {
                                         hotelDetail = response.body().getHotelDetails();
-                                        Timber.i("Sheila hotelOffersListById = %s", hotelDetail
-                                                .toString());
                                         convertDataById(hotelDetail);
                                         notifyHotelDetailListeners();
                                     }
@@ -425,7 +415,6 @@ public class DataManager {
             hotelImageList.clear();
         }
         hotelImageList = photoList;
-        Timber.i("Sheila hotelImageList %s", hotelImageList.toString());
     }
 
     private void convertDataById(HotelDetailData dataDetail) {
@@ -439,7 +428,6 @@ public class DataManager {
 
 
     private void convertData(List<Data> myData) {
-        List<Data> hotelData = myData;
 
         for (int iter = 0; iter < myData.size(); iter++) {
             hotelList.add(myData.get(iter).getHotel());
@@ -484,9 +472,9 @@ public class DataManager {
         return amadeusAccessToken.getAccess_token();
     }
 
-    public Photo getHotelPhoto(int photoId) {
+    public Photo getHotelPhoto(String photoId) {
         for (Photo photo : photoList) {
-            if (photo.getId() == photoId) {
+            if (photo.getId().equals(photoId)) {
                 return photo;
             }
         }

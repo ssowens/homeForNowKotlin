@@ -24,9 +24,8 @@ import com.ssowens.android.homefornow.utils.DataManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import timber.log.Timber;
-
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_ID;
+import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_PHOTO_ID;
 
 /**
  * Created by Sheila Owens on 8/2/18.
@@ -35,6 +34,7 @@ public class HotelDetailFragment extends Fragment
         implements HotelDetailListener, PhotoByIdListener {
 
     private String hotelId;
+    private String photoId;
     private FragmentHotelDetailBinding fragmentHotelDetailBinding;
     private PhotoImageBinding photoImageBinding;
     private DataManager dataManager;
@@ -45,19 +45,24 @@ public class HotelDetailFragment extends Fragment
     private List<Photo> hotelPhotoList = new ArrayList<>();
 
 
-    public static HotelDetailFragment newInstance(String hotelId) {
+    public static HotelDetailFragment newInstance(String hotelId, String photoId) {
         Bundle args = new Bundle();
         args.putString(ARG_HOTEL_ID, hotelId);
+        args.putString(ARG_PHOTO_ID, photoId);
 
         HotelDetailFragment fragment = new HotelDetailFragment();
         fragment.setArguments(args);
-
         return fragment;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        if (args != null) {
+            hotelId = args.getString(ARG_HOTEL_ID);
+            photoId = args.getString(ARG_PHOTO_ID);
+        }
         setHasOptionsMenu(true);
     }
 
@@ -79,8 +84,7 @@ public class HotelDetailFragment extends Fragment
     }
 
     private void updateUI() {
-        hotelId = getArguments().getString(ARG_HOTEL_ID);
-        Timber.i("Sheila fetchHotelOffersById = hotelid = %s ", hotelId);
+
         dataManager = DataManager.get(getContext());
         dataManager.addHotelDetailListener(this);
         dataManager.fetchHotelOffersById(hotelId);
@@ -96,7 +100,7 @@ public class HotelDetailFragment extends Fragment
     public void onStart() {
         super.onStart();
         dataManager.addPhotoByIdListener(this);
-        dataManager.fetchPhotosById(photo.getId());
+        dataManager.fetchPhotosById(photoId);
     }
 
     @Override
@@ -114,7 +118,6 @@ public class HotelDetailFragment extends Fragment
     @Override
     public void onHotelDetailFinished() {
         hotelDetailData = dataManager.getHotelDetailData();
-        Timber.i("Sheila DATA hotelDetailData %s", hotelDetailData.toString());
         fragmentHotelDetailBinding.setModel(hotelDetailData);
     }
 
@@ -125,9 +128,9 @@ public class HotelDetailFragment extends Fragment
     @Override
     public void onPhotoByIdFinished() {
         photo = dataManager.getPhoto();
-        Timber.i("Sheila onPhotoByIdFinished photo ~ %s ", photo.toString());
+      //  Timber.i("Sheila onPhotoByIdFinished photo ~ %s ", photo.toString());
         setPhoto(photo);
-        Timber.i("Sheila Photo photo %s", photo.toString());
+       // Timber.i("Sheila Photo photo %s", photo.toString());
         fragmentHotelDetailBinding.setPhoto(photo);
 
     }

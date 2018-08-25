@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class Photo {
 
-    private int id;
+    private String id;
     private int width;
     private int height;
 
@@ -60,7 +60,7 @@ public class Photo {
                 .into(view);
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 

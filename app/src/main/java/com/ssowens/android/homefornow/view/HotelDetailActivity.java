@@ -18,12 +18,13 @@ public class HotelDetailActivity extends SingleFragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
     @Override
     protected Fragment createFragment() {
         if (isOnline()) {
             String hotelId = getIntent().getStringExtra(ARG_HOTEL_ID);
-           // int photoId = getIntent().getIntExtras(ARG_PHOTO_ID);
-            return HotelDetailFragment.newInstance(hotelId);
+            String photoId = getIntent().getStringExtra(ARG_PHOTO_ID);
+            return HotelDetailFragment.newInstance(hotelId, photoId);
         } else {
             Toast.makeText(this, getString(R.string.no_internet_service),
                     Toast.LENGTH_SHORT).show();

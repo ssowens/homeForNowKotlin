@@ -29,7 +29,6 @@ public class TopRatedHotelsAdapter extends RecyclerView.Adapter<TopRatedHotelsAd
     private List<Photo> hotelPhotoList = new ArrayList<>();
     private TopRatedHotelsAdapterListener listener;
     private Data hotelData;
-    private int myPhoto;
     private TopRatedCardViewItemBinding topRatedCardViewItemBinding;
 
     public TopRatedHotelsAdapter(List<Hotel> hotelTopRatedHotelsList) {
@@ -71,8 +70,8 @@ public class TopRatedHotelsAdapter extends RecyclerView.Adapter<TopRatedHotelsAd
             binding.mediaImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(v.getContext(), "Clicked => " + binding.getPhoto().getId()
-                            + " " + binding.getModel().getHotelId(),
+                    Toast.makeText(v.getContext(), "Photo => " + binding.getPhoto().getId()
+                            + "Hotel id=> " + binding.getModel().getHotelId(),
                             Toast.LENGTH_LONG).show();
 
                     Intent intent = new Intent(v.getContext(), HotelDetailActivity.class);
