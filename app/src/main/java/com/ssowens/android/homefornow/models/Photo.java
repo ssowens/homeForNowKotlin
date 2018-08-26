@@ -28,6 +28,7 @@ public class Photo {
         this.pictureSrc = pictureSrc;
     }
 
+
     public int getWidth() {
         return width;
     }

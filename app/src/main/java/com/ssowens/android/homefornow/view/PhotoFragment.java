@@ -107,7 +107,6 @@ public class PhotoFragment extends Fragment implements
     @Override
     public void onHotelImageFinished() {
         List<Photo> photoList = dataManager.getPhotoList();
-        Timber.i("Sheila photoList ~ %s ", photoList.toString());
         photosAdapter.setPhotoList(photoList);
     }
 

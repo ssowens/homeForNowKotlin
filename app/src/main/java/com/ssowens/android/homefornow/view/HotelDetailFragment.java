@@ -15,25 +15,26 @@ import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentHotelDetailBinding;
 import com.ssowens.android.homefornow.databinding.PhotoImageBinding;
 import com.ssowens.android.homefornow.listeners.HotelDetailListener;
-import com.ssowens.android.homefornow.listeners.HotelImageListener;
+import com.ssowens.android.homefornow.listeners.PhotoByIdListener;
 import com.ssowens.android.homefornow.models.Hotel;
 import com.ssowens.android.homefornow.models.HotelDetailData;
 import com.ssowens.android.homefornow.models.Photo;
 import com.ssowens.android.homefornow.utils.DataManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import timber.log.Timber;
-
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_ID;
+import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_PHOTO_ID;
 
 /**
  * Created by Sheila Owens on 8/2/18.
  */
 public class HotelDetailFragment extends Fragment
-        implements HotelDetailListener, HotelImageListener {
+        implements HotelDetailListener, PhotoByIdListener {
 
     private String hotelId;
+    private String photoId;
     private FragmentHotelDetailBinding fragmentHotelDetailBinding;
     private PhotoImageBinding photoImageBinding;
     private DataManager dataManager;
@@ -41,21 +42,27 @@ public class HotelDetailFragment extends Fragment
     private Toolbar toolbar;
     private HotelDetailData hotelDetailData;
     private Hotel hotel;
+    private List<Photo> hotelPhotoList = new ArrayList<>();
 
 
-    public static HotelDetailFragment newInstance(String hotelId) {
+    public static HotelDetailFragment newInstance(String hotelId, String photoId) {
         Bundle args = new Bundle();
         args.putString(ARG_HOTEL_ID, hotelId);
+        args.putString(ARG_PHOTO_ID, photoId);
 
         HotelDetailFragment fragment = new HotelDetailFragment();
         fragment.setArguments(args);
-
         return fragment;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        if (args != null) {
+            hotelId = args.getString(ARG_HOTEL_ID);
+            photoId = args.getString(ARG_PHOTO_ID);
+        }
         setHasOptionsMenu(true);
     }
 
@@ -65,8 +72,6 @@ public class HotelDetailFragment extends Fragment
                              @Nullable Bundle savedInstanceState) {
         fragmentHotelDetailBinding = DataBindingUtil.inflate(inflater, R.layout
                 .fragment_hotel_detail, container, false);
-        photoImageBinding = DataBindingUtil.inflate(inflater, R.layout.photo_image, container,
-                false);
         toolbar = fragmentHotelDetailBinding.toolbar;
 
 
@@ -79,8 +84,7 @@ public class HotelDetailFragment extends Fragment
     }
 
     private void updateUI() {
-        hotelId = getArguments().getString(ARG_HOTEL_ID);
-        Timber.i("Sheila fetchHotelOffersById = hotelid = %s ", hotelId);
+
         dataManager = DataManager.get(getContext());
         dataManager.addHotelDetailListener(this);
         dataManager.fetchHotelOffersById(hotelId);
@@ -95,15 +99,15 @@ public class HotelDetailFragment extends Fragment
     @Override
     public void onStart() {
         super.onStart();
-        dataManager.addHotelImageListener(this);
-        dataManager.fetchHotelPhotos();
+        dataManager.addPhotoByIdListener(this);
+        dataManager.fetchPhotosById(photoId);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         dataManager.removeHotelDetailListener(this);
-        dataManager.removeHotelImageListener(this);
+        dataManager.removePhotoByIdListener(this);
     }
 
     @Override
@@ -114,14 +118,20 @@ public class HotelDetailFragment extends Fragment
     @Override
     public void onHotelDetailFinished() {
         hotelDetailData = dataManager.getHotelDetailData();
-        Timber.i("Sheila DATA hotelDetailData %s", hotelDetailData.toString());
         fragmentHotelDetailBinding.setModel(hotelDetailData);
+    }
 
+    public void setPhoto(Photo photo) {
+        this.photo = photo;
     }
 
     @Override
-    public void onHotelImageFinished() {
-        List<Photo> photoList = dataManager.getPhotoList();
-        Timber.i("Sheila onHotelImageFinished photoList ~ %s ", photoList.toString());
+    public void onPhotoByIdFinished() {
+        photo = dataManager.getPhoto();
+      //  Timber.i("Sheila onPhotoByIdFinished photo ~ %s ", photo.toString());
+        setPhoto(photo);
+       // Timber.i("Sheila Photo photo %s", photo.toString());
+        fragmentHotelDetailBinding.setPhoto(photo);
+
     }
 }

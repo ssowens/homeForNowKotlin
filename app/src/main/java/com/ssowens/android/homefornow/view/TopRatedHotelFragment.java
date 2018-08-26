@@ -1,10 +1,7 @@
 package com.ssowens.android.homefornow.view;
 
-import android.app.ProgressDialog;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -43,7 +40,7 @@ public class TopRatedHotelFragment extends Fragment
     private RecyclerView recyclerView;
     private Toolbar toolbar;
     private int currentToolbarTitle;
-    private ProgressDialog progressDialog;
+    FragmentTopRatedHotelsBinding fragmentTopRatedHotelsBinding;
 
     public static TopRatedHotelFragment newInstance() {
         TopRatedHotelFragment fragment = new TopRatedHotelFragment();
@@ -61,7 +58,7 @@ public class TopRatedHotelFragment extends Fragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        FragmentTopRatedHotelsBinding fragmentTopRatedHotelsBinding =
+        fragmentTopRatedHotelsBinding =
                 DataBindingUtil.inflate(inflater, R.layout
                         .fragment_top_rated_hotels, container, false);
         toolbar = fragmentTopRatedHotelsBinding.toolbar;
@@ -75,6 +72,7 @@ public class TopRatedHotelFragment extends Fragment
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         }
 
+        fragmentTopRatedHotelsBinding.loadingSpinner.setVisibility(View.VISIBLE);
         fragmentTopRatedHotelsBinding.recyclerView.setLayoutManager(new GridLayoutManager
                 (getActivity(), 2));
         topRatedHotelsAdapter = new TopRatedHotelsAdapter(Collections.EMPTY_LIST);
@@ -83,47 +81,12 @@ public class TopRatedHotelFragment extends Fragment
         return fragmentTopRatedHotelsBinding.getRoot();
     }
 
-    private void displayProgressDialog() {
-        progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setMax(25);
-        progressDialog.setMessage(getString(R.string.loading_text));
-        progressDialog.setTitle(getString(R.string.top_rated_hotels));
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.show();
-
-        final Handler handle = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                progressDialog.incrementProgressBy(1);
-            }
-        };
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    while (progressDialog.getProgress() <= progressDialog
-                            .getMax()) {
-                        Thread.sleep(300);
-                        handle.sendMessage(handle.obtainMessage());
-                        if (progressDialog.getProgress() == progressDialog
-                                .getMax()) {
-                            progressDialog.dismiss();
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
 
     @Override
     public void onStart() {
         super.onStart();
         dataManager = DataManager.get(getContext());
-        displayProgressDialog();
+        //displayProgressDialog();
         dataManager.addHotelImageListener(this);
         dataManager.fetchHotelPhotos();
 
@@ -138,6 +101,7 @@ public class TopRatedHotelFragment extends Fragment
         super.onStop();
         dataManager.removeHotelOffersSearchListener(this);
         dataManager.removeHotelImageListener(this);
+
     }
 
     @Override
@@ -145,6 +109,9 @@ public class TopRatedHotelFragment extends Fragment
         Timber.i("Sheila ~ onHotelOffersFinished");
         List<Hotel> hotelTopRatedHotelList = dataManager.getTopRatedHotelsList();
         topRatedHotelsAdapter.setTopRatedHotelsList(hotelTopRatedHotelList);
+        fragmentTopRatedHotelsBinding.loadingSpinner.setVisibility(View.GONE);
+
+
     }
 
     @Override

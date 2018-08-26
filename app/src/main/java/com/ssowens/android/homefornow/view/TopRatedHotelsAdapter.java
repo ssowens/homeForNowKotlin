@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_ID;
+import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_PHOTO_ID;
 
 /**
  * Created by Sheila Owens on 8/8/18.
@@ -69,11 +70,13 @@ public class TopRatedHotelsAdapter extends RecyclerView.Adapter<TopRatedHotelsAd
             binding.mediaImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(v.getContext(), "Clicked => " + binding.getModel().getHotelId() ,
+                    Toast.makeText(v.getContext(), "Photo => " + binding.getPhoto().getId()
+                            + "Hotel id=> " + binding.getModel().getHotelId(),
                             Toast.LENGTH_LONG).show();
 
                     Intent intent = new Intent(v.getContext(), HotelDetailActivity.class);
                     intent.putExtra(ARG_HOTEL_ID, binding.getModel().getHotelId());
+                    intent.putExtra(ARG_PHOTO_ID, binding.getPhoto().getId());
                     v.getContext().startActivity(intent);
                 }
             });
