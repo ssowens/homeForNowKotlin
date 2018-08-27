@@ -109,6 +109,7 @@ public class DataManager {
     private HotelOffersApi hotelOffersApi;
     private static TokenStore sTokenStore;
     public String accessToken;
+    public boolean isTokenAvail;
 
     DataManager(TokenStore tokenStore,
                 Retrofit retrofit,
@@ -198,8 +199,11 @@ public class DataManager {
                     .addConverterFactory(gsonConverterFactory)
                     .build();
 
-            TokenStore tokenStore = TokenStore.get(context);
+          //  TokenStore tokenStore = TokenStore.get(context);
             //sAccessToken = tokenStore.getAccessToken();
+
+            // TODO Need to use a singleton
+            TokenStore tokenStore = null;
 
             sDataManager = new DataManager(tokenStore, retrofit, hotelOffersRetrofit,
                     accessTokenRetrofit);
@@ -382,6 +386,7 @@ public class DataManager {
                 if (responseToken.isSuccessful() && responseToken.body() != null) {
                     AmadeusAccessTokenResponse token = responseToken.body();
                     String tokenString = HEADER_BEARER + token.getAccess_token();
+                    token.setAccess_token(token.getAccess_token());
 
                     hotelOffersApi.hotelOffersSearchById(tokenString, hotelId, HOTEL_VIEW)
                             .enqueue(new Callback<HotelDetailResponse>() {

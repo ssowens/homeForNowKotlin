@@ -86,14 +86,8 @@ public class TopRatedHotelFragment extends Fragment
     public void onStart() {
         super.onStart();
         dataManager = DataManager.get(getContext());
-        //displayProgressDialog();
         dataManager.addHotelImageListener(this);
         dataManager.fetchHotelPhotos();
-
-        // Get the pictures and then get the other data
-//        dataManager.addHotelOffersSearchListener(this);
-//        dataManager.fetchHotelOffers();
-
     }
 
     @Override
