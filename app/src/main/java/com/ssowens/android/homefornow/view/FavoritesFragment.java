@@ -22,8 +22,6 @@ public class FavoritesFragment extends Fragment {
 
     private static final String DATABASE_NAME = "favorites_db";
     private FavoritesDatabase favoritesDatabase;
-    private String hotelId;
-    private String photoId;
     private FragmentFavoritesDetailBinding fragmentFavoritesDetailBinding;
 
 
@@ -44,8 +42,8 @@ public class FavoritesFragment extends Fragment {
         setHasOptionsMenu(true);
         Bundle args = getArguments();
         if (args != null) {
-            hotelId = args.getString(ARG_HOTEL_ID);
-            photoId = args.getString(ARG_PHOTO_ID);
+            String hotelId = args.getString(ARG_HOTEL_ID);
+            String photoId = args.getString(ARG_PHOTO_ID);
         }
         favoritesDatabase = Room.databaseBuilder(getContext(),
                 FavoritesDatabase.class,
