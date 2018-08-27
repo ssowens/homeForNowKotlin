@@ -129,7 +129,6 @@ public class HotelDetailFragment extends Fragment
     public void onPhotoByIdFinished() {
         photo = dataManager.getPhoto();
       //  Timber.i("Sheila onPhotoByIdFinished photo ~ %s ", photo.toString());
-        setPhoto(photo);
        // Timber.i("Sheila Photo photo %s", photo.toString());
         fragmentHotelDetailBinding.setPhoto(photo);
 

@@ -91,6 +91,9 @@ public class DataManager {
     private List<Data> dataList;
     private List<Data> dataByIdList;
     private HotelDetailData hotelDetail;
+
+
+
     private Photo photo;
     public Data data;
     public AmadeusAccessTokenResponse amadeusAccessToken;
@@ -293,22 +296,24 @@ public class DataManager {
         Timber.i("Sheila photoId %s", photoId);
         apiService.photoById(photoId)
                 // Handles web request asynchronously
-                .enqueue(new Callback<PhotoByIdResponse>() {
+                .enqueue(new Callback<Photo>() {
                     @Override
-                    public void onResponse(Call<PhotoByIdResponse> call,
-                                           retrofit2.Response<PhotoByIdResponse> response) {
+                    public void onResponse(Call<Photo> call,
+                                           retrofit2.Response<Photo> response) {
 //                        Log.i("Sheila", "response body = " + response.body().toString());
 //                        Timber.i("Sheila = response body %s", response.body());
                         if (response.body() != null) {
-                            myPhotos = response.body().getPhotos();
+                           photo = response.body();
+                           setPhoto(photo);
                             notifyPhotoByIdListeners();
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<PhotoByIdResponse> call, Throwable t) {
-                        Timber.e("** Failed to fetch photoById" + " ~ " + t);
+                    public void onFailure(Call<Photo> call, Throwable t) {
+
                     }
+
                 });
     }
 
@@ -471,6 +476,14 @@ public class DataManager {
 
     public Photo getPhoto() {
         return photo;
+    }
+
+    public void setPhoto(Photo photo) {
+        this.photo = photo;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photo.setPhotoUrl(photoUrl);
     }
 
     public String getAccessToken() {

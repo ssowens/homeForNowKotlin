@@ -9,19 +9,10 @@ import java.util.List;
  */
 public class PhotoByIdResponse {
 
-//    @SerializedName("photos")
-//    private Photo photo;
-//
-//    public Photo getPhoto() {
-//        return photo;
-//    }
-
     @SerializedName("photos")
-    List<Photo> photos;
+    private Photo photo;
 
-    public List<Photo> getPhotos() {
-        return photos;
+    public Photo getPhoto() {
+        return photo;
     }
-
-
 }
