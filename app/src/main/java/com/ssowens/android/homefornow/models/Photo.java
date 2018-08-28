@@ -1,12 +1,15 @@
 package com.ssowens.android.homefornow.models;
 
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
 import android.databinding.BindingAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.annotations.SerializedName;
+import com.ssowens.android.homefornow.BR;
 
-public class Photo {
+public class Photo extends BaseObservable {
 
     private String id;
     private int width;
@@ -28,7 +31,6 @@ public class Photo {
         this.pictureSrc = pictureSrc;
     }
 
-
     public int getWidth() {
         return width;
     }
@@ -37,18 +39,21 @@ public class Photo {
         return height;
     }
 
+    @Bindable
     public String getPhotoUrl() {
-        return pictureSrc.getSmall();
+        return pictureSrc.getOriginal();
     }
 
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
+        notifyPropertyChanged(BR.photoUrl);
     }
 
     public String getPhotographer() {
         return photographer;
     }
 
+    @Bindable
     public PictureSrc getPictureSrc() {
         return pictureSrc;
     }

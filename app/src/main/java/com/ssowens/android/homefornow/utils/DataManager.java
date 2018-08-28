@@ -1,7 +1,6 @@
 package com.ssowens.android.homefornow.utils;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -278,7 +277,6 @@ public class DataManager {
                     @Override
                     public void onResponse(Call<HotelPopularSearchResponse> call,
                                            retrofit2.Response<HotelPopularSearchResponse> response) {
-                        Log.i("Sheila", "**response body = " + response.toString());
                         if (response.body() != null) {
                             photoList = response.body().getPhotoList();
                             notifyHotelImageListeners();
@@ -293,15 +291,12 @@ public class DataManager {
     }
 
     public void fetchPhotosById(String photoId) {
-        Timber.i("Sheila photoId %s", photoId);
         apiService.photoById(photoId)
                 // Handles web request asynchronously
                 .enqueue(new Callback<Photo>() {
                     @Override
                     public void onResponse(Call<Photo> call,
                                            retrofit2.Response<Photo> response) {
-//                        Log.i("Sheila", "response body = " + response.body().toString());
-//                        Timber.i("Sheila = response body %s", response.body());
                         if (response.body() != null) {
                            photo = response.body();
                            setPhoto(photo);
@@ -432,7 +427,6 @@ public class DataManager {
         hotelDetail = new HotelDetailData();
         if (dataDetail != null) {
             hotelDetail = dataDetail;
-            Timber.i("Sheila Data for Hotel Detail %s", hotelDetail.toString());
         }
     }
 

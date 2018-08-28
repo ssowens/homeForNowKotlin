@@ -119,6 +119,7 @@ public class HotelDetailFragment extends Fragment
     public void onHotelDetailFinished() {
         hotelDetailData = dataManager.getHotelDetailData();
         fragmentHotelDetailBinding.setModel(hotelDetailData);
+        fragmentHotelDetailBinding.executePendingBindings();
     }
 
     public void setPhoto(Photo photo) {
@@ -128,9 +129,8 @@ public class HotelDetailFragment extends Fragment
     @Override
     public void onPhotoByIdFinished() {
         photo = dataManager.getPhoto();
-      //  Timber.i("Sheila onPhotoByIdFinished photo ~ %s ", photo.toString());
-       // Timber.i("Sheila Photo photo %s", photo.toString());
         fragmentHotelDetailBinding.setPhoto(photo);
+        fragmentHotelDetailBinding.executePendingBindings();
 
     }
 }
