@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentHotelDetailBinding;
@@ -79,6 +80,14 @@ public class HotelDetailFragment extends Fragment
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
             //getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        fragmentHotelDetailBinding.favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Favorite Clicked", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
 
         return fragmentHotelDetailBinding.getRoot();
     }

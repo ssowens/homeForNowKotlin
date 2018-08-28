@@ -65,9 +65,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:tint="@android:color/white"
-            android:contentDescription="Favorites unselected"
-            bind:favorite="@drawable/ic_favorite_border_black_24dp"/>
+            android:layout_gravity="end"
+            android:tint="@android:color/holo_red_dark"
+            android:contentDescription="@string/favorite_icon_unselected"
+            app:srcCompat="@drawable/ic_favorite_border_black_24dp"/>
 
         <TextView
             android:id="@+id/hotel_name"

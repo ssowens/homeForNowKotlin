@@ -23,10 +23,6 @@ public class Photo extends BaseObservable {
     @SerializedName("src")
     private PictureSrc pictureSrc;
 
-
-
-    private ImageView favorite;
-
     public Photo(int width, int height, String photoUrl, String photographer, PictureSrc pictureSrc) {
         this.width = width;
         this.height = height;
@@ -68,15 +64,6 @@ public class Photo extends BaseObservable {
                 .load(photoUrl)
                 .into(view);
     }
-
-//    @BindingAdapter("favorite")
-//    public static void setFavorite(ImageView imageView) {
-//        imageView.setImageDrawable(null);
-//    }
-//
-//    public ImageView getFavorite() {
-//        return favorite;
-//    }
 
     public String getId() {
         return id;
