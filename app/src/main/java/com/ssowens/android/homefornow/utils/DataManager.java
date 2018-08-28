@@ -66,13 +66,13 @@ public class DataManager {
     private static final String HOTEL_VIEW = "FULL";
 
     // KEYS FOR API
-    public static final String PEXELS_API_KEY = BuildConfig.PexelsApiKey;
-    public static final String AMADEUS_API_KEY = BuildConfig.AmadeusApiKey;
-    public static final String AMADEUS_SECRET = BuildConfig.AmadeusSecret;
+    private static final String PEXELS_API_KEY = BuildConfig.PexelsApiKey;
+    private static final String AMADEUS_API_KEY = BuildConfig.AmadeusApiKey;
+    private static final String AMADEUS_SECRET = BuildConfig.AmadeusSecret;
     public static final String AMADEUS_GRANT_TYPE = "grant_type";
     public static final String AMADEUS_CLIENT_ID = "client_id";
     public static final String AMADEUS_CLIENT_SECRET = "client_secret";
-    public static final String AMADEUS_CLIENT_CREDENTIALS = "client_credentials";
+    private static final String AMADEUS_CLIENT_CREDENTIALS = "client_credentials";
     public static final String AMADEUS_ACCESS_TOKEN = "access_token";
 
 

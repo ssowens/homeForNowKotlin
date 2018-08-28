@@ -84,7 +84,7 @@ public class HotelDetailFragment extends Fragment
     }
 
     private void updateUI() {
-
+        fragmentHotelDetailBinding.loadingSpinner.setVisibility(View.VISIBLE);
         dataManager = DataManager.get(getContext());
         dataManager.addHotelDetailListener(this);
         dataManager.fetchHotelOffersById(hotelId);
@@ -120,6 +120,7 @@ public class HotelDetailFragment extends Fragment
         hotelDetailData = dataManager.getHotelDetailData();
         fragmentHotelDetailBinding.setModel(hotelDetailData);
         fragmentHotelDetailBinding.executePendingBindings();
+        fragmentHotelDetailBinding.loadingSpinner.setVisibility(View.GONE);
     }
 
     public void setPhoto(Photo photo) {

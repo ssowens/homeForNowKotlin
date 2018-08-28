@@ -25,8 +25,6 @@ import com.ssowens.android.homefornow.utils.DataManager;
 import java.util.Collections;
 import java.util.List;
 
-import timber.log.Timber;
-
 import static com.ssowens.android.homefornow.view.PhotoFragment.EXTRA_CURRENT_TOOLBAR_TITLE;
 
 /**
@@ -81,7 +79,6 @@ public class TopRatedHotelFragment extends Fragment
         return fragmentTopRatedHotelsBinding.getRoot();
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -95,17 +92,13 @@ public class TopRatedHotelFragment extends Fragment
         super.onStop();
         dataManager.removeHotelOffersSearchListener(this);
         dataManager.removeHotelImageListener(this);
-
     }
 
     @Override
     public void onHotelOffersFinished() {
-        Timber.i("Sheila ~ onHotelOffersFinished");
         List<Hotel> hotelTopRatedHotelList = dataManager.getTopRatedHotelsList();
         topRatedHotelsAdapter.setTopRatedHotelsList(hotelTopRatedHotelList);
         fragmentTopRatedHotelsBinding.loadingSpinner.setVisibility(View.GONE);
-
-
     }
 
     @Override
@@ -132,6 +125,5 @@ public class TopRatedHotelFragment extends Fragment
         topRatedHotelsAdapter.setHotelPhotoList(photoList);
         dataManager.addHotelOffersSearchListener(this);
         dataManager.fetchHotelOffers();
-
     }
 }

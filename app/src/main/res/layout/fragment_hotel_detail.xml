@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:bind="http://schemas.android.com/tools">
+        xmlns:bind="http://schemas.android.com/tools"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -60,6 +60,15 @@
             android:scaleType="centerCrop"
             bind:photoUrl="@{photo.photoUrl}"/>
 
+        <ImageView
+            android:id="@+id/favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:tint="@android:color/white"
+            android:contentDescription="Favorites unselected"
+            bind:favorite="@drawable/ic_favorite_border_black_24dp"/>
+
         <TextView
             android:id="@+id/hotel_name"
             android:layout_width="wrap_content"
@@ -96,6 +105,15 @@
                 android:text="@{model.bedType}"
                 tools:text="Room Type - 1 bed"/>
         </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/loading_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/colorAccent"
+            android:indeterminateTintMode="src_atop"
+            android:visibility="visible"/>
 
         <TextView
             android:id="@+id/price_per_night"
@@ -141,5 +159,7 @@
                 android:textSize="20sp"
                 tools:text="205"/>
         </LinearLayout>
+
+
     </LinearLayout>
 </layout>
