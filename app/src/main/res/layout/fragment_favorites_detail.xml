@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:bind="http://schemas.android.com/tools"
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
             name="model"
-            type="com.ssowens.android.homefornow.models.HotelDetailData"/>
+            type="com.ssowens.android.homefornow.db.Favorites"/>
 
-        <variable
-            name="photo"
-            type="com.ssowens.android.homefornow.models.Photo"/>
     </data>
 
     <LinearLayout
@@ -53,25 +49,12 @@
 
         <ImageView
             android:id="@+id/media_image"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:contentDescription="@string/hotel_picture"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:paddingBottom="16dp"
             android:scaleType="centerCrop"
-            bind:photoUrl="@{photo.photoUrl}"/>
-
-        <ToggleButton
-            android:id="@+id/button_favorite"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/button_favorite"
-            android:contentDescription="@string/favorite_icon_unselected"
-            android:layout_gravity="end"
-            android:checked="false"
-            android:text=""
-            android:textOff=""
-            android:textOn=""/>
+            android:contentDescription="@string/hotel_picture"/>
+            <!--bind:photoUrl="@{model.photoUrl}"-->
 
         <TextView
             android:id="@+id/hotel_name"
@@ -80,7 +63,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="@dimen/activity_margin"
             android:layout_marginTop="16dp"
-            android:text="@{model.hotel.name}"
+            android:text="@{model.hotelName}"
             android:textSize="20sp"
             android:textStyle="bold"
             tools:text="DOUBLETREE BY HILTON SAN PEDRO"/>
@@ -109,15 +92,6 @@
                 android:text="@{model.bedType}"
                 tools:text="Room Type - 1 bed"/>
         </LinearLayout>
-
-        <ProgressBar
-            android:id="@+id/loading_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminateTint="@color/colorAccent"
-            android:indeterminateTintMode="src_atop"
-            android:visibility="visible"/>
 
         <TextView
             android:id="@+id/price_per_night"
@@ -159,11 +133,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:paddingTop="16dp"
                 android:textSize="20sp"
                 tools:text="205"/>
         </LinearLayout>
-
-
     </LinearLayout>
 </layout>

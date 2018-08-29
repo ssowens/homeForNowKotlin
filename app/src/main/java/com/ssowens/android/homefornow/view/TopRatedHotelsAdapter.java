@@ -51,10 +51,6 @@ public class TopRatedHotelsAdapter extends RecyclerView.Adapter<TopRatedHotelsAd
 
     }
 
-    private void updateUI() {
-       //List<Hotel> hotelList = hotelData.getOffersList();
-    }
-
     @Override
     public int getItemCount() {
         return hotelTopRatedHotelsList.size();

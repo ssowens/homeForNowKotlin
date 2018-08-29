@@ -12,4 +12,5 @@
     <string name="datamanager_error">Default constructor called for singleton</string>
     <string name="loading_text">Loading . . . .</string>
     <string name="top_rated_hotels">Top Rated Hotels</string>
+    <string name="favorite_icon_unselected">Favorites unselected</string>
 </resources>

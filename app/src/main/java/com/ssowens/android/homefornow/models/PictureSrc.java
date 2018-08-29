@@ -10,11 +10,11 @@ class PictureSrc {
     private String landscape;
     private String tiny;
 
-    public PictureSrc(String original, String large, String large2x, String medium, String small,
+    public PictureSrc(String original, String large2x, String large, String medium, String small,
                       String portrait, String landscape, String tiny) {
         this.original = original;
-        this.large = large;
         this.large2x = large2x;
+        this.large = large;
         this.medium = medium;
         this.small = small;
         this.portrait = portrait;

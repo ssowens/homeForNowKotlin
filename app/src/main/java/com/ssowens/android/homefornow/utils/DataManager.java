@@ -1,7 +1,6 @@
 package com.ssowens.android.homefornow.utils;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -67,13 +66,13 @@ public class DataManager {
     private static final String HOTEL_VIEW = "FULL";
 
     // KEYS FOR API
-    public static final String PEXELS_API_KEY = BuildConfig.PexelsApiKey;
-    public static final String AMADEUS_API_KEY = BuildConfig.AmadeusApiKey;
-    public static final String AMADEUS_SECRET = BuildConfig.AmadeusSecret;
+    private static final String PEXELS_API_KEY = BuildConfig.PexelsApiKey;
+    private static final String AMADEUS_API_KEY = BuildConfig.AmadeusApiKey;
+    private static final String AMADEUS_SECRET = BuildConfig.AmadeusSecret;
     public static final String AMADEUS_GRANT_TYPE = "grant_type";
     public static final String AMADEUS_CLIENT_ID = "client_id";
     public static final String AMADEUS_CLIENT_SECRET = "client_secret";
-    public static final String AMADEUS_CLIENT_CREDENTIALS = "client_credentials";
+    private static final String AMADEUS_CLIENT_CREDENTIALS = "client_credentials";
     public static final String AMADEUS_ACCESS_TOKEN = "access_token";
 
 
@@ -91,6 +90,9 @@ public class DataManager {
     private List<Data> dataList;
     private List<Data> dataByIdList;
     private HotelDetailData hotelDetail;
+
+
+
     private Photo photo;
     public Data data;
     public AmadeusAccessTokenResponse amadeusAccessToken;
@@ -109,6 +111,7 @@ public class DataManager {
     private HotelOffersApi hotelOffersApi;
     private static TokenStore sTokenStore;
     public String accessToken;
+    public boolean isTokenAvail;
 
     DataManager(TokenStore tokenStore,
                 Retrofit retrofit,
@@ -198,8 +201,11 @@ public class DataManager {
                     .addConverterFactory(gsonConverterFactory)
                     .build();
 
-            TokenStore tokenStore = TokenStore.get(context);
+          //  TokenStore tokenStore = TokenStore.get(context);
             //sAccessToken = tokenStore.getAccessToken();
+
+            // TODO Need to use a singleton
+            TokenStore tokenStore = null;
 
             sDataManager = new DataManager(tokenStore, retrofit, hotelOffersRetrofit,
                     accessTokenRetrofit);
@@ -271,7 +277,6 @@ public class DataManager {
                     @Override
                     public void onResponse(Call<HotelPopularSearchResponse> call,
                                            retrofit2.Response<HotelPopularSearchResponse> response) {
-                        Log.i("Sheila", "**response body = " + response.toString());
                         if (response.body() != null) {
                             photoList = response.body().getPhotoList();
                             notifyHotelImageListeners();
@@ -286,25 +291,24 @@ public class DataManager {
     }
 
     public void fetchPhotosById(String photoId) {
-        Timber.i("Sheila photoId %s", photoId);
         apiService.photoById(photoId)
                 // Handles web request asynchronously
-                .enqueue(new Callback<PhotoByIdResponse>() {
+                .enqueue(new Callback<Photo>() {
                     @Override
-                    public void onResponse(Call<PhotoByIdResponse> call,
-                                           retrofit2.Response<PhotoByIdResponse> response) {
-//                        Log.i("Sheila", "response body = " + response.body().toString());
-//                        Timber.i("Sheila = response body %s", response.body());
+                    public void onResponse(Call<Photo> call,
+                                           retrofit2.Response<Photo> response) {
                         if (response.body() != null) {
-                            myPhotos = response.body().getPhotos();
+                           photo = response.body();
+                           setPhoto(photo);
                             notifyPhotoByIdListeners();
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<PhotoByIdResponse> call, Throwable t) {
-                        Timber.e("** Failed to fetch photoById" + " ~ " + t);
+                    public void onFailure(Call<Photo> call, Throwable t) {
+
                     }
+
                 });
     }
 
@@ -382,6 +386,7 @@ public class DataManager {
                 if (responseToken.isSuccessful() && responseToken.body() != null) {
                     AmadeusAccessTokenResponse token = responseToken.body();
                     String tokenString = HEADER_BEARER + token.getAccess_token();
+                    token.setAccess_token(token.getAccess_token());
 
                     hotelOffersApi.hotelOffersSearchById(tokenString, hotelId, HOTEL_VIEW)
                             .enqueue(new Callback<HotelDetailResponse>() {
@@ -422,7 +427,6 @@ public class DataManager {
         hotelDetail = new HotelDetailData();
         if (dataDetail != null) {
             hotelDetail = dataDetail;
-            Timber.i("Sheila Data for Hotel Detail %s", hotelDetail.toString());
         }
     }
 
@@ -466,6 +470,14 @@ public class DataManager {
 
     public Photo getPhoto() {
         return photo;
+    }
+
+    public void setPhoto(Photo photo) {
+        this.photo = photo;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photo.setPhotoUrl(photoUrl);
     }
 
     public String getAccessToken() {

@@ -2,6 +2,7 @@ package com.ssowens.android.homefornow.services;
 
 import com.ssowens.android.homefornow.models.HotelPopularSearchResponse;
 import com.ssowens.android.homefornow.models.HotelTopRatedSearchResponse;
+import com.ssowens.android.homefornow.models.Photo;
 import com.ssowens.android.homefornow.models.PhotoByIdResponse;
 
 import retrofit2.Call;
@@ -22,5 +23,5 @@ public interface ApiService {
     // Hotel By Id
     // https://api.pexels.com/v1/photos/:id
     @GET("https://api.pexels.com/v1/photos/{id}")
-    Call<PhotoByIdResponse> photoById(@Path("id") String photoId);
+    Call<Photo> photoById(@Path("id") String photoId);
 }

@@ -10,6 +10,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.ScaleAnimation;
+import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentHotelDetailBinding;
@@ -80,11 +85,31 @@ public class HotelDetailFragment extends Fragment
             //getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        final ScaleAnimation scaleAnimation = new ScaleAnimation(0.7f,
+                1.0f, 0.7f, 1.0f, Animation
+                .RELATIVE_TO_SELF, 0.7f, Animation.RELATIVE_TO_SELF, 0.7f);
+        scaleAnimation.setDuration(500);
+        BounceInterpolator bounceInterpolator = new BounceInterpolator();
+        scaleAnimation.setInterpolator(bounceInterpolator);
+        fragmentHotelDetailBinding.buttonFavorite.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                        //animation
+                        compoundButton.startAnimation(scaleAnimation);
+                        Toast.makeText(getActivity(), "Favorite Button Clicked =>" + isChecked,
+                                Toast
+                                .LENGTH_SHORT)
+                                .show();
+                    }
+                });
+
+
         return fragmentHotelDetailBinding.getRoot();
     }
 
     private void updateUI() {
-
+        fragmentHotelDetailBinding.loadingSpinner.setVisibility(View.VISIBLE);
         dataManager = DataManager.get(getContext());
         dataManager.addHotelDetailListener(this);
         dataManager.fetchHotelOffersById(hotelId);
@@ -119,6 +144,8 @@ public class HotelDetailFragment extends Fragment
     public void onHotelDetailFinished() {
         hotelDetailData = dataManager.getHotelDetailData();
         fragmentHotelDetailBinding.setModel(hotelDetailData);
+        fragmentHotelDetailBinding.executePendingBindings();
+        fragmentHotelDetailBinding.loadingSpinner.setVisibility(View.GONE);
     }
 
     public void setPhoto(Photo photo) {
@@ -128,10 +155,8 @@ public class HotelDetailFragment extends Fragment
     @Override
     public void onPhotoByIdFinished() {
         photo = dataManager.getPhoto();
-      //  Timber.i("Sheila onPhotoByIdFinished photo ~ %s ", photo.toString());
-        setPhoto(photo);
-       // Timber.i("Sheila Photo photo %s", photo.toString());
         fragmentHotelDetailBinding.setPhoto(photo);
+        fragmentHotelDetailBinding.executePendingBindings();
 
     }
 }
