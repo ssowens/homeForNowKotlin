@@ -60,15 +60,18 @@
             android:scaleType="centerCrop"
             bind:photoUrl="@{photo.photoUrl}"/>
 
-        <ImageView
-            android:id="@+id/favorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_gravity="end"
-            android:tint="@android:color/holo_red_dark"
+        <ToggleButton
+            android:id="@+id/button_favorite"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/button_favorite"
             android:contentDescription="@string/favorite_icon_unselected"
-            app:srcCompat="@drawable/ic_favorite_border_black_24dp"/>
+            android:layout_gravity="end"
+            android:checked="false"
+            android:text=""
+            android:textOff=""
+            android:textOn=""/>
 
         <TextView
             android:id="@+id/hotel_name"

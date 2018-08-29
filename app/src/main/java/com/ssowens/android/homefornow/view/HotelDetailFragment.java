@@ -10,6 +10,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.ScaleAnimation;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.ssowens.android.homefornow.R;
@@ -81,13 +85,25 @@ public class HotelDetailFragment extends Fragment
             //getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        fragmentHotelDetailBinding.favorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "Favorite Clicked", Toast.LENGTH_SHORT)
-                        .show();
-            }
-        });
+        final ScaleAnimation scaleAnimation = new ScaleAnimation(0.7f,
+                1.0f, 0.7f, 1.0f, Animation
+                .RELATIVE_TO_SELF, 0.7f, Animation.RELATIVE_TO_SELF, 0.7f);
+        scaleAnimation.setDuration(500);
+        BounceInterpolator bounceInterpolator = new BounceInterpolator();
+        scaleAnimation.setInterpolator(bounceInterpolator);
+        fragmentHotelDetailBinding.buttonFavorite.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                        //animation
+                        compoundButton.startAnimation(scaleAnimation);
+                        Toast.makeText(getActivity(), "Favorite Button Clicked =>" + isChecked,
+                                Toast
+                                .LENGTH_SHORT)
+                                .show();
+                    }
+                });
+
 
         return fragmentHotelDetailBinding.getRoot();
     }
