@@ -32,8 +32,6 @@ import com.ssowens.android.homefornow.utils.DataManager;
 import java.util.Collections;
 import java.util.List;
 
-import timber.log.Timber;
-
 public class PhotoFragment extends Fragment implements
         HotelImageListener,
         AccessTokenListener {
@@ -120,11 +118,8 @@ public class PhotoFragment extends Fragment implements
     public void onResume() {
         super.onResume();
         updateToolbarTitle();
-        updateUI();
     }
 
-    private void updateUI() {
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -148,6 +143,8 @@ public class PhotoFragment extends Fragment implements
                 Toast.makeText(getActivity(), "FavoritesActivity selected", Toast.LENGTH_SHORT)
                         .show();
                 currentToolbarTitle = R.string.favorites;
+                intent = new Intent(getActivity(), FavoritesActivity.class);
+                startActivity(intent);
                 break;
             default:
                 return super.onOptionsItemSelected(item);

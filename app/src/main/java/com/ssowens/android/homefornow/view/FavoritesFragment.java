@@ -1,6 +1,5 @@
 package com.ssowens.android.homefornow.view;
 
-import android.arch.persistence.room.Room;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,7 +13,9 @@ import android.view.ViewGroup;
 
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentFavoriteHotelsBinding;
-import com.ssowens.android.homefornow.db.FavoritesDatabase;
+import com.ssowens.android.homefornow.db.AppDatabase;
+
+import java.util.Collections;
 
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_ID;
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_PHOTO_ID;
@@ -24,9 +25,10 @@ import static com.ssowens.android.homefornow.view.PhotoFragment.EXTRA_CURRENT_TO
 public class FavoritesFragment extends Fragment {
 
     private static final String DATABASE_NAME = "favorites_db";
-    private FavoritesDatabase favoritesDatabase;
+    private AppDatabase appDatabase;
     private FragmentFavoriteHotelsBinding favoriteHotelsBinding;
     private Toolbar toolbar;
+    private FavoriteAdapter favoriteAdapter;
 
 
     public static FavoritesFragment newInstance(String hotelId, String photoId) {
@@ -48,11 +50,7 @@ public class FavoritesFragment extends Fragment {
             String hotelId = args.getString(ARG_HOTEL_ID);
             String photoId = args.getString(ARG_PHOTO_ID);
         }
-        favoritesDatabase = Room.databaseBuilder(getContext(),
-                FavoritesDatabase.class,
-                DATABASE_NAME)
-                .fallbackToDestructiveMigration()
-                .build();
+        appDatabase = AppDatabase.getInstance(getContext());
     }
 
     @Nullable
@@ -72,7 +70,15 @@ public class FavoritesFragment extends Fragment {
         }
         favoriteHotelsBinding.recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),
                 2));
-        return super.onCreateView(inflater, container, savedInstanceState);
+        favoriteAdapter = new FavoriteAdapter(Collections.EMPTY_LIST);
+        favoriteHotelsBinding.recyclerView.setAdapter(favoriteAdapter);
+        return favoriteHotelsBinding.getRoot();
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        favoriteAdapter.setFavorites(appDatabase.favoriteDao().loadAllFavorites());
     }
 }

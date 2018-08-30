@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import android.widget.Toast;
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentHotelDetailBinding;
 import com.ssowens.android.homefornow.databinding.PhotoImageBinding;
+import com.ssowens.android.homefornow.db.AppDatabase;
+import com.ssowens.android.homefornow.db.Favorite;
 import com.ssowens.android.homefornow.listeners.HotelDetailListener;
 import com.ssowens.android.homefornow.listeners.PhotoByIdListener;
 import com.ssowens.android.homefornow.models.Hotel;
@@ -40,7 +43,7 @@ public class HotelDetailFragment extends Fragment
 
     private String hotelId;
     private String photoId;
-    private FragmentHotelDetailBinding fragmentHotelDetailBinding;
+    private FragmentHotelDetailBinding detailBinding;
     private PhotoImageBinding photoImageBinding;
     private DataManager dataManager;
     private Photo photo;
@@ -48,6 +51,7 @@ public class HotelDetailFragment extends Fragment
     private HotelDetailData hotelDetailData;
     private Hotel hotel;
     private List<Photo> hotelPhotoList = new ArrayList<>();
+    private AppDatabase database;
 
 
     public static HotelDetailFragment newInstance(String hotelId, String photoId) {
@@ -69,15 +73,16 @@ public class HotelDetailFragment extends Fragment
             photoId = args.getString(ARG_PHOTO_ID);
         }
         setHasOptionsMenu(true);
+        database = AppDatabase.getInstance((getContext()));
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        fragmentHotelDetailBinding = DataBindingUtil.inflate(inflater, R.layout
+        detailBinding = DataBindingUtil.inflate(inflater, R.layout
                 .fragment_hotel_detail, container, false);
-        toolbar = fragmentHotelDetailBinding.toolbar;
+        toolbar = detailBinding.toolbar;
 
 
         if (toolbar != null) {
@@ -91,7 +96,7 @@ public class HotelDetailFragment extends Fragment
         scaleAnimation.setDuration(500);
         BounceInterpolator bounceInterpolator = new BounceInterpolator();
         scaleAnimation.setInterpolator(bounceInterpolator);
-        fragmentHotelDetailBinding.buttonFavorite.setOnCheckedChangeListener(
+        detailBinding.buttonFavorite.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
@@ -99,17 +104,49 @@ public class HotelDetailFragment extends Fragment
                         compoundButton.startAnimation(scaleAnimation);
                         Toast.makeText(getActivity(), "Favorite Button Clicked =>" + isChecked,
                                 Toast
-                                .LENGTH_SHORT)
+                                        .LENGTH_SHORT)
                                 .show();
                     }
                 });
 
+        return detailBinding.getRoot();
+    }
 
-        return fragmentHotelDetailBinding.getRoot();
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString(ARG_HOTEL_ID, hotelId);
+        outState.putString(ARG_PHOTO_ID, photoId);
+        super.onSaveInstanceState(outState);
+    }
+
+    public void saveFavorite() {
+        if (TextUtils.isEmpty(hotelId)) {
+            Toast.makeText(getContext(), "HotelID is null",
+                    Toast.LENGTH_LONG).show();
+        } else {
+            Favorite favorite = new Favorite(
+                    hotelId,
+                    photoId,
+                    photo.getPhotographer(),
+                    hotelDetailData.getHotel().getName(),
+                    photo.getPhotoUrl(),
+                    hotelDetailData.guests,
+                    hotelDetailData.getType(),
+                    hotelDetailData.price,
+                    hotelDetailData.getDescription(),
+                    "raters",
+                    hotelDetailData.getOffers().get(0).getRoom().getType(),
+                    hotelDetailData.getBedType()
+            );
+            database.favoriteDao().insertFavorite(favorite);
+            Toast.makeText(getContext(), "Favorite Saved",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     private void updateUI() {
-        fragmentHotelDetailBinding.loadingSpinner.setVisibility(View.VISIBLE);
+        // Display progress bar for user
+        detailBinding.loadingSpinner.setVisibility(View.VISIBLE);
         dataManager = DataManager.get(getContext());
         dataManager.addHotelDetailListener(this);
         dataManager.fetchHotelOffersById(hotelId);
@@ -143,9 +180,10 @@ public class HotelDetailFragment extends Fragment
     @Override
     public void onHotelDetailFinished() {
         hotelDetailData = dataManager.getHotelDetailData();
-        fragmentHotelDetailBinding.setModel(hotelDetailData);
-        fragmentHotelDetailBinding.executePendingBindings();
-        fragmentHotelDetailBinding.loadingSpinner.setVisibility(View.GONE);
+        detailBinding.setModel(hotelDetailData);
+        detailBinding.executePendingBindings();
+        detailBinding.loadingSpinner.setVisibility(View.GONE);
+        saveFavorite();
     }
 
     public void setPhoto(Photo photo) {
@@ -155,8 +193,8 @@ public class HotelDetailFragment extends Fragment
     @Override
     public void onPhotoByIdFinished() {
         photo = dataManager.getPhoto();
-        fragmentHotelDetailBinding.setPhoto(photo);
-        fragmentHotelDetailBinding.executePendingBindings();
+        detailBinding.setPhoto(photo);
+        detailBinding.executePendingBindings();
 
     }
 }

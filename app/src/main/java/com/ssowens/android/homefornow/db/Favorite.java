@@ -8,12 +8,14 @@ import android.support.annotation.NonNull;
  * Created by Sheila Owens on 8/26/18.
  */
 
-@Entity
-public class Favorites {
+@Entity(tableName = "favorite")
+public class Favorite {
 
     @NonNull
     @PrimaryKey
     private String hotelId;
+    private String photeId;
+    private String photographer;
     private String hotelName;
     private String photoUrl;
     private String guests;
@@ -24,6 +26,31 @@ public class Favorites {
     private String bedType;
     private String beds;
 
+    public Favorite(@NonNull String hotelId,
+                    String photeId,
+                    String photographer, String hotelName,
+                    String photoUrl,
+                    String guests,
+                    String roomType,
+                    String price,
+                    String description,
+                    String raters,
+                    String bedType,
+                    String beds) {
+        this.hotelId = hotelId;
+        this.photeId = photeId;
+        this.photographer = photographer;
+        this.hotelName = hotelName;
+        this.photoUrl = photoUrl;
+        this.guests = guests;
+        this.roomType = roomType;
+        this.price = price;
+        this.description = description;
+        this.raters = raters;
+        this.bedType = bedType;
+        this.beds = beds;
+    }
+
     @NonNull
     public String getHotelId() {
         return hotelId;
@@ -31,6 +58,22 @@ public class Favorites {
 
     public void setHotelId(@NonNull String hotelId) {
         this.hotelId = hotelId;
+    }
+
+    public String getPhoteId() {
+        return photeId;
+    }
+
+    public void setPhoteId(String photeId) {
+        this.photeId = photeId;
+    }
+
+    public String getPhotographer() {
+        return photographer;
+    }
+
+    public void setPhotographer(String photographer) {
+        this.photographer = photographer;
     }
 
     public String getHotelName() {
@@ -60,6 +103,7 @@ public class Favorites {
     public void setRoomType(String roomType) {
         this.roomType = roomType;
     }
+
     public String getRoomType() {
         return roomType;
     }
@@ -67,6 +111,7 @@ public class Favorites {
     public void setPrice(String price) {
         this.price = price;
     }
+
     public String getPrice() {
         return price;
     }
@@ -82,6 +127,7 @@ public class Favorites {
     public void setRaters(String raters) {
         this.raters = raters;
     }
+
     public String getRaters() {
         return raters;
     }
@@ -89,6 +135,7 @@ public class Favorites {
     public void setBedType(String bedType) {
         this.bedType = bedType;
     }
+
     public String getBedType() {
         return bedType;
     }
@@ -96,31 +143,11 @@ public class Favorites {
     public void setBeds(String beds) {
         this.beds = beds;
     }
+
     public String getBeds() {
         return beds;
     }
 
-    public Favorites(@NonNull String hotelId,
-                     String hotelName,
-                     String photoUrl,
-                     String guests,
-                     String roomType,
-                     String price,
-                     String description,
-                     String raters,
-                     String bedType,
-                     String beds) {
-        this.hotelId = hotelId;
-        this.hotelName = hotelName;
-        this.photoUrl = photoUrl;
-        this.guests = guests;
-        this.roomType = roomType;
-        this.price = price;
-        this.description = description;
-        this.raters = raters;
-        this.bedType = bedType;
-        this.beds = beds;
-    }
 }
 
 
