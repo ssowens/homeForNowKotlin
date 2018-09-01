@@ -21,7 +21,9 @@ public class HotelDetailData {
     public String bedType;
 
     public String getType() {
-        return type;
+        if (!TextUtils.isEmpty(type)) {
+            return type;
+        } else return "";
     }
 
     public Hotel getHotel() {
@@ -46,23 +48,33 @@ public class HotelDetailData {
 
 
     public String getGuests() {
-        if (!TextUtils.isEmpty(getOffers().get(0).getGuests().getAdults()))
-            return getOffers().get(0).getGuests().getAdults() + " " + "guests";
+        if (getOffers() != null) {
+            if (!TextUtils.isEmpty(getOffers().get(0).getGuests().getAdults()))
+                return getOffers().get(0).getGuests().getAdults() + " " + "guests";
+        }
         return "0";
     }
 
     public String getPrice() {
         String price = "$0.00";
-        if (!TextUtils.isEmpty(getOffers().get(0).getPrice().getTotal())) {
-            price = "$" + getOffers().get(0).getPrice().getTotal()
-                    + " " + getOffers().get(0).getPrice()
-                    .getCurrency();
+        if (getOffers() != null) {
+            if (!TextUtils.isEmpty(getOffers().get(0).getPrice().getTotal())) {
+                price = "$" + getOffers().get(0).getPrice().getTotal()
+                        + " " + getOffers().get(0).getPrice()
+                        .getCurrency();
+            }
         }
         return price;
     }
 
     public String getDescription() {
-        return getOffers().get(0).getRoom().getDescription().getText();
+        if (getOffers() != null) {
+            if (!TextUtils.isEmpty(getOffers().get(0).getRoom().getDescription().getText())) {
+                return getOffers().get(0).getRoom().getDescription().getText();
+            }
+
+        }
+        return "";
     }
 
 
@@ -71,7 +83,12 @@ public class HotelDetailData {
     }
 
     public String getBedType() {
-        return getOffers().get(0).getRoom().getTypeEstimated().getBedType();
+        if (getOffers() != null) {
+            if (!TextUtils.isEmpty(getOffers().get(0).getRoom().getTypeEstimated().getBedType())) {
+                return getOffers().get(0).getRoom().getTypeEstimated().getBedType();
+            }
+        }
+        return "";
     }
 
     @Override

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentFavoriteHotelsBinding;
 import com.ssowens.android.homefornow.db.AppDatabase;
+import com.ssowens.android.homefornow.utils.AppExecutors;
 
 import java.util.Collections;
 
@@ -69,7 +70,7 @@ public class FavoritesFragment extends Fragment {
                     R.string.toolbar_title);
         }
         favoriteHotelsBinding.recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),
-                2));
+                1));
         favoriteAdapter = new FavoriteAdapter(Collections.EMPTY_LIST);
         favoriteHotelsBinding.recyclerView.setAdapter(favoriteAdapter);
         return favoriteHotelsBinding.getRoot();
@@ -79,6 +80,17 @@ public class FavoritesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        favoriteAdapter.setFavorites(appDatabase.favoriteDao().loadAllFavorites());
+        retrieveFavorites();
+    }
+
+    private void retrieveFavorites() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                // Will be simplified with Android Architecture Components
+                favoriteAdapter.setFavorites(appDatabase.favoriteDao().loadAllFavorites());
+            }
+        });
     }
 }
+

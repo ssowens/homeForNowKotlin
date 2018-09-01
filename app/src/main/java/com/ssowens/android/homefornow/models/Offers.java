@@ -1,6 +1,7 @@
 package com.ssowens.android.homefornow.models;
 
 import android.databinding.BaseObservable;
+import android.text.TextUtils;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -58,7 +59,9 @@ public class Offers extends BaseObservable {
         private Description description;
 
         public String getType() {
-            return type;
+            if (!TextUtils.isEmpty(type)) {
+                return type;
+            } else return "";
         }
 
         public TypeEstimated getTypeEstimated() {

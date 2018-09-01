@@ -1,6 +1,7 @@
 package com.ssowens.android.homefornow.db;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
@@ -12,7 +13,8 @@ import android.support.annotation.NonNull;
 public class Favorite {
 
     @NonNull
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    private int id;
     private String hotelId;
     private String photeId;
     private String photographer;
@@ -25,7 +27,9 @@ public class Favorite {
     private String raters;
     private String bedType;
     private String beds;
+    private boolean isFavorite;
 
+    @Ignore
     public Favorite(@NonNull String hotelId,
                     String photeId,
                     String photographer, String hotelName,
@@ -36,7 +40,8 @@ public class Favorite {
                     String description,
                     String raters,
                     String bedType,
-                    String beds) {
+                    String beds,
+                    boolean isFavorite) {
         this.hotelId = hotelId;
         this.photeId = photeId;
         this.photographer = photographer;
@@ -49,6 +54,44 @@ public class Favorite {
         this.raters = raters;
         this.bedType = bedType;
         this.beds = beds;
+        this.isFavorite = isFavorite;
+    }
+
+    public Favorite(@NonNull int id, @NonNull String hotelId,
+                    String photeId,
+                    String photographer, String hotelName,
+                    String photoUrl,
+                    String guests,
+                    String roomType,
+                    String price,
+                    String description,
+                    String raters,
+                    String bedType,
+                    String beds,
+                    boolean isFavorite) {
+        this.id = id;
+        this.hotelId = hotelId;
+        this.photeId = photeId;
+        this.photographer = photographer;
+        this.hotelName = hotelName;
+        this.photoUrl = photoUrl;
+        this.guests = guests;
+        this.roomType = roomType;
+        this.price = price;
+        this.description = description;
+        this.raters = raters;
+        this.bedType = bedType;
+        this.beds = beds;
+        this.isFavorite = isFavorite;
+    }
+
+    @NonNull
+    public int getId() {
+        return id;
+    }
+
+    public void setId(@NonNull int id) {
+        this.id = id;
     }
 
     @NonNull
@@ -148,6 +191,13 @@ public class Favorite {
         return beds;
     }
 
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
 }
 
 

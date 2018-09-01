@@ -27,6 +27,7 @@ import com.ssowens.android.homefornow.listeners.PhotoByIdListener;
 import com.ssowens.android.homefornow.models.Hotel;
 import com.ssowens.android.homefornow.models.HotelDetailData;
 import com.ssowens.android.homefornow.models.Photo;
+import com.ssowens.android.homefornow.utils.AppExecutors;
 import com.ssowens.android.homefornow.utils.DataManager;
 
 import java.util.ArrayList;
@@ -51,7 +52,10 @@ public class HotelDetailFragment extends Fragment
     private HotelDetailData hotelDetailData;
     private Hotel hotel;
     private List<Photo> hotelPhotoList = new ArrayList<>();
-    private AppDatabase database;
+    private AppDatabase appDatabase;
+    private FavoriteAdapter favoriteAdapter;
+    private boolean isFavorite;
+    List<Favorite> favs;
 
 
     public static HotelDetailFragment newInstance(String hotelId, String photoId) {
@@ -73,7 +77,7 @@ public class HotelDetailFragment extends Fragment
             photoId = args.getString(ARG_PHOTO_ID);
         }
         setHasOptionsMenu(true);
-        database = AppDatabase.getInstance((getContext()));
+        appDatabase = AppDatabase.getInstance((getContext()));
     }
 
     @Nullable
@@ -106,6 +110,14 @@ public class HotelDetailFragment extends Fragment
                                 Toast
                                         .LENGTH_SHORT)
                                 .show();
+                        if (isChecked) {
+                            isFavorite = isChecked;
+                            saveFavorite();
+                        } else {
+                            isFavorite = isChecked;
+                            removeFavorite();
+                        }
+
                     }
                 });
 
@@ -119,29 +131,78 @@ public class HotelDetailFragment extends Fragment
         super.onSaveInstanceState(outState);
     }
 
+
     public void saveFavorite() {
         if (TextUtils.isEmpty(hotelId)) {
             Toast.makeText(getContext(), "HotelID is null",
                     Toast.LENGTH_LONG).show();
         } else {
-            Favorite favorite = new Favorite(
+            final Favorite favorite = new Favorite(
                     hotelId,
                     photoId,
                     photo.getPhotographer(),
                     hotelDetailData.getHotel().getName(),
                     photo.getPhotoUrl(),
-                    hotelDetailData.guests,
+                    hotelDetailData.getGuests(),
                     hotelDetailData.getType(),
-                    hotelDetailData.price,
+                    hotelDetailData.getPrice(),
                     hotelDetailData.getDescription(),
                     "raters",
                     hotelDetailData.getOffers().get(0).getRoom().getType(),
-                    hotelDetailData.getBedType()
+                    hotelDetailData.getBedType(),
+                    isFavorite
             );
-            database.favoriteDao().insertFavorite(favorite);
-            Toast.makeText(getContext(), "Favorite Saved",
-                    Toast.LENGTH_LONG).show();
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    appDatabase.favoriteDao().insertFavorite(favorite);
+                }
+            });
+
         }
+    }
+
+    public void removeFavorite() {
+        if (TextUtils.isEmpty(hotelId)) {
+            Toast.makeText(getContext(), "HotelID is null",
+                    Toast.LENGTH_LONG).show();
+        } else {
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    List<Favorite> favs = favoriteAdapter.getFavorites();
+                    for (int i = 0; i < favs.size(); i++) {
+                        if (hotelId.equals(favs.get(i).getHotelId())) {
+                            appDatabase.favoriteDao().deleteFavorite(favs.get(i));
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    public List<Favorite> getFavorites() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                // Will be simplified with Android Architecture Components
+                favs = appDatabase.favoriteDao().loadAllFavorites();
+            }
+        });
+        return favs;
+    }
+
+    public boolean getFavorite() {
+        boolean isFav = false;
+        favs = getFavorites();
+        if (favs != null && !favs.isEmpty()) {
+            for (int i = 0; i < favs.size(); i++) {
+                if (hotelId.equals(favs.get(i).getHotelId())) {
+                    isFav = favs.get(i).isFavorite();
+                }
+            }
+        }
+        return isFav;
     }
 
     private void updateUI() {
@@ -180,10 +241,19 @@ public class HotelDetailFragment extends Fragment
     @Override
     public void onHotelDetailFinished() {
         hotelDetailData = dataManager.getHotelDetailData();
+        // Check Favorites against hotelDetailData
+        // Get Favorites from appDatabase if hotel is a favorite change drawable
         detailBinding.setModel(hotelDetailData);
         detailBinding.executePendingBindings();
         detailBinding.loadingSpinner.setVisibility(View.GONE);
-        saveFavorite();
+        detailBinding.buttonFavorite.setVisibility(View.VISIBLE);
+        if (!TextUtils.isEmpty(hotelId)) {
+            boolean fav = getFavorite();
+            if (fav) {
+                detailBinding.buttonFavorite.setBackgroundDrawable(getResources().getDrawable(R.drawable
+                        .ic_favorite));
+            }
+        }
     }
 
     public void setPhoto(Photo photo) {

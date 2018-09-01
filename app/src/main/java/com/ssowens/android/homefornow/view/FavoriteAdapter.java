@@ -70,4 +70,9 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
         this.favorites = favoriteList;
         notifyDataSetChanged();
     }
+
+    public List<Favorite> getFavorites() {
+        return favorites;
+    }
+
 }

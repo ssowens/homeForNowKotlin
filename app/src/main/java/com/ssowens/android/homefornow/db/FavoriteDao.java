@@ -19,8 +19,11 @@ public interface FavoriteDao {
     @Insert
     void insertFavorite(Favorite favorite);
 
-    @Query("SELECT * FROM Favorite ORDER BY hotelName")
+    @Query("SELECT * FROM favorite ORDER BY hotelName")
     List<Favorite> loadAllFavorites();
+
+    @Query("SELECT * FROM favorite WHERE id = :id")
+    Favorite loadFavoriteById(int id);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void  updateFavorite (Favorite favorite);

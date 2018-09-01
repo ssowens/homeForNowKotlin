@@ -25,8 +25,6 @@ public abstract class AppDatabase extends RoomDatabase {
                 Timber.d(String.valueOf(R.string.create_db_instance));
                 sInstance = Room.databaseBuilder(context.getApplicationContext(),
                         AppDatabase.class, AppDatabase.DATABASE_NAME)
-                        // TODO MUST REMOVE FOR TESTING ONLY
-                        .allowMainThreadQueries()
                         .build();
             }
         }
