@@ -1,6 +1,5 @@
 package com.ssowens.android.homefornow.view;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,9 +18,8 @@ import java.util.List;
 public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder> {
 
     private List<Favorite> favorites;
-    private Context context;
 
-    public FavoriteAdapter(List<Favorite> favorites) {
+    FavoriteAdapter(List<Favorite> favorites) {
         this.favorites = favorites;
     }
 
@@ -48,11 +46,11 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
         return favorites.size();
     }
 
-    public class FavoriteViewHolder extends RecyclerView.ViewHolder {
+    class FavoriteViewHolder extends RecyclerView.ViewHolder {
 
         private FavoritesCardViewItemBinding binding;
 
-        public FavoriteViewHolder(FavoritesCardViewItemBinding itemBinding) {
+        FavoriteViewHolder(FavoritesCardViewItemBinding itemBinding) {
             super(itemBinding.getRoot());
             this.binding = itemBinding;
 

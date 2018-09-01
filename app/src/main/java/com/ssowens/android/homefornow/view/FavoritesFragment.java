@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -68,6 +69,11 @@ public class FavoritesFragment extends Fragment {
         } else {
             int currentToolbarTitle = savedInstanceState.getInt(EXTRA_CURRENT_TOOLBAR_TITLE,
                     R.string.toolbar_title);
+        }
+        if (toolbar != null) {
+            ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled
+                    (true);
         }
         favoriteHotelsBinding.recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),
                 1));

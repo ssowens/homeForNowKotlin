@@ -91,7 +91,8 @@ public class HotelDetailFragment extends Fragment
 
         if (toolbar != null) {
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-            //getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled
+                    (true);
         }
 
         final ScaleAnimation scaleAnimation = new ScaleAnimation(0.7f,
@@ -170,7 +171,7 @@ public class HotelDetailFragment extends Fragment
             AppExecutors.getInstance().diskIO().execute(new Runnable() {
                 @Override
                 public void run() {
-                    List<Favorite> favs = favoriteAdapter.getFavorites();
+                    List<Favorite> favs = appDatabase.favoriteDao().loadAllFavorites();
                     for (int i = 0; i < favs.size(); i++) {
                         if (hotelId.equals(favs.get(i).getHotelId())) {
                             appDatabase.favoriteDao().deleteFavorite(favs.get(i));
