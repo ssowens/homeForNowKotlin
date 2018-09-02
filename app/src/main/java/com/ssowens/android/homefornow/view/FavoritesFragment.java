@@ -1,5 +1,7 @@
 package com.ssowens.android.homefornow.view;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,9 +17,12 @@ import android.view.ViewGroup;
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentFavoriteHotelsBinding;
 import com.ssowens.android.homefornow.db.AppDatabase;
-import com.ssowens.android.homefornow.utils.AppExecutors;
+import com.ssowens.android.homefornow.db.Favorite;
 
 import java.util.Collections;
+import java.util.List;
+
+import timber.log.Timber;
 
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_ID;
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_PHOTO_ID;
@@ -53,6 +58,7 @@ public class FavoritesFragment extends Fragment {
             String photoId = args.getString(ARG_PHOTO_ID);
         }
         appDatabase = AppDatabase.getInstance(getContext());
+        retrieveFavorites();
     }
 
     @Nullable
@@ -86,15 +92,17 @@ public class FavoritesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        retrieveFavorites();
+
     }
 
     private void retrieveFavorites() {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+        Timber.d("Actively retrieving the favorite from the database");
+        final LiveData<List<Favorite>> favs = appDatabase.favoriteDao().loadAllFavorites();
+        favs.observe(getActivity(), new Observer<List<Favorite>>() {
             @Override
-            public void run() {
-                // Will be simplified with Android Architecture Components
-                favoriteAdapter.setFavorites(appDatabase.favoriteDao().loadAllFavorites());
+            public void onChanged(@Nullable List<Favorite> favorites) {
+                Timber.d("Receiving database update from LiveData");
+                favoriteAdapter.setFavorites(favorites);
             }
         });
     }

@@ -1,5 +1,7 @@
 package com.ssowens.android.homefornow.view;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -32,6 +34,8 @@ import com.ssowens.android.homefornow.utils.DataManager;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_ID;
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_PHOTO_ID;
@@ -78,6 +82,15 @@ public class HotelDetailFragment extends Fragment
         }
         setHasOptionsMenu(true);
         appDatabase = AppDatabase.getInstance((getContext()));
+        setupViewModel();
+    }
+
+    private void setFavorites(List<Favorite> favoriteList) {
+        this.favs = favoriteList;
+    }
+
+    public List<Favorite> getFavorites() {
+        return favs;
     }
 
     @Nullable
@@ -125,6 +138,7 @@ public class HotelDetailFragment extends Fragment
         return detailBinding.getRoot();
     }
 
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString(ARG_HOTEL_ID, hotelId);
@@ -171,7 +185,6 @@ public class HotelDetailFragment extends Fragment
             AppExecutors.getInstance().diskIO().execute(new Runnable() {
                 @Override
                 public void run() {
-                    List<Favorite> favs = appDatabase.favoriteDao().loadAllFavorites();
                     for (int i = 0; i < favs.size(); i++) {
                         if (hotelId.equals(favs.get(i).getHotelId())) {
                             appDatabase.favoriteDao().deleteFavorite(favs.get(i));
@@ -182,20 +195,22 @@ public class HotelDetailFragment extends Fragment
         }
     }
 
-    public List<Favorite> getFavorites() {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+    private void setupViewModel() {
+//        HotelDetailViewModel viewModel = ViewModelProviders.of(this).get
+//                (HotelDetailViewModel.class);
+//        viewModel.getFavorites().observe(this, new Observer<List<Favorite>>() {
+        LiveData<List<Favorite>> favorites = appDatabase.favoriteDao().loadAllFavorites();
+        favorites.observe(getActivity(), new Observer<List<Favorite>>() {
             @Override
-            public void run() {
-                // Will be simplified with Android Architecture Components
-                favs = appDatabase.favoriteDao().loadAllFavorites();
+            public void onChanged(@Nullable List<Favorite> favorites) {
+                Timber.d("Updating list of favorites from LiveData in ViewModel");
+                setFavorites(favorites);
             }
         });
-        return favs;
     }
 
     public boolean getFavorite() {
         boolean isFav = false;
-        favs = getFavorites();
         if (favs != null && !favs.isEmpty()) {
             for (int i = 0; i < favs.size(); i++) {
                 if (hotelId.equals(favs.get(i).getHotelId())) {
@@ -253,6 +268,7 @@ public class HotelDetailFragment extends Fragment
             if (fav) {
                 detailBinding.buttonFavorite.setBackgroundDrawable(getResources().getDrawable(R.drawable
                         .ic_favorite));
+                detailBinding.executePendingBindings();
             }
         }
     }

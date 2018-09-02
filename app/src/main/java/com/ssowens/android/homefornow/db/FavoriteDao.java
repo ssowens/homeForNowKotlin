@@ -1,5 +1,6 @@
 package com.ssowens.android.homefornow.db;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -20,10 +21,10 @@ public interface FavoriteDao {
     void insertFavorite(Favorite favorite);
 
     @Query("SELECT * FROM favorite ORDER BY hotelName")
-    List<Favorite> loadAllFavorites();
+    LiveData<List<Favorite>> loadAllFavorites();
 
     @Query("SELECT * FROM favorite WHERE id = :id")
-    Favorite loadFavoriteById(int id);
+    LiveData<Favorite> loadFavoriteById(int id);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void  updateFavorite (Favorite favorite);
