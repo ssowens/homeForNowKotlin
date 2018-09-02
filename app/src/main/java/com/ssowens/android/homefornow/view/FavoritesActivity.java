@@ -1,5 +1,6 @@
 package com.ssowens.android.homefornow.view;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
@@ -9,6 +10,11 @@ import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_PHOTO_ID;
 
 public class FavoritesActivity extends SingleFragmentActivity {
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     protected Fragment createFragment() {

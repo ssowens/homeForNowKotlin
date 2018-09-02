@@ -2,6 +2,7 @@ package com.ssowens.android.homefornow.models;
 
 import android.databinding.BaseObservable;
 import android.databinding.BindingAdapter;
+import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -41,7 +42,10 @@ public class Hotel extends BaseObservable {
 
 
     public String getName() {
-        return name;
+        if (!TextUtils.isEmpty(name)) {
+            return name;
+        }
+        return "";
     }
 
     public String getRating() {

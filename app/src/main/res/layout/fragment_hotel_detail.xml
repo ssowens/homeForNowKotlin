@@ -69,6 +69,7 @@
             android:contentDescription="@string/favorite_icon_unselected"
             android:layout_gravity="end"
             android:checked="false"
+            android:visibility="invisible"
             android:text=""
             android:textOff=""
             android:textOn=""/>
