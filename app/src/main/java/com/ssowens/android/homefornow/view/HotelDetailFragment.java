@@ -1,7 +1,7 @@
 package com.ssowens.android.homefornow.view;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,6 +31,7 @@ import com.ssowens.android.homefornow.models.HotelDetailData;
 import com.ssowens.android.homefornow.models.Photo;
 import com.ssowens.android.homefornow.utils.AppExecutors;
 import com.ssowens.android.homefornow.utils.DataManager;
+import com.ssowens.android.homefornow.viewModels.HotelDetailViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -196,11 +197,9 @@ public class HotelDetailFragment extends Fragment
     }
 
     private void setupViewModel() {
-//        HotelDetailViewModel viewModel = ViewModelProviders.of(this).get
-//                (HotelDetailViewModel.class);
-//        viewModel.getFavorites().observe(this, new Observer<List<Favorite>>() {
-        LiveData<List<Favorite>> favorites = appDatabase.favoriteDao().loadAllFavorites();
-        favorites.observe(getActivity(), new Observer<List<Favorite>>() {
+        HotelDetailViewModel viewModel = ViewModelProviders.of(this).get(HotelDetailViewModel
+                .class);
+        viewModel.getFavorites().observe(this, new Observer<List<Favorite>>() {
             @Override
             public void onChanged(@Nullable List<Favorite> favorites) {
                 Timber.d("Updating list of favorites from LiveData in ViewModel");
