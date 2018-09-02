@@ -1,5 +1,7 @@
 package com.ssowens.android.homefornow.view;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,15 +22,20 @@ import android.widget.Toast;
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentHotelDetailBinding;
 import com.ssowens.android.homefornow.databinding.PhotoImageBinding;
+import com.ssowens.android.homefornow.db.AppDatabase;
+import com.ssowens.android.homefornow.db.Favorite;
 import com.ssowens.android.homefornow.listeners.HotelDetailListener;
 import com.ssowens.android.homefornow.listeners.PhotoByIdListener;
 import com.ssowens.android.homefornow.models.Hotel;
 import com.ssowens.android.homefornow.models.HotelDetailData;
 import com.ssowens.android.homefornow.models.Photo;
+import com.ssowens.android.homefornow.utils.AppExecutors;
 import com.ssowens.android.homefornow.utils.DataManager;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_ID;
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_PHOTO_ID;
@@ -40,7 +48,7 @@ public class HotelDetailFragment extends Fragment
 
     private String hotelId;
     private String photoId;
-    private FragmentHotelDetailBinding fragmentHotelDetailBinding;
+    private FragmentHotelDetailBinding detailBinding;
     private PhotoImageBinding photoImageBinding;
     private DataManager dataManager;
     private Photo photo;
@@ -48,6 +56,10 @@ public class HotelDetailFragment extends Fragment
     private HotelDetailData hotelDetailData;
     private Hotel hotel;
     private List<Photo> hotelPhotoList = new ArrayList<>();
+    private AppDatabase appDatabase;
+    private FavoriteAdapter favoriteAdapter;
+    private boolean isFavorite;
+    List<Favorite> favs;
 
 
     public static HotelDetailFragment newInstance(String hotelId, String photoId) {
@@ -69,20 +81,31 @@ public class HotelDetailFragment extends Fragment
             photoId = args.getString(ARG_PHOTO_ID);
         }
         setHasOptionsMenu(true);
+        appDatabase = AppDatabase.getInstance((getContext()));
+        setupViewModel();
+    }
+
+    private void setFavorites(List<Favorite> favoriteList) {
+        this.favs = favoriteList;
+    }
+
+    public List<Favorite> getFavorites() {
+        return favs;
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        fragmentHotelDetailBinding = DataBindingUtil.inflate(inflater, R.layout
+        detailBinding = DataBindingUtil.inflate(inflater, R.layout
                 .fragment_hotel_detail, container, false);
-        toolbar = fragmentHotelDetailBinding.toolbar;
+        toolbar = detailBinding.toolbar;
 
 
         if (toolbar != null) {
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-            //getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled
+                    (true);
         }
 
         final ScaleAnimation scaleAnimation = new ScaleAnimation(0.7f,
@@ -91,7 +114,7 @@ public class HotelDetailFragment extends Fragment
         scaleAnimation.setDuration(500);
         BounceInterpolator bounceInterpolator = new BounceInterpolator();
         scaleAnimation.setInterpolator(bounceInterpolator);
-        fragmentHotelDetailBinding.buttonFavorite.setOnCheckedChangeListener(
+        detailBinding.buttonFavorite.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
@@ -99,17 +122,108 @@ public class HotelDetailFragment extends Fragment
                         compoundButton.startAnimation(scaleAnimation);
                         Toast.makeText(getActivity(), "Favorite Button Clicked =>" + isChecked,
                                 Toast
-                                .LENGTH_SHORT)
+                                        .LENGTH_SHORT)
                                 .show();
+                        if (isChecked) {
+                            isFavorite = isChecked;
+                            saveFavorite();
+                        } else {
+                            isFavorite = isChecked;
+                            removeFavorite();
+                        }
+
                     }
                 });
 
+        return detailBinding.getRoot();
+    }
 
-        return fragmentHotelDetailBinding.getRoot();
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString(ARG_HOTEL_ID, hotelId);
+        outState.putString(ARG_PHOTO_ID, photoId);
+        super.onSaveInstanceState(outState);
+    }
+
+
+    public void saveFavorite() {
+        if (TextUtils.isEmpty(hotelId)) {
+            Toast.makeText(getContext(), "HotelID is null",
+                    Toast.LENGTH_LONG).show();
+        } else {
+            final Favorite favorite = new Favorite(
+                    hotelId,
+                    photoId,
+                    photo.getPhotographer(),
+                    hotelDetailData.getHotel().getName(),
+                    photo.getPhotoUrl(),
+                    hotelDetailData.getGuests(),
+                    hotelDetailData.getType(),
+                    hotelDetailData.getPrice(),
+                    hotelDetailData.getDescription(),
+                    "raters",
+                    hotelDetailData.getOffers().get(0).getRoom().getType(),
+                    hotelDetailData.getBedType(),
+                    isFavorite
+            );
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    appDatabase.favoriteDao().insertFavorite(favorite);
+                }
+            });
+
+        }
+    }
+
+    public void removeFavorite() {
+        if (TextUtils.isEmpty(hotelId)) {
+            Toast.makeText(getContext(), "HotelID is null",
+                    Toast.LENGTH_LONG).show();
+        } else {
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < favs.size(); i++) {
+                        if (hotelId.equals(favs.get(i).getHotelId())) {
+                            appDatabase.favoriteDao().deleteFavorite(favs.get(i));
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    private void setupViewModel() {
+//        HotelDetailViewModel viewModel = ViewModelProviders.of(this).get
+//                (HotelDetailViewModel.class);
+//        viewModel.getFavorites().observe(this, new Observer<List<Favorite>>() {
+        LiveData<List<Favorite>> favorites = appDatabase.favoriteDao().loadAllFavorites();
+        favorites.observe(getActivity(), new Observer<List<Favorite>>() {
+            @Override
+            public void onChanged(@Nullable List<Favorite> favorites) {
+                Timber.d("Updating list of favorites from LiveData in ViewModel");
+                setFavorites(favorites);
+            }
+        });
+    }
+
+    public boolean getFavorite() {
+        boolean isFav = false;
+        if (favs != null && !favs.isEmpty()) {
+            for (int i = 0; i < favs.size(); i++) {
+                if (hotelId.equals(favs.get(i).getHotelId())) {
+                    isFav = favs.get(i).isFavorite();
+                }
+            }
+        }
+        return isFav;
     }
 
     private void updateUI() {
-        fragmentHotelDetailBinding.loadingSpinner.setVisibility(View.VISIBLE);
+        // Display progress bar for user
+        detailBinding.loadingSpinner.setVisibility(View.VISIBLE);
         dataManager = DataManager.get(getContext());
         dataManager.addHotelDetailListener(this);
         dataManager.fetchHotelOffersById(hotelId);
@@ -143,9 +257,20 @@ public class HotelDetailFragment extends Fragment
     @Override
     public void onHotelDetailFinished() {
         hotelDetailData = dataManager.getHotelDetailData();
-        fragmentHotelDetailBinding.setModel(hotelDetailData);
-        fragmentHotelDetailBinding.executePendingBindings();
-        fragmentHotelDetailBinding.loadingSpinner.setVisibility(View.GONE);
+        // Check Favorites against hotelDetailData
+        // Get Favorites from appDatabase if hotel is a favorite change drawable
+        detailBinding.setModel(hotelDetailData);
+        detailBinding.executePendingBindings();
+        detailBinding.loadingSpinner.setVisibility(View.GONE);
+        detailBinding.buttonFavorite.setVisibility(View.VISIBLE);
+        if (!TextUtils.isEmpty(hotelId)) {
+            boolean fav = getFavorite();
+            if (fav) {
+                detailBinding.buttonFavorite.setBackgroundDrawable(getResources().getDrawable(R.drawable
+                        .ic_favorite));
+                detailBinding.executePendingBindings();
+            }
+        }
     }
 
     public void setPhoto(Photo photo) {
@@ -155,8 +280,8 @@ public class HotelDetailFragment extends Fragment
     @Override
     public void onPhotoByIdFinished() {
         photo = dataManager.getPhoto();
-        fragmentHotelDetailBinding.setPhoto(photo);
-        fragmentHotelDetailBinding.executePendingBindings();
+        detailBinding.setPhoto(photo);
+        detailBinding.executePendingBindings();
 
     }
 }

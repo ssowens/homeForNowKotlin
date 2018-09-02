@@ -22,10 +22,15 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".view.HotelDetailActivity">
+        <activity android:name=".view.HotelDetailActivity"
+            android:parentActivityName=".view.TopRatedHotelActivity">
         </activity>
-        <activity android:name=".view.FavoritesActivity"/>
-        <activity android:name=".view.TopRatedHotelActivity"/>
+        <activity
+            android:name=".view.FavoritesActivity"
+            android:parentActivityName=".view.MainActivity"/>
+        <activity
+            android:name=".view.TopRatedHotelActivity"
+            android:parentActivityName=".view.MainActivity"/>
 
         <receiver android:name=".HomeForNowWidget">
             <intent-filter>

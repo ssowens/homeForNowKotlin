@@ -3,6 +3,7 @@ package com.ssowens.android.homefornow.models;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.databinding.BindingAdapter;
+import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -41,7 +42,9 @@ public class Photo extends BaseObservable {
 
     @Bindable
     public String getPhotoUrl() {
-        return pictureSrc.getOriginal();
+        if (!TextUtils.isEmpty(pictureSrc.getOriginal())) {
+            return pictureSrc.getOriginal();
+        } else return "";
     }
 
     public void setPhotoUrl(String photoUrl) {
@@ -50,7 +53,9 @@ public class Photo extends BaseObservable {
     }
 
     public String getPhotographer() {
-        return photographer;
+        if (!TextUtils.isEmpty(photographer)) {
+            return photographer;
+        } else return "";
     }
 
     @Bindable

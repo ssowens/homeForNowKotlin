@@ -75,7 +75,7 @@
                 android:layout_gravity="center"
                 android:indeterminateTint="@color/colorAccent"
                 android:indeterminateTintMode="src_atop"
-                android:visibility="visible"/>
+                android:visibility="gone"/>
         </android.support.design.widget.CoordinatorLayout>
 
 

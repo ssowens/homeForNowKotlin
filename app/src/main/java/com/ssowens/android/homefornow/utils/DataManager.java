@@ -62,7 +62,7 @@ public class DataManager {
     public static final String HEADER_AUTHORIZATION = "Authorization";
     private static final String HEADER_AUTHORIZATION_BEARER = "Authorization: Bearer";
     private static final String HEADER_BEARER = "Bearer ";
-    private static final int HOTEL_RATING = 4;
+    private static final int HOTEL_RATING = 3;
     private static final String HOTEL_VIEW = "FULL";
 
     // KEYS FOR API
@@ -435,7 +435,7 @@ public class DataManager {
 
         for (int iter = 0; iter < myData.size(); iter++) {
             hotelList.add(myData.get(iter).getHotel());
-            Timber.i("Sheila (hotelData) == %s", hotelList.toString());
+            //Timber.i("Sheila (hotelData) == %s", hotelList.toString());
         }
     }
 
