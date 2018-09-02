@@ -13,4 +13,8 @@
     <string name="loading_text">Loading . . . .</string>
     <string name="top_rated_hotels">Top Rated Hotels</string>
     <string name="favorite_icon_unselected">Favorites unselected</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="data_count_format">%1$d @%2$s</string>
+    <string name="update_now">Update Now</string>
 </resources>
