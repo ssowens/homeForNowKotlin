@@ -21,10 +21,10 @@ import android.view.animation.ScaleAnimation;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.ssowens.android.homefornow.R;
@@ -41,7 +41,6 @@ import com.ssowens.android.homefornow.utils.AppExecutors;
 import com.ssowens.android.homefornow.utils.DataManager;
 import com.ssowens.android.homefornow.viewModels.HotelDetailViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import timber.log.Timber;
@@ -53,7 +52,7 @@ import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_PHOTO_
  * Created by Sheila Owens on 8/2/18.
  */
 public class HotelDetailFragment extends Fragment
-        implements HotelDetailListener, PhotoByIdListener {
+        implements HotelDetailListener, PhotoByIdListener, OnMapReadyCallback {
 
     public static final String FAVORITES_KEY = "favCount";
     private String hotelId;
@@ -65,7 +64,6 @@ public class HotelDetailFragment extends Fragment
     private Toolbar toolbar;
     private HotelDetailData hotelDetailData;
     private Hotel hotel;
-    private List<Photo> hotelPhotoList = new ArrayList<>();
     private AppDatabase appDatabase;
     private FavoriteAdapter favoriteAdapter;
     private boolean isFavorite;
@@ -112,7 +110,6 @@ public class HotelDetailFragment extends Fragment
                 .fragment_hotel_detail, container, false);
         toolbar = detailBinding.toolbar;
 
-
         if (toolbar != null) {
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
             ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled
@@ -121,6 +118,9 @@ public class HotelDetailFragment extends Fragment
 
         mapView = detailBinding.mapView;
         mapView.onCreate(savedInstanceState);
+
+        // TODO moved this lower
+        //mapView.getMapAsync(this);
 
         final ScaleAnimation scaleAnimation = new ScaleAnimation(0.7f,
                 1.0f, 0.7f, 1.0f, Animation
@@ -177,7 +177,7 @@ public class HotelDetailFragment extends Fragment
                     hotelDetailData.getType(),
                     hotelDetailData.getPrice(),
                     hotelDetailData.getDescription(),
-                    "raters",
+                    "raters", // TODO remove
                     hotelDetailData.getOffers().get(0).getRoom().getType(),
                     hotelDetailData.getBedType(),
                     isFavorite
@@ -261,6 +261,9 @@ public class HotelDetailFragment extends Fragment
     @Override
     public void onStart() {
         super.onStart();
+        if (mapView != null) {
+            mapView.onStart();
+        }
         dataManager.addPhotoByIdListener(this);
         dataManager.fetchPhotosById(photoId);
     }
@@ -268,6 +271,9 @@ public class HotelDetailFragment extends Fragment
     @Override
     public void onStop() {
         super.onStop();
+        if (mapView != null) {
+            mapView.onStop();
+        }
         dataManager.removeHotelDetailListener(this);
         dataManager.removePhotoByIdListener(this);
     }
@@ -322,6 +328,7 @@ public class HotelDetailFragment extends Fragment
                         .ic_favorite));
             }
         }
+        mapView.getMapAsync(this);
     }
 
     public void setPhoto(Photo photo) {
@@ -336,8 +343,10 @@ public class HotelDetailFragment extends Fragment
     }
 
     public void onMapReady(GoogleMap googleMap) {
-        LatLng selectedLocation = new LatLng();
+        LatLng selectedLocation = new LatLng(hotelDetailData.getLatitude(), hotelDetailData
+                .getLongitude());
         googleMap.addMarker(new MarkerOptions().position(selectedLocation));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(selectedLocation));
+        detailBinding.executePendingBindings();
     }
 }
