@@ -21,6 +21,12 @@ import android.view.animation.ScaleAnimation;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentHotelDetailBinding;
 import com.ssowens.android.homefornow.databinding.PhotoImageBinding;
@@ -35,7 +41,6 @@ import com.ssowens.android.homefornow.utils.AppExecutors;
 import com.ssowens.android.homefornow.utils.DataManager;
 import com.ssowens.android.homefornow.viewModels.HotelDetailViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import timber.log.Timber;
@@ -47,7 +52,7 @@ import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_PHOTO_
  * Created by Sheila Owens on 8/2/18.
  */
 public class HotelDetailFragment extends Fragment
-        implements HotelDetailListener, PhotoByIdListener {
+        implements HotelDetailListener, PhotoByIdListener, OnMapReadyCallback {
 
     public static final String FAVORITES_KEY = "favCount";
     private String hotelId;
@@ -59,13 +64,11 @@ public class HotelDetailFragment extends Fragment
     private Toolbar toolbar;
     private HotelDetailData hotelDetailData;
     private Hotel hotel;
-    private List<Photo> hotelPhotoList = new ArrayList<>();
     private AppDatabase appDatabase;
     private FavoriteAdapter favoriteAdapter;
     private boolean isFavorite;
+    protected MapView mapView;
     List<Favorite> favs;
-
-
 
     public static HotelDetailFragment newInstance(String hotelId, String photoId) {
         Bundle args = new Bundle();
@@ -106,12 +109,14 @@ public class HotelDetailFragment extends Fragment
                 .fragment_hotel_detail, container, false);
         toolbar = detailBinding.toolbar;
 
-
         if (toolbar != null) {
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
             ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled
                     (true);
         }
+
+        mapView = detailBinding.mapView;
+        mapView.onCreate(savedInstanceState);
 
         final ScaleAnimation scaleAnimation = new ScaleAnimation(0.7f,
                 1.0f, 0.7f, 1.0f, Animation
@@ -148,6 +153,9 @@ public class HotelDetailFragment extends Fragment
         outState.putString(ARG_HOTEL_ID, hotelId);
         outState.putString(ARG_PHOTO_ID, photoId);
         super.onSaveInstanceState(outState);
+        if (mapView != null) {
+            mapView.onSaveInstanceState(outState);
+        }
     }
 
     public void saveFavorite() {
@@ -165,7 +173,7 @@ public class HotelDetailFragment extends Fragment
                     hotelDetailData.getType(),
                     hotelDetailData.getPrice(),
                     hotelDetailData.getDescription(),
-                    "raters",
+                    "raters", // TODO remove
                     hotelDetailData.getOffers().get(0).getRoom().getType(),
                     hotelDetailData.getBedType(),
                     isFavorite
@@ -249,6 +257,9 @@ public class HotelDetailFragment extends Fragment
     @Override
     public void onStart() {
         super.onStart();
+        if (mapView != null) {
+            mapView.onStart();
+        }
         dataManager.addPhotoByIdListener(this);
         dataManager.fetchPhotosById(photoId);
     }
@@ -256,6 +267,9 @@ public class HotelDetailFragment extends Fragment
     @Override
     public void onStop() {
         super.onStop();
+        if (mapView != null) {
+            mapView.onStop();
+        }
         dataManager.removeHotelDetailListener(this);
         dataManager.removePhotoByIdListener(this);
     }
@@ -263,6 +277,37 @@ public class HotelDetailFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
+        if (mapView != null) {
+            mapView.onResume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        if (mapView != null) {
+            mapView.onPause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mapView != null) {
+            try {
+                mapView.onDestroy();
+            } catch (NullPointerException e) {
+                Timber.e(e, getString(R.string.mapview_ondestroy_error));
+            }
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        if (mapView != null) {
+            mapView.onLowMemory();
+        }
     }
 
     @Override
@@ -279,6 +324,7 @@ public class HotelDetailFragment extends Fragment
                         .ic_favorite));
             }
         }
+        mapView.getMapAsync(this);
     }
 
     public void setPhoto(Photo photo) {
@@ -290,6 +336,13 @@ public class HotelDetailFragment extends Fragment
         photo = dataManager.getPhoto();
         detailBinding.setPhoto(photo);
         detailBinding.executePendingBindings();
+    }
 
+    public void onMapReady(GoogleMap googleMap) {
+        LatLng selectedLocation = new LatLng(hotelDetailData.getLatitude(), hotelDetailData
+                .getLongitude());
+        googleMap.addMarker(new MarkerOptions().position(selectedLocation));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(selectedLocation));
+        detailBinding.executePendingBindings();
     }
 }

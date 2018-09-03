@@ -13,12 +13,15 @@ public class HotelDetailData {
     private Hotel hotel;
     private boolean available;
     private List<Offers> offers;
-    public String imageUrl;
-    public String guests;
-    public String price;
+    private String imageUrl;
+    private String guests;
+    private String price;
     public String description;
-    public String bed;
-    public String bedType;
+    private String bed;
+    private String bedType;
+    private Float latitude;
+    private Float longitude;
+
 
     public String getType() {
         if (!TextUtils.isEmpty(type)) {
@@ -83,12 +86,30 @@ public class HotelDetailData {
     }
 
     public String getBedType() {
-        if (getOffers() != null) {
-            if (!TextUtils.isEmpty(getOffers().get(0).getRoom().getTypeEstimated().getBedType())) {
-                return getOffers().get(0).getRoom().getTypeEstimated().getBedType();
-            }
+        if (getOffers().get(0).getRoom().getTypeEstimated().getBedType() != null) {
+            return getOffers().get(0).getRoom().getTypeEstimated().getBedType();
         }
         return "";
+    }
+
+    public Float getLatitude() {
+        latitude = 0.0f;
+        if (getHotel() != null) {
+            if (getHotel().getLatitude() != 0.0) {
+                return getHotel().getLatitude();
+            }
+        }
+        return latitude;
+    }
+
+    public Float getLongitude() {
+        longitude = 0.0f;
+        if (getHotel() != null) {
+            if (getHotel().getLongitude() != 0.0) {
+                return getHotel().getLongitude();
+            }
+        }
+        return longitude;
     }
 
     @Override

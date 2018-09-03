@@ -4,15 +4,17 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.ssowens.android.homefornow"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        resValue "string", "google_maps_key", (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
         dataBinding {
             enabled = true
         }
+        multiDexEnabled true
 
     }
     buildTypes {
@@ -84,5 +86,8 @@ dependencies {
      // ViewModel and Live Data
     implementation "android.arch.lifecycle:extensions:1.1.1"
     annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
+
+    // Google Play Services for Maps
+    implementation 'com.google.android.gms:play-services-maps:15.0.1'
 
 }
