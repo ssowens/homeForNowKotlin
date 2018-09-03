@@ -70,7 +70,6 @@ public class HotelDetailFragment extends Fragment
     protected MapView mapView;
     List<Favorite> favs;
 
-
     public static HotelDetailFragment newInstance(String hotelId, String photoId) {
         Bundle args = new Bundle();
         args.putString(ARG_HOTEL_ID, hotelId);
@@ -118,9 +117,6 @@ public class HotelDetailFragment extends Fragment
 
         mapView = detailBinding.mapView;
         mapView.onCreate(savedInstanceState);
-
-        // TODO moved this lower
-        //mapView.getMapAsync(this);
 
         final ScaleAnimation scaleAnimation = new ScaleAnimation(0.7f,
                 1.0f, 0.7f, 1.0f, Animation
