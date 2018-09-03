@@ -6,10 +6,13 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 
 import java.text.DateFormat;
 import java.util.Date;
+
+import static com.ssowens.android.homefornow.view.HotelDetailFragment.FAVORITES_KEY;
 
 /**
  * Implementation of App Widget functionality.
@@ -28,10 +31,12 @@ public class HomeForNowWidget extends AppWidgetProvider {
         int count = prefs.getInt(COUNT_KEY + appWidgetId, 0);
         count++;
 
+        // Get the favorites count
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        int favs_count = preferences.getInt(FAVORITES_KEY, 0);
+
         String dateString =
                 DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date());
-
-
 
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.home_for_now_widget);
@@ -41,9 +46,10 @@ public class HomeForNowWidget extends AppWidgetProvider {
                 context.getResources().getString(
                         R.string.data_count_format, count, dateString));
 
+        views.setTextViewText(R.id.favorite_count, String.valueOf(favs_count));
+
         SharedPreferences.Editor prefEditor = prefs.edit();
         prefEditor.putInt(COUNT_KEY + appWidgetId, count);
-        prefEditor.apply();
 
         Intent intentUpdate = new Intent(context, HomeForNowWidget.class);
         intentUpdate.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
@@ -56,7 +62,6 @@ public class HomeForNowWidget extends AppWidgetProvider {
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         views.setOnClickPendingIntent(R.id.button_update, pendingUpdate);
-
 
 
         // Instruct the widget manager to update the widget

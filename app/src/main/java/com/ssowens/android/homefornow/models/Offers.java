@@ -81,7 +81,11 @@ public class Offers extends BaseObservable {
             }
 
             public String getBedType() {
-                return bedType;
+                if (!TextUtils.isEmpty(bedType)) {
+                    return bedType;
+                } else {
+                    return "";
+                }
             }
 
             @Override

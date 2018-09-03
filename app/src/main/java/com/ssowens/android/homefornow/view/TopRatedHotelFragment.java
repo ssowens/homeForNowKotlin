@@ -2,6 +2,7 @@ package com.ssowens.android.homefornow.view;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -25,6 +26,7 @@ import com.ssowens.android.homefornow.utils.DataManager;
 import java.util.Collections;
 import java.util.List;
 
+import static com.ssowens.android.homefornow.utils.DataManager.AMADEUS_ACCESS_TOKEN;
 import static com.ssowens.android.homefornow.view.PhotoFragment.EXTRA_CURRENT_TOOLBAR_TITLE;
 
 /**
@@ -125,5 +127,9 @@ public class TopRatedHotelFragment extends Fragment
         topRatedHotelsAdapter.setHotelPhotoList(photoList);
         dataManager.addHotelOffersSearchListener(this);
         dataManager.fetchHotelOffers();
+
+        // TODO NEEDS TO BE HANDLED
+        PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString
+                (AMADEUS_ACCESS_TOKEN, dataManager.getTokenString()).apply();
     }
 }
