@@ -92,10 +92,11 @@ public class DataManager {
     private HotelDetailData hotelDetail;
 
 
-
     private Photo photo;
     public Data data;
     public AmadeusAccessTokenResponse amadeusAccessToken;
+
+    public String tokenString;
 
     // Listeners List
     private List<HotelImageListener> hotelImageListenerList;
@@ -201,7 +202,7 @@ public class DataManager {
                     .addConverterFactory(gsonConverterFactory)
                     .build();
 
-          //  TokenStore tokenStore = TokenStore.get(context);
+            //  TokenStore tokenStore = TokenStore.get(context);
             //sAccessToken = tokenStore.getAccessToken();
 
             // TODO Need to use a singleton
@@ -298,8 +299,8 @@ public class DataManager {
                     public void onResponse(Call<Photo> call,
                                            retrofit2.Response<Photo> response) {
                         if (response.body() != null) {
-                           photo = response.body();
-                           setPhoto(photo);
+                            photo = response.body();
+                            setPhoto(photo);
                             notifyPhotoByIdListeners();
                         }
                     }
@@ -345,9 +346,9 @@ public class DataManager {
                                            responseToken) {
                 if (responseToken.isSuccessful() && responseToken.body() != null) {
                     AmadeusAccessTokenResponse token = responseToken.body();
-                    String tokenString = HEADER_BEARER + token.getAccess_token();
-
-                    hotelOffersApi.hotelOffersSearch(tokenString, "ATL", "5",
+                    tokenString = HEADER_BEARER + token.getAccess_token();
+                    setTokenString(tokenString);
+                    hotelOffersApi.hotelOffersSearch(tokenString, "LAX", "5",
                             "KM", "false",
                             "true", HOTEL_VIEW, "NONE", HOTEL_RATING)
                             .enqueue(new Callback<HotelOffersResponse>() {
@@ -549,4 +550,11 @@ public class DataManager {
         }
     }
 
+    public String getTokenString() {
+        return tokenString;
+    }
+
+    public void setTokenString(String tokenString) {
+        this.tokenString = tokenString;
+    }
 }

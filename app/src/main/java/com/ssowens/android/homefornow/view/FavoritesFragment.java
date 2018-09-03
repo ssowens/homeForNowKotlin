@@ -1,9 +1,11 @@
 package com.ssowens.android.homefornow.view;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,6 +20,7 @@ import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentFavoriteHotelsBinding;
 import com.ssowens.android.homefornow.db.AppDatabase;
 import com.ssowens.android.homefornow.db.Favorite;
+import com.ssowens.android.homefornow.viewModels.HotelDetailViewModel;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +29,7 @@ import timber.log.Timber;
 
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_ID;
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_PHOTO_ID;
+import static com.ssowens.android.homefornow.view.HotelDetailFragment.FAVORITES_KEY;
 import static com.ssowens.android.homefornow.view.PhotoFragment.EXTRA_CURRENT_TOOLBAR_TITLE;
 
 
@@ -58,7 +62,7 @@ public class FavoritesFragment extends Fragment {
             String photoId = args.getString(ARG_PHOTO_ID);
         }
         appDatabase = AppDatabase.getInstance(getContext());
-        retrieveFavorites();
+        setupViewModel();
     }
 
     @Nullable
@@ -95,16 +99,25 @@ public class FavoritesFragment extends Fragment {
 
     }
 
-    private void retrieveFavorites() {
-        Timber.d("Actively retrieving the favorite from the database");
-        final LiveData<List<Favorite>> favs = appDatabase.favoriteDao().loadAllFavorites();
-        favs.observe(getActivity(), new Observer<List<Favorite>>() {
+    private void setupViewModel() {
+        HotelDetailViewModel viewModel = ViewModelProviders.of(this).get(HotelDetailViewModel
+                .class);
+        viewModel.getFavorites().observe(this, new Observer<List<Favorite>>() {
             @Override
             public void onChanged(@Nullable List<Favorite> favorites) {
-                Timber.d("Receiving database update from LiveData");
+                Timber.d("Updating list of favorites from LiveData in ViewModel");
+                saveFavoritesToSharedPreferences(favorites);
                 favoriteAdapter.setFavorites(favorites);
             }
         });
     }
-}
 
+    public void saveFavoritesToSharedPreferences(List<Favorite> favs) {
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = preferences.edit();
+        int favCount = favs.size();
+        editor.putInt(FAVORITES_KEY, favCount);
+        editor.apply();
+    }
+}

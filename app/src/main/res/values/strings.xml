@@ -6,6 +6,7 @@
     <string name="top_rated">Top Rated</string>
     <string name="most_popular">Most Popular</string>
     <string name="favorites">Favorites</string>
+    <string name="favorites_label">Favs</string>
     <string name="photo_by">"Photo by: "</string>
     <string name="hotel_picture">Hotel Image</string>
     <string name="toolbar_title">HomeForNow</string>
@@ -15,4 +16,9 @@
     <string name="favorite_icon_unselected">Favorites unselected</string>
     <string name="create_db_instance">"Creating new database instance</string>
     <string name="get_db_instance">Getting the database instance</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="data_count_format">%1$d @%2$s</string>
+    <string name="update_now">Update Now</string>
+    <string name="preference_file_favs">favs</string>
 </resources>

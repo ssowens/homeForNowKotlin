@@ -1,9 +1,11 @@
 package com.ssowens.android.homefornow.view;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -31,6 +33,7 @@ import com.ssowens.android.homefornow.models.HotelDetailData;
 import com.ssowens.android.homefornow.models.Photo;
 import com.ssowens.android.homefornow.utils.AppExecutors;
 import com.ssowens.android.homefornow.utils.DataManager;
+import com.ssowens.android.homefornow.viewModels.HotelDetailViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +49,7 @@ import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_PHOTO_
 public class HotelDetailFragment extends Fragment
         implements HotelDetailListener, PhotoByIdListener {
 
+    public static final String FAVORITES_KEY = "favCount";
     private String hotelId;
     private String photoId;
     private FragmentHotelDetailBinding detailBinding;
@@ -60,6 +64,7 @@ public class HotelDetailFragment extends Fragment
     private FavoriteAdapter favoriteAdapter;
     private boolean isFavorite;
     List<Favorite> favs;
+
 
 
     public static HotelDetailFragment newInstance(String hotelId, String photoId) {
@@ -138,14 +143,12 @@ public class HotelDetailFragment extends Fragment
         return detailBinding.getRoot();
     }
 
-
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString(ARG_HOTEL_ID, hotelId);
         outState.putString(ARG_PHOTO_ID, photoId);
         super.onSaveInstanceState(outState);
     }
-
 
     public void saveFavorite() {
         if (TextUtils.isEmpty(hotelId)) {
@@ -196,11 +199,9 @@ public class HotelDetailFragment extends Fragment
     }
 
     private void setupViewModel() {
-//        HotelDetailViewModel viewModel = ViewModelProviders.of(this).get
-//                (HotelDetailViewModel.class);
-//        viewModel.getFavorites().observe(this, new Observer<List<Favorite>>() {
-        LiveData<List<Favorite>> favorites = appDatabase.favoriteDao().loadAllFavorites();
-        favorites.observe(getActivity(), new Observer<List<Favorite>>() {
+        HotelDetailViewModel viewModel = ViewModelProviders.of(this).get(HotelDetailViewModel
+                .class);
+        viewModel.getFavorites().observe(this, new Observer<List<Favorite>>() {
             @Override
             public void onChanged(@Nullable List<Favorite> favorites) {
                 Timber.d("Updating list of favorites from LiveData in ViewModel");
@@ -212,6 +213,7 @@ public class HotelDetailFragment extends Fragment
     public boolean getFavorite() {
         boolean isFav = false;
         if (favs != null && !favs.isEmpty()) {
+            saveFavoritesToSharedPreferences();
             for (int i = 0; i < favs.size(); i++) {
                 if (hotelId.equals(favs.get(i).getHotelId())) {
                     isFav = favs.get(i).isFavorite();
@@ -219,6 +221,15 @@ public class HotelDetailFragment extends Fragment
             }
         }
         return isFav;
+    }
+
+    public void saveFavoritesToSharedPreferences() {
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = preferences.edit();
+        int favCount = favs.size();
+        editor.putInt(FAVORITES_KEY, favCount);
+        editor.apply();
     }
 
     private void updateUI() {
@@ -257,8 +268,6 @@ public class HotelDetailFragment extends Fragment
     @Override
     public void onHotelDetailFinished() {
         hotelDetailData = dataManager.getHotelDetailData();
-        // Check Favorites against hotelDetailData
-        // Get Favorites from appDatabase if hotel is a favorite change drawable
         detailBinding.setModel(hotelDetailData);
         detailBinding.executePendingBindings();
         detailBinding.loadingSpinner.setVisibility(View.GONE);
@@ -268,7 +277,6 @@ public class HotelDetailFragment extends Fragment
             if (fav) {
                 detailBinding.buttonFavorite.setBackgroundDrawable(getResources().getDrawable(R.drawable
                         .ic_favorite));
-                detailBinding.executePendingBindings();
             }
         }
     }
