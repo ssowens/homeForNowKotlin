@@ -21,6 +21,8 @@ import android.view.animation.ScaleAnimation;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -29,12 +31,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentHotelDetailBinding;
-import com.ssowens.android.homefornow.databinding.PhotoImageBinding;
 import com.ssowens.android.homefornow.db.AppDatabase;
 import com.ssowens.android.homefornow.db.Favorite;
 import com.ssowens.android.homefornow.listeners.HotelDetailListener;
 import com.ssowens.android.homefornow.listeners.PhotoByIdListener;
-import com.ssowens.android.homefornow.models.Hotel;
 import com.ssowens.android.homefornow.models.HotelDetailData;
 import com.ssowens.android.homefornow.models.Photo;
 import com.ssowens.android.homefornow.utils.AppExecutors;
@@ -58,17 +58,14 @@ public class HotelDetailFragment extends Fragment
     private String hotelId;
     private String photoId;
     private FragmentHotelDetailBinding detailBinding;
-    private PhotoImageBinding photoImageBinding;
     private DataManager dataManager;
     private Photo photo;
-    private Toolbar toolbar;
     private HotelDetailData hotelDetailData;
-    private Hotel hotel;
     private AppDatabase appDatabase;
-    private FavoriteAdapter favoriteAdapter;
     private boolean isFavorite;
     protected MapView mapView;
     List<Favorite> favs;
+    private AdView adView;
 
     public static HotelDetailFragment newInstance(String hotelId, String photoId) {
         Bundle args = new Bundle();
@@ -107,7 +104,7 @@ public class HotelDetailFragment extends Fragment
                              @Nullable Bundle savedInstanceState) {
         detailBinding = DataBindingUtil.inflate(inflater, R.layout
                 .fragment_hotel_detail, container, false);
-        toolbar = detailBinding.toolbar;
+        Toolbar toolbar = detailBinding.toolbar;
 
         if (toolbar != null) {
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
@@ -117,6 +114,10 @@ public class HotelDetailFragment extends Fragment
 
         mapView = detailBinding.mapView;
         mapView.onCreate(savedInstanceState);
+
+        adView = detailBinding.adView;
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
 
         final ScaleAnimation scaleAnimation = new ScaleAnimation(0.7f,
                 1.0f, 0.7f, 1.0f, Animation
@@ -134,14 +135,12 @@ public class HotelDetailFragment extends Fragment
                                 Toast
                                         .LENGTH_SHORT)
                                 .show();
+                        isFavorite = isChecked;
                         if (isChecked) {
-                            isFavorite = isChecked;
                             saveFavorite();
                         } else {
-                            isFavorite = isChecked;
                             removeFavorite();
                         }
-
                     }
                 });
 
@@ -159,10 +158,7 @@ public class HotelDetailFragment extends Fragment
     }
 
     public void saveFavorite() {
-        if (TextUtils.isEmpty(hotelId)) {
-            Toast.makeText(getContext(), "HotelID is null",
-                    Toast.LENGTH_LONG).show();
-        } else {
+        if (!TextUtils.isEmpty(hotelId)) {
             final Favorite favorite = new Favorite(
                     hotelId,
                     photoId,
@@ -189,10 +185,7 @@ public class HotelDetailFragment extends Fragment
     }
 
     public void removeFavorite() {
-        if (TextUtils.isEmpty(hotelId)) {
-            Toast.makeText(getContext(), "HotelID is null",
-                    Toast.LENGTH_LONG).show();
-        } else {
+        if (!TextUtils.isEmpty(hotelId)) {
             AppExecutors.getInstance().diskIO().execute(new Runnable() {
                 @Override
                 public void run() {

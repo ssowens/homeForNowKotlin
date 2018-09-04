@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.MobileAds;
 import com.ssowens.android.homefornow.BuildConfig;
 import com.ssowens.android.homefornow.R;
 
@@ -17,6 +18,7 @@ public class MainActivity extends SingleFragmentActivity {
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
+        MobileAds.initialize(this, "ca-app-pub-3983610797900419~4189860710");
     }
 
     @Override
