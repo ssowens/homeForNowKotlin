@@ -41,23 +41,25 @@ import static com.ssowens.android.homefornow.view.PhotoFragment.EXTRA_CURRENT_TO
 public class FavoritesFragment extends Fragment {
 
     private static final String DATABASE_NAME = "favorites_db";
+    public static final String ARG_ONLINE = "online";
     private AppDatabase appDatabase;
     private Toolbar toolbar;
     private FavoriteAdapter favoriteAdapter;
     private int currentToolbarTitle;
     private String hotelId;
     private String photoId;
-    private boolean isInternetAvail;
+    private boolean isOnline;
 
 
     public static FavoritesFragment newInstance(String hotelId,
                                                 String photoId,
-                                                boolean isOffline)
+                                                boolean isOnline)
 
     {
         Bundle args = new Bundle();
         args.putString(ARG_HOTEL_ID, hotelId);
         args.putString(ARG_PHOTO_ID, photoId);
+        args.putBoolean(ARG_ONLINE, isOnline);
         FavoritesFragment fragment = new FavoritesFragment();
         fragment.setArguments(args);
         return fragment;
@@ -71,6 +73,7 @@ public class FavoritesFragment extends Fragment {
         if (args != null) {
             hotelId = args.getString(ARG_HOTEL_ID);
             photoId = args.getString(ARG_PHOTO_ID);
+            isOnline = args.getBoolean(ARG_ONLINE); // Set a default value
         }
         setHasOptionsMenu(true);
         appDatabase = AppDatabase.getInstance(getContext());
@@ -85,16 +88,13 @@ public class FavoritesFragment extends Fragment {
         FragmentFavoriteHotelsBinding favoriteHotelsBinding = DataBindingUtil.inflate(inflater, R.layout
                 .fragment_favorite_hotels, container, false);
         toolbar = favoriteHotelsBinding.toolbar;
-        if (hotelId == null && photoId == null) {
-            isInternetAvail = false;
-        }
         if (savedInstanceState == null) {
             toolbar.setTitle(R.string.favorites);
         } else {
             int currentToolbarTitle = savedInstanceState.getInt(EXTRA_CURRENT_TOOLBAR_TITLE,
                     R.string.toolbar_title);
         }
-        if (toolbar != null && isInternetAvail) {
+        if (toolbar != null && isOnline) {
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
             ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled
                     (true);

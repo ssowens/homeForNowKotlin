@@ -62,7 +62,6 @@ public class DataManager {
     private static final String HEADER_AUTHORIZATION_BEARER = "Authorization: Bearer";
     private static final String HEADER_BEARER = "Bearer ";
     private static final int HOTEL_RATING = 3;
-    private static final String HOTEL_VIEW = "FULL";
 
     // KEYS FOR API
     private static final String PEXELS_API_KEY = BuildConfig.PexelsApiKey;
@@ -200,9 +199,6 @@ public class DataManager {
                     .addConverterFactory(gsonConverterFactory)
                     .build();
 
-            //  TokenStore tokenStore = TokenStore.get(context);
-            //sAccessToken = tokenStore.getAccessToken();
-
             // TODO Need to use a singleton
             TokenStore tokenStore = null;
 
@@ -335,7 +331,7 @@ public class DataManager {
     public void fetchHotelOffers(int hotelRating) {
         hotelOffersApi.hotelOffersSearch(getTokenString(), "LAX", "5",
                 "KM", "false",
-                "true", HOTEL_VIEW, "NONE", hotelRating)
+                "true","NONE", hotelRating)
                 .enqueue(new Callback<HotelOffersResponse>() {
                     @Override
                     public void onResponse(Call<HotelOffersResponse> call,
@@ -396,7 +392,7 @@ public class DataManager {
                     String tokenString = HEADER_BEARER + token.getAccess_token();
                     token.setAccess_token(token.getAccess_token());
 
-                    hotelOffersApi.hotelOffersSearchById(tokenString, hotelId, HOTEL_VIEW)
+                    hotelOffersApi.hotelOffersSearchById(tokenString, hotelId)
                             .enqueue(new Callback<HotelDetailResponse>() {
                                 @Override
                                 public void onResponse(Call<HotelDetailResponse> call,
