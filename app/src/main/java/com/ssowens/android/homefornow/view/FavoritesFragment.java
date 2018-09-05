@@ -2,6 +2,7 @@ package com.ssowens.android.homefornow.view;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -13,8 +14,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentFavoriteHotelsBinding;
@@ -40,6 +45,7 @@ public class FavoritesFragment extends Fragment {
     private FragmentFavoriteHotelsBinding favoriteHotelsBinding;
     private Toolbar toolbar;
     private FavoriteAdapter favoriteAdapter;
+    private int currentToolbarTitle;
 
 
     public static FavoritesFragment newInstance(String hotelId, String photoId) {
@@ -61,6 +67,7 @@ public class FavoritesFragment extends Fragment {
             String hotelId = args.getString(ARG_HOTEL_ID);
             String photoId = args.getString(ARG_PHOTO_ID);
         }
+        setHasOptionsMenu(true);
         appDatabase = AppDatabase.getInstance(getContext());
         setupViewModel();
     }
@@ -90,6 +97,51 @@ public class FavoritesFragment extends Fragment {
         favoriteAdapter = new FavoriteAdapter(Collections.EMPTY_LIST);
         favoriteHotelsBinding.recyclerView.setAdapter(favoriteAdapter);
         return favoriteHotelsBinding.getRoot();
+
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_fragment_photo, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.most_popular:
+                Toast.makeText(getActivity(), "Most Popular selected", Toast.LENGTH_SHORT)
+                        .show();
+                currentToolbarTitle = R.string.most_popular;
+                intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.top_rated:
+                Toast.makeText(getActivity(), "Top Rated selected", Toast.LENGTH_SHORT)
+                        .show();
+                currentToolbarTitle = R.string.top_rated;
+                intent = new Intent(getActivity(), TopRatedHotelActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.favorite:
+                Toast.makeText(getActivity(), "FavoritesActivity selected", Toast.LENGTH_SHORT)
+                        .show();
+                currentToolbarTitle = R.string.favorites;
+                intent = new Intent(getActivity(), FavoritesActivity.class);
+                startActivity(intent);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        updateToolbarTitle();
+        return true;
+    }
+
+    private void updateToolbarTitle() {
+        if (currentToolbarTitle != 0) {
+            toolbar.setTitle(currentToolbarTitle);
+        }
 
     }
 

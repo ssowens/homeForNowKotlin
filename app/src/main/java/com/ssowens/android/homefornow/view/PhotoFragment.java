@@ -21,20 +21,17 @@ import android.widget.Toast;
 
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentPhotosBinding;
-import com.ssowens.android.homefornow.listeners.AccessTokenListener;
 import com.ssowens.android.homefornow.listeners.HotelImageListener;
 import com.ssowens.android.homefornow.models.HotelTopRatedPhoto;
 import com.ssowens.android.homefornow.models.PexelsImages;
 import com.ssowens.android.homefornow.models.Photo;
-import com.ssowens.android.homefornow.models.TokenStore;
 import com.ssowens.android.homefornow.utils.DataManager;
 
 import java.util.Collections;
 import java.util.List;
 
 public class PhotoFragment extends Fragment implements
-        HotelImageListener,
-        AccessTokenListener {
+        HotelImageListener{
 
     public static final String EXTRA_CURRENT_TOOLBAR_TITLE = "current_toolbar_title";
     private PhotosAdapter photosAdapter;
@@ -109,12 +106,6 @@ public class PhotoFragment extends Fragment implements
     }
 
     @Override
-    public void onAccessTokenFinished() {
-        TokenStore tokenStore = TokenStore.get(getActivity());
-        tokenStore.setAccessToken(dataManager.getAccessToken());
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         updateToolbarTitle();
@@ -157,7 +148,6 @@ public class PhotoFragment extends Fragment implements
         if (currentToolbarTitle != 0) {
             toolbar.setTitle(currentToolbarTitle);
         }
-
     }
 
     @Override

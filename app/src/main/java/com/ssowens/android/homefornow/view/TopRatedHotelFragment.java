@@ -1,5 +1,6 @@
 package com.ssowens.android.homefornow.view;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -8,15 +9,18 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentTopRatedHotelsBinding;
+import com.ssowens.android.homefornow.listeners.AccessTokenListener;
 import com.ssowens.android.homefornow.listeners.HotelImageListener;
 import com.ssowens.android.homefornow.listeners.HotelOffersSearchListener;
 import com.ssowens.android.homefornow.models.Hotel;
@@ -26,6 +30,8 @@ import com.ssowens.android.homefornow.utils.DataManager;
 import java.util.Collections;
 import java.util.List;
 
+import timber.log.Timber;
+
 import static com.ssowens.android.homefornow.utils.DataManager.AMADEUS_ACCESS_TOKEN;
 import static com.ssowens.android.homefornow.view.PhotoFragment.EXTRA_CURRENT_TOOLBAR_TITLE;
 
@@ -33,13 +39,13 @@ import static com.ssowens.android.homefornow.view.PhotoFragment.EXTRA_CURRENT_TO
  * Created by Sheila Owens on 8/8/18.
  */
 public class TopRatedHotelFragment extends Fragment
-        implements HotelOffersSearchListener, HotelImageListener {
+        implements HotelOffersSearchListener, HotelImageListener,
+        AccessTokenListener {
 
     private TopRatedHotelsAdapter topRatedHotelsAdapter;
     private DataManager dataManager;
-    private RecyclerView recyclerView;
-    private Toolbar toolbar;
     private int currentToolbarTitle;
+    private Toolbar toolbar;
     FragmentTopRatedHotelsBinding fragmentTopRatedHotelsBinding;
 
     public static TopRatedHotelFragment newInstance() {
@@ -77,8 +83,13 @@ public class TopRatedHotelFragment extends Fragment
                 (getActivity(), 2));
         topRatedHotelsAdapter = new TopRatedHotelsAdapter(Collections.EMPTY_LIST);
         fragmentTopRatedHotelsBinding.recyclerView.setAdapter(topRatedHotelsAdapter);
-
         return fragmentTopRatedHotelsBinding.getRoot();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_fragment_photo, menu);
     }
 
     @Override
@@ -94,6 +105,7 @@ public class TopRatedHotelFragment extends Fragment
         super.onStop();
         dataManager.removeHotelOffersSearchListener(this);
         dataManager.removeHotelImageListener(this);
+        dataManager.removeAccessTokenListener(this);
     }
 
     @Override
@@ -101,6 +113,17 @@ public class TopRatedHotelFragment extends Fragment
         List<Hotel> hotelTopRatedHotelList = dataManager.getTopRatedHotelsList();
         topRatedHotelsAdapter.setTopRatedHotelsList(hotelTopRatedHotelList);
         fragmentTopRatedHotelsBinding.loadingSpinner.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onAccessTokenFinished() {
+        if (dataManager.getTokenString() == null) {
+            Timber.i("Sheila missing token");
+        } else {
+            Timber.i("Sheila got token");
+            dataManager.addHotelOffersSearchListener(this);
+            dataManager.fetchHotelOffers();
+        }
     }
 
     @Override
@@ -112,12 +135,42 @@ public class TopRatedHotelFragment extends Fragment
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
+            case R.id.most_popular:
+                Toast.makeText(getActivity(), "Most Popular selected", Toast.LENGTH_SHORT)
+                        .show();
+                currentToolbarTitle = R.string.most_popular;
+                intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.top_rated:
+                Toast.makeText(getActivity(), "Top Rated selected", Toast.LENGTH_SHORT)
+                        .show();
+                currentToolbarTitle = R.string.top_rated;
+                intent = new Intent(getActivity(), TopRatedHotelActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.favorite:
+                Toast.makeText(getActivity(), "FavoritesActivity selected", Toast.LENGTH_SHORT)
+                        .show();
+                currentToolbarTitle = R.string.favorites;
+                intent = new Intent(getActivity(), FavoritesActivity.class);
+                startActivity(intent);
+                break;
             case android.R.id.home:
                 getActivity().onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+        updateToolbarTitle();
+        return true;
+    }
+
+    private void updateToolbarTitle() {
+        if (currentToolbarTitle != 0) {
+            toolbar.setTitle(currentToolbarTitle);
         }
     }
 
@@ -125,8 +178,16 @@ public class TopRatedHotelFragment extends Fragment
     public void onHotelImageFinished() {
         List<Photo> photoList = dataManager.getPhotoList();
         topRatedHotelsAdapter.setHotelPhotoList(photoList);
-        dataManager.addHotelOffersSearchListener(this);
-        dataManager.fetchHotelOffers();
+
+        if (dataManager.getTokenString() == null) {
+            // Get Access Token
+            dataManager.addAccessTokenListener(this);
+            dataManager.fetchAccessToken();
+        } else {
+            Timber.i("Sheila got token");
+            dataManager.addHotelOffersSearchListener(this);
+            dataManager.fetchHotelOffers();
+        }
 
         // TODO NEEDS TO BE HANDLED
         PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString

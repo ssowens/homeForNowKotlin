@@ -94,9 +94,9 @@ public class DataManager {
 
     private Photo photo;
     public Data data;
-    public AmadeusAccessTokenResponse amadeusAccessToken;
+    private AmadeusAccessTokenResponse amadeusToken;
 
-    public String tokenString;
+    private String tokenString;
 
     // Listeners List
     private List<HotelImageListener> hotelImageListenerList;
@@ -127,7 +127,6 @@ public class DataManager {
         accessTokenListenerList = new ArrayList<>();
         hotelDetailListenerList = new ArrayList<>();
         photoByIdListenerList = new ArrayList<>();
-
     }
 
     public static DataManager get(Context context) {
@@ -307,9 +306,8 @@ public class DataManager {
 
                     @Override
                     public void onFailure(Call<Photo> call, Throwable t) {
-
+                        Timber.e(t, "Failed to fetch hotel by Id ~ ");
                     }
-
                 });
     }
 
@@ -323,8 +321,6 @@ public class DataManager {
 
                         if (response.body() != null) {
                             photoList = response.body().getPhotoList();
-                            Timber.i("Sheila Downloaded photoLists = %s",
-                                    photoList.toString());
                             setupHotelImages(response.body().getPhotoList());
                             notifyHotelImageListeners();
                         }
@@ -337,43 +333,55 @@ public class DataManager {
                 });
     }
 
-
     public void fetchHotelOffers() {
+        hotelOffersApi.hotelOffersSearch(getTokenString(), "LAX", "5",
+                "KM", "false",
+                "true", HOTEL_VIEW, "NONE", HOTEL_RATING)
+                .enqueue(new Callback<HotelOffersResponse>() {
+                    @Override
+                    public void onResponse(Call<HotelOffersResponse> call,
+                                           retrofit2.Response<HotelOffersResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            dataList = response.body().getHotelOffersList();
+
+                            convertData(dataList);
+                            notifyHotelOffersListeners();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<HotelOffersResponse> call, Throwable t) {
+                        Timber.e("Failed to fetch Hotel Offers" + " ~ " + t);
+                    }
+                });
+    }
+
+    public void getToken(final Callback callbackSuccess) {
+        Call<AmadeusAccessTokenResponse> tokenCall =
+                hotelOffersApi.getAmadeusToken(AMADEUS_CLIENT_CREDENTIALS,
+                        AMADEUS_API_KEY, AMADEUS_SECRET);
+
+        tokenCall.enqueue(callbackSuccess);
+    }
+
+    public void fetchAccessToken() {
         getToken(new Callback<AmadeusAccessTokenResponse>() {
             @Override
             public void onResponse(Call<AmadeusAccessTokenResponse> tokenCall,
                                    retrofit2.Response<AmadeusAccessTokenResponse>
                                            responseToken) {
                 if (responseToken.isSuccessful() && responseToken.body() != null) {
-                    AmadeusAccessTokenResponse token = responseToken.body();
-                    tokenString = HEADER_BEARER + token.getAccess_token();
+                    amadeusToken = responseToken.body();
+                    String tokenString = HEADER_BEARER + amadeusToken.getAccess_token();
+                    amadeusToken.setAccess_token(tokenString);
                     setTokenString(tokenString);
-                    hotelOffersApi.hotelOffersSearch(tokenString, "LAX", "5",
-                            "KM", "false",
-                            "true", HOTEL_VIEW, "NONE", HOTEL_RATING)
-                            .enqueue(new Callback<HotelOffersResponse>() {
-                                @Override
-                                public void onResponse(Call<HotelOffersResponse> call,
-                                                       retrofit2.Response<HotelOffersResponse> response) {
-                                    if (response.isSuccessful() && response.body() != null) {
-                                        dataList = response.body().getHotelOffersList();
-
-                                        convertData(dataList);
-                                        notifyHotelOffersListeners();
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Call<HotelOffersResponse> call, Throwable t) {
-                                    Timber.e("Failed to fetch Hotel Offers" + " ~ " + t);
-                                }
-                            });
+                    notifyAccessTokenListeners();
                 }
             }
 
             @Override
             public void onFailure(Call<AmadeusAccessTokenResponse> call, Throwable t) {
-                Timber.e(t, " ~ Failed to fetch the token");
+                Timber.e(t, " ~ Failed to fetch token");
             }
         });
     }
@@ -424,28 +432,16 @@ public class DataManager {
     }
 
     private void convertDataById(HotelDetailData dataDetail) {
-
         hotelDetail = new HotelDetailData();
         if (dataDetail != null) {
             hotelDetail = dataDetail;
         }
     }
 
-
     private void convertData(List<Data> myData) {
-
         for (int iter = 0; iter < myData.size(); iter++) {
             hotelList.add(myData.get(iter).getHotel());
-            //Timber.i("Sheila (hotelData) == %s", hotelList.toString());
         }
-    }
-
-    public void getToken(final Callback callbackSuccess) {
-        Call<AmadeusAccessTokenResponse> tokenCall =
-                hotelOffersApi.getAmadeusToken(AMADEUS_CLIENT_CREDENTIALS,
-                        AMADEUS_API_KEY, AMADEUS_SECRET);
-
-        tokenCall.enqueue(callbackSuccess);
     }
 
 
@@ -453,16 +449,8 @@ public class DataManager {
         return photoList;
     }
 
-    public List<Photo> getHotelImageList() {
-        return hotelImageList;
-    }
-
     public List<Hotel> getTopRatedHotelsList() {
         return hotelList;
-    }
-
-    public List<Data> getDataList() {
-        return dataList;
     }
 
     public HotelDetailData getHotelDetailData() {
@@ -482,7 +470,7 @@ public class DataManager {
     }
 
     public String getAccessToken() {
-        return amadeusAccessToken.getAccess_token();
+        return amadeusToken.getAccess_token();
     }
 
     public Photo getHotelPhoto(String photoId) {
@@ -526,6 +514,20 @@ public class DataManager {
         for (HotelOffersSearchListener listener : hotelOffersSearchListenerList) {
             listener.onHotelOffersFinished();
         }
+    }
+
+    private void notifyAccessTokenListeners() {
+        for (AccessTokenListener listener : accessTokenListenerList) {
+            listener.onAccessTokenFinished();
+        }
+    }
+
+    public void addAccessTokenListener(AccessTokenListener listener) {
+        accessTokenListenerList.add(listener);
+    }
+
+    public void removeAccessTokenListener(AccessTokenListener listener) {
+        accessTokenListenerList.remove(listener);
     }
 
     public void addPhotoByIdListener(PhotoByIdListener listener) {
