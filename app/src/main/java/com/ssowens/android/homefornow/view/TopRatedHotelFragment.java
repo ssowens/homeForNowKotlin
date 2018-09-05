@@ -3,7 +3,6 @@ package com.ssowens.android.homefornow.view;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -32,7 +31,6 @@ import java.util.List;
 
 import timber.log.Timber;
 
-import static com.ssowens.android.homefornow.utils.DataManager.AMADEUS_ACCESS_TOKEN;
 import static com.ssowens.android.homefornow.view.PhotoFragment.EXTRA_CURRENT_TOOLBAR_TITLE;
 
 /**
@@ -47,9 +45,17 @@ public class TopRatedHotelFragment extends Fragment
     private int currentToolbarTitle;
     private Toolbar toolbar;
     FragmentTopRatedHotelsBinding fragmentTopRatedHotelsBinding;
+    public static final String EXTRA_HOTEL_TYPE = "hotelType";
+    public static final int POPULAR_HOTEL = 2;
+    public static final int TOP_RATED_HOTEL = 4;
+    private int hotelRating;
 
-    public static TopRatedHotelFragment newInstance() {
+    public static TopRatedHotelFragment newInstance(int hotel_rating) {
+        Bundle args = new Bundle();
+        args.putInt(EXTRA_HOTEL_TYPE, hotel_rating);
+
         TopRatedHotelFragment fragment = new TopRatedHotelFragment();
+        fragment.setArguments(args);
         fragment.setRetainInstance(true);
         return fragment;
     }
@@ -57,6 +63,10 @@ public class TopRatedHotelFragment extends Fragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        if (args != null) {
+            hotelRating = args.getInt(EXTRA_HOTEL_TYPE);
+        }
         setHasOptionsMenu(true);
     }
 
@@ -122,7 +132,7 @@ public class TopRatedHotelFragment extends Fragment
         } else {
             Timber.i("Sheila got token");
             dataManager.addHotelOffersSearchListener(this);
-            dataManager.fetchHotelOffers();
+            dataManager.fetchHotelOffers(hotelRating);
         }
     }
 
@@ -142,6 +152,7 @@ public class TopRatedHotelFragment extends Fragment
                         .show();
                 currentToolbarTitle = R.string.most_popular;
                 intent = new Intent(getActivity(), MainActivity.class);
+                intent.putExtra(EXTRA_HOTEL_TYPE, POPULAR_HOTEL);
                 startActivity(intent);
                 break;
             case R.id.top_rated:
@@ -149,6 +160,7 @@ public class TopRatedHotelFragment extends Fragment
                         .show();
                 currentToolbarTitle = R.string.top_rated;
                 intent = new Intent(getActivity(), TopRatedHotelActivity.class);
+                intent.putExtra(EXTRA_HOTEL_TYPE, TOP_RATED_HOTEL);
                 startActivity(intent);
                 break;
             case R.id.favorite:
@@ -186,11 +198,8 @@ public class TopRatedHotelFragment extends Fragment
         } else {
             Timber.i("Sheila got token");
             dataManager.addHotelOffersSearchListener(this);
-            dataManager.fetchHotelOffers();
+            dataManager.fetchHotelOffers(hotelRating);
         }
 
-        // TODO NEEDS TO BE HANDLED
-        PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString
-                (AMADEUS_ACCESS_TOKEN, dataManager.getTokenString()).apply();
     }
 }

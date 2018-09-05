@@ -42,17 +42,22 @@ public class FavoritesFragment extends Fragment {
 
     private static final String DATABASE_NAME = "favorites_db";
     private AppDatabase appDatabase;
-    private FragmentFavoriteHotelsBinding favoriteHotelsBinding;
     private Toolbar toolbar;
     private FavoriteAdapter favoriteAdapter;
     private int currentToolbarTitle;
+    private String hotelId;
+    private String photoId;
+    private boolean isInternetAvail;
 
 
-    public static FavoritesFragment newInstance(String hotelId, String photoId) {
+    public static FavoritesFragment newInstance(String hotelId,
+                                                String photoId,
+                                                boolean isOffline)
+
+    {
         Bundle args = new Bundle();
         args.putString(ARG_HOTEL_ID, hotelId);
         args.putString(ARG_PHOTO_ID, photoId);
-
         FavoritesFragment fragment = new FavoritesFragment();
         fragment.setArguments(args);
         return fragment;
@@ -64,8 +69,8 @@ public class FavoritesFragment extends Fragment {
         setHasOptionsMenu(true);
         Bundle args = getArguments();
         if (args != null) {
-            String hotelId = args.getString(ARG_HOTEL_ID);
-            String photoId = args.getString(ARG_PHOTO_ID);
+            hotelId = args.getString(ARG_HOTEL_ID);
+            photoId = args.getString(ARG_PHOTO_ID);
         }
         setHasOptionsMenu(true);
         appDatabase = AppDatabase.getInstance(getContext());
@@ -77,17 +82,19 @@ public class FavoritesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        favoriteHotelsBinding =
-                DataBindingUtil.inflate(inflater, R.layout
-                        .fragment_favorite_hotels, container, false);
+        FragmentFavoriteHotelsBinding favoriteHotelsBinding = DataBindingUtil.inflate(inflater, R.layout
+                .fragment_favorite_hotels, container, false);
         toolbar = favoriteHotelsBinding.toolbar;
+        if (hotelId == null && photoId == null) {
+            isInternetAvail = false;
+        }
         if (savedInstanceState == null) {
             toolbar.setTitle(R.string.favorites);
         } else {
             int currentToolbarTitle = savedInstanceState.getInt(EXTRA_CURRENT_TOOLBAR_TITLE,
                     R.string.toolbar_title);
         }
-        if (toolbar != null) {
+        if (toolbar != null && isInternetAvail) {
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
             ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled
                     (true);
@@ -97,7 +104,6 @@ public class FavoritesFragment extends Fragment {
         favoriteAdapter = new FavoriteAdapter(Collections.EMPTY_LIST);
         favoriteHotelsBinding.recyclerView.setAdapter(favoriteAdapter);
         return favoriteHotelsBinding.getRoot();
-
     }
 
     @Override
@@ -111,25 +117,25 @@ public class FavoritesFragment extends Fragment {
         Intent intent;
         switch (item.getItemId()) {
             case R.id.most_popular:
-                Toast.makeText(getActivity(), "Most Popular selected", Toast.LENGTH_SHORT)
-                        .show();
-                currentToolbarTitle = R.string.most_popular;
-                intent = new Intent(getActivity(), MainActivity.class);
-                startActivity(intent);
+                    Toast.makeText(getActivity(), "Most Popular selected", Toast.LENGTH_SHORT)
+                            .show();
+                    currentToolbarTitle = R.string.most_popular;
+                    intent = new Intent(getActivity(), MainActivity.class);
+                    startActivity(intent);
                 break;
             case R.id.top_rated:
-                Toast.makeText(getActivity(), "Top Rated selected", Toast.LENGTH_SHORT)
-                        .show();
-                currentToolbarTitle = R.string.top_rated;
-                intent = new Intent(getActivity(), TopRatedHotelActivity.class);
-                startActivity(intent);
+                    Toast.makeText(getActivity(), "Top Rated selected", Toast.LENGTH_SHORT)
+                            .show();
+                    currentToolbarTitle = R.string.top_rated;
+                    intent = new Intent(getActivity(), TopRatedHotelActivity.class);
+                    startActivity(intent);
                 break;
             case R.id.favorite:
-                Toast.makeText(getActivity(), "FavoritesActivity selected", Toast.LENGTH_SHORT)
-                        .show();
-                currentToolbarTitle = R.string.favorites;
-                intent = new Intent(getActivity(), FavoritesActivity.class);
-                startActivity(intent);
+                    Toast.makeText(getActivity(), "FavoritesActivity selected", Toast.LENGTH_SHORT)
+                            .show();
+                    currentToolbarTitle = R.string.favorites;
+                    intent = new Intent(getActivity(), FavoritesActivity.class);
+                    startActivity(intent);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -142,7 +148,6 @@ public class FavoritesFragment extends Fragment {
         if (currentToolbarTitle != 0) {
             toolbar.setTitle(currentToolbarTitle);
         }
-
     }
 
     @Override

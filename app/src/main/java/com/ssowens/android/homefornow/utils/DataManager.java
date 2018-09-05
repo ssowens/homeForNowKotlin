@@ -50,7 +50,6 @@ public class DataManager {
 
     // ENDPOINTS FOR API
     private static final String PEXELS_ENDPOINT = "https://api.pexels.com/v1/";
-    // "https://test.api.amadeus.com/v1/shopping/hotel-offers?cityCode=PAR" -H "Authorization: Bearer ${token}" -k -o hotel_search_curl.json
     private static final String AMADEUS_ENDPOINT = "https://test.api.amadeus" +
             ".com/v1/shopping/";
     public static final String AMADEUS_AUTHORIZATION_ENDPOINT = "v1/security/oauth2/token/";
@@ -333,10 +332,10 @@ public class DataManager {
                 });
     }
 
-    public void fetchHotelOffers() {
+    public void fetchHotelOffers(int hotelRating) {
         hotelOffersApi.hotelOffersSearch(getTokenString(), "LAX", "5",
                 "KM", "false",
-                "true", HOTEL_VIEW, "NONE", HOTEL_RATING)
+                "true", HOTEL_VIEW, "NONE", hotelRating)
                 .enqueue(new Callback<HotelOffersResponse>() {
                     @Override
                     public void onResponse(Call<HotelOffersResponse> call,

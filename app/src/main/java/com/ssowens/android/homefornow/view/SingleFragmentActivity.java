@@ -32,6 +32,12 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, getString(R.string.no_internet_service),
                     Toast.LENGTH_SHORT).show();
+            if (fragment == null) {
+                fragment = createFragment();
+                fm.beginTransaction()
+                        .add(R.id.fragment_container, fragment)
+                        .commit();
+            }
         }
     }
 

@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,8 +21,6 @@ import android.widget.Toast;
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentPhotosBinding;
 import com.ssowens.android.homefornow.listeners.HotelImageListener;
-import com.ssowens.android.homefornow.models.HotelTopRatedPhoto;
-import com.ssowens.android.homefornow.models.PexelsImages;
 import com.ssowens.android.homefornow.models.Photo;
 import com.ssowens.android.homefornow.utils.DataManager;
 
@@ -35,11 +32,7 @@ public class PhotoFragment extends Fragment implements
 
     public static final String EXTRA_CURRENT_TOOLBAR_TITLE = "current_toolbar_title";
     private PhotosAdapter photosAdapter;
-    private List<HotelTopRatedPhoto> hotelTopRatedPhotoList;
-    private PexelsImages pexelsImages;
-    private PhotosAdapter.PhotosAdapterListener listener;
     private DataManager dataManager;
-    private RecyclerView recyclerView;
     private int currentToolbarTitle;
     private Toolbar toolbar;
 

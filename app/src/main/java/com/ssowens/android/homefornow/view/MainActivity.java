@@ -10,6 +10,9 @@ import com.ssowens.android.homefornow.R;
 
 import timber.log.Timber;
 
+import static com.ssowens.android.homefornow.view.TopRatedHotelFragment.EXTRA_HOTEL_TYPE;
+import static com.ssowens.android.homefornow.view.TopRatedHotelFragment.POPULAR_HOTEL;
+
 public class MainActivity extends SingleFragmentActivity {
 
     @Override
@@ -24,12 +27,13 @@ public class MainActivity extends SingleFragmentActivity {
     @Override
     protected Fragment createFragment() {
         if (isOnline()) {
-            return PhotoFragment.newInstance();
+            int hotel_rating = getIntent().getIntExtra(EXTRA_HOTEL_TYPE, POPULAR_HOTEL);
+            return TopRatedHotelFragment.newInstance(hotel_rating);
         } else {
             Toast.makeText(this, getString(R.string.no_internet_service),
                     Toast.LENGTH_SHORT).show();
-            return null;
+            return FavoritesFragment.newInstance("", "", isOnline());
         }
-    }
 
+    }
 }
