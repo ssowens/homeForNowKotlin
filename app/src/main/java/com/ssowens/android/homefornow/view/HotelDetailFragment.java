@@ -2,6 +2,7 @@ package com.ssowens.android.homefornow.view;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -13,6 +14,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -47,6 +51,9 @@ import timber.log.Timber;
 
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_ID;
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_PHOTO_ID;
+import static com.ssowens.android.homefornow.view.TopRatedHotelFragment.EXTRA_HOTEL_TYPE;
+import static com.ssowens.android.homefornow.view.TopRatedHotelFragment.POPULAR_HOTEL;
+import static com.ssowens.android.homefornow.view.TopRatedHotelFragment.TOP_RATED_HOTEL;
 
 /**
  * Created by Sheila Owens on 8/2/18.
@@ -66,6 +73,8 @@ public class HotelDetailFragment extends Fragment
     protected MapView mapView;
     List<Favorite> favs;
     private AdView adView;
+    private int currentToolbarTitle;
+    private Toolbar toolbar;
 
     public static HotelDetailFragment newInstance(String hotelId, String photoId) {
         Bundle args = new Bundle();
@@ -104,7 +113,7 @@ public class HotelDetailFragment extends Fragment
                              @Nullable Bundle savedInstanceState) {
         detailBinding = DataBindingUtil.inflate(inflater, R.layout
                 .fragment_hotel_detail, container, false);
-        Toolbar toolbar = detailBinding.toolbar;
+        toolbar = detailBinding.toolbar;
 
         if (toolbar != null) {
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
@@ -118,6 +127,8 @@ public class HotelDetailFragment extends Fragment
         adView = detailBinding.adView;
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
+
+
 
         final ScaleAnimation scaleAnimation = new ScaleAnimation(0.7f,
                 1.0f, 0.7f, 1.0f, Animation
@@ -154,6 +165,55 @@ public class HotelDetailFragment extends Fragment
         super.onSaveInstanceState(outState);
         if (mapView != null) {
             mapView.onSaveInstanceState(outState);
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_fragment_photo, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.most_popular:
+                Toast.makeText(getActivity(), "Most Popular selected", Toast.LENGTH_SHORT)
+                        .show();
+                currentToolbarTitle = R.string.most_popular;
+                intent = new Intent(getActivity(), MainActivity.class);
+                intent.putExtra(EXTRA_HOTEL_TYPE, POPULAR_HOTEL);
+                startActivity(intent);
+                break;
+            case R.id.top_rated:
+                Toast.makeText(getActivity(), "Top Rated selected", Toast.LENGTH_SHORT)
+                        .show();
+                currentToolbarTitle = R.string.top_rated;
+                intent = new Intent(getActivity(), TopRatedHotelActivity.class);
+                intent.putExtra(EXTRA_HOTEL_TYPE, TOP_RATED_HOTEL);
+                startActivity(intent);
+                break;
+            case R.id.favorite:
+                Toast.makeText(getActivity(), "FavoritesActivity selected", Toast.LENGTH_SHORT)
+                        .show();
+                currentToolbarTitle = R.string.favorites;
+                intent = new Intent(getActivity(), FavoritesActivity.class);
+                startActivity(intent);
+                break;
+            case android.R.id.home:
+                getActivity().onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        updateToolbarTitle();
+        return true;
+    }
+
+    private void updateToolbarTitle() {
+        if (currentToolbarTitle != 0) {
+            toolbar.setTitle(currentToolbarTitle);
         }
     }
 
@@ -206,7 +266,7 @@ public class HotelDetailFragment extends Fragment
             @Override
             public void onChanged(@Nullable List<Favorite> favorites) {
                 Timber.d("Updating list of favorites from LiveData in ViewModel");
-                setFavorites(favorites);
+                //setFavorites(favorites);
             }
         });
     }

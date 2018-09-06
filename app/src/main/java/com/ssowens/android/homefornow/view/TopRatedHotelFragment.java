@@ -90,7 +90,7 @@ public class TopRatedHotelFragment extends Fragment
 
         fragmentTopRatedHotelsBinding.loadingSpinner.setVisibility(View.VISIBLE);
         fragmentTopRatedHotelsBinding.recyclerView.setLayoutManager(new GridLayoutManager
-                (getActivity(), 2));
+                (getActivity(), 1));
         topRatedHotelsAdapter = new TopRatedHotelsAdapter(Collections.EMPTY_LIST);
         fragmentTopRatedHotelsBinding.recyclerView.setAdapter(topRatedHotelsAdapter);
         return fragmentTopRatedHotelsBinding.getRoot();

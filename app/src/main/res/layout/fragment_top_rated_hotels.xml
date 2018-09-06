@@ -48,16 +48,11 @@
                     android:layout_marginLeft="@dimen/list_toolbar_side_margin"
                     android:layout_marginRight="@dimen/list_toolbar_side_margin"
                     android:background="@color/colorPrimary"
+                    android:elevation="4dp"
                     app:layout_collapseMode="pin"
                     app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@color/colorAccent"
-                        tools:text="For Test Purposes"/>
-
                 </android.support.v7.widget.Toolbar>
+
             </android.support.design.widget.CollapsingToolbarLayout>
         </android.support.design.widget.AppBarLayout>
 
