@@ -35,7 +35,7 @@ import timber.log.Timber;
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_ID;
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_PHOTO_ID;
 import static com.ssowens.android.homefornow.view.HotelDetailFragment.FAVORITES_KEY;
-import static com.ssowens.android.homefornow.view.PhotoFragment.EXTRA_CURRENT_TOOLBAR_TITLE;
+import static com.ssowens.android.homefornow.view.TopRatedHotelFragment.EXTRA_CURRENT_TOOLBAR_TITLE;
 
 
 public class FavoritesFragment extends Fragment {

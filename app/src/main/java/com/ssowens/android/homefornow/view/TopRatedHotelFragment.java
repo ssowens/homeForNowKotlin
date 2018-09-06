@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,8 +32,6 @@ import java.util.List;
 
 import timber.log.Timber;
 
-import static com.ssowens.android.homefornow.view.PhotoFragment.EXTRA_CURRENT_TOOLBAR_TITLE;
-
 /**
  * Created by Sheila Owens on 8/8/18.
  */
@@ -48,7 +47,13 @@ public class TopRatedHotelFragment extends Fragment
     public static final String EXTRA_HOTEL_TYPE = "hotelType";
     public static final int POPULAR_HOTEL = 2;
     public static final int TOP_RATED_HOTEL = 4;
+    public static final String SORTED_POPULAR = "popular";
+    public static final String SORTED_TOP_RATED = "toprated";
+    public static final String SORTED_FAVORITES = "favorites";
+    public static final String EXTRA_HOTEL_SORTED = "sorted";
+    public static final String EXTRA_CURRENT_TOOLBAR_TITLE = "";
     private int hotelRating;
+    private String hotelSort;
 
     public static TopRatedHotelFragment newInstance(int hotel_rating) {
         Bundle args = new Bundle();
@@ -66,6 +71,7 @@ public class TopRatedHotelFragment extends Fragment
         Bundle args = getArguments();
         if (args != null) {
             hotelRating = args.getInt(EXTRA_HOTEL_TYPE);
+            hotelSort = args.getString(EXTRA_HOTEL_SORTED);
         }
         setHasOptionsMenu(true);
     }
@@ -78,15 +84,12 @@ public class TopRatedHotelFragment extends Fragment
                 DataBindingUtil.inflate(inflater, R.layout
                         .fragment_top_rated_hotels, container, false);
         toolbar = fragmentTopRatedHotelsBinding.toolbar;
-        if (savedInstanceState == null) {
-            toolbar.setTitle(R.string.top_rated);
-        } else {
-            currentToolbarTitle = savedInstanceState.getInt(EXTRA_CURRENT_TOOLBAR_TITLE,
-                    R.string.toolbar_title);
-        }
+
+
         if (toolbar != null) {
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         }
+
 
         fragmentTopRatedHotelsBinding.loadingSpinner.setVisibility(View.VISIBLE);
         fragmentTopRatedHotelsBinding.recyclerView.setLayoutManager(new GridLayoutManager
@@ -94,6 +97,18 @@ public class TopRatedHotelFragment extends Fragment
         topRatedHotelsAdapter = new TopRatedHotelsAdapter(Collections.EMPTY_LIST);
         fragmentTopRatedHotelsBinding.recyclerView.setAdapter(topRatedHotelsAdapter);
         return fragmentTopRatedHotelsBinding.getRoot();
+    }
+
+    private void setTitleToolbar() {
+        if (!TextUtils.isEmpty(hotelSort) && toolbar != null) {
+            if (hotelSort.equals(SORTED_POPULAR)) {
+                toolbar.setTitle("Most Popular");
+            } else if (hotelSort.equals(SORTED_TOP_RATED)) {
+                toolbar.setTitle("Top Rated");
+            } else toolbar.setTitle("Favorites");
+        } else if (toolbar != null) {
+            toolbar.setTitle("HomeForNow");
+        }
     }
 
     @Override
@@ -140,7 +155,8 @@ public class TopRatedHotelFragment extends Fragment
     public void onResume() {
         super.onResume();
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        // ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        setTitleToolbar();
     }
 
     @Override
@@ -153,6 +169,7 @@ public class TopRatedHotelFragment extends Fragment
                 currentToolbarTitle = R.string.most_popular;
                 intent = new Intent(getActivity(), MainActivity.class);
                 intent.putExtra(EXTRA_HOTEL_TYPE, POPULAR_HOTEL);
+                intent.putExtra(EXTRA_HOTEL_SORTED, SORTED_POPULAR);
                 startActivity(intent);
                 break;
             case R.id.top_rated:
@@ -161,6 +178,7 @@ public class TopRatedHotelFragment extends Fragment
                 currentToolbarTitle = R.string.top_rated;
                 intent = new Intent(getActivity(), TopRatedHotelActivity.class);
                 intent.putExtra(EXTRA_HOTEL_TYPE, TOP_RATED_HOTEL);
+                intent.putExtra(EXTRA_HOTEL_SORTED, SORTED_TOP_RATED);
                 startActivity(intent);
                 break;
             case R.id.favorite:
@@ -168,6 +186,7 @@ public class TopRatedHotelFragment extends Fragment
                         .show();
                 currentToolbarTitle = R.string.favorites;
                 intent = new Intent(getActivity(), FavoritesActivity.class);
+                intent.putExtra(EXTRA_HOTEL_SORTED, SORTED_FAVORITES);
                 startActivity(intent);
                 break;
             case android.R.id.home:
