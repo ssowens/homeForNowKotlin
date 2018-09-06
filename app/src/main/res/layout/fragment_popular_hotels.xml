@@ -46,9 +46,8 @@
                     android:layout_marginLeft="@dimen/list_toolbar_side_margin"
                     android:layout_marginRight="@dimen/list_toolbar_side_margin"
                     android:background="@color/colorPrimary"
-                    android:elevation="4dp"
                     app:layout_collapseMode="pin"
-                    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+                    app:theme="@style/ThemeOverlay.AppCompat.Light">
                 </android.support.v7.widget.Toolbar>
 
             </android.support.design.widget.CollapsingToolbarLayout>

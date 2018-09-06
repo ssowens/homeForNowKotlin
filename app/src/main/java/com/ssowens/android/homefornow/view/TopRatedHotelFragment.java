@@ -135,9 +135,7 @@ public class TopRatedHotelFragment extends Fragment
     @Override
     public void onAccessTokenFinished() {
         if (dataManager.getTokenString() == null) {
-            Timber.i("Sheila missing token");
         } else {
-            Timber.i("Sheila got token");
             dataManager.addHotelOffersSearchListener(this);
             dataManager.fetchHotelOffers(hotelRating);
         }
@@ -156,7 +154,7 @@ public class TopRatedHotelFragment extends Fragment
         Intent intent;
         switch (item.getItemId()) {
             case R.id.most_popular:
-                Toast.makeText(getActivity(), "Most Popular selected", Toast.LENGTH_SHORT)
+                Toast.makeText(getActivity(), R.string.popular_selected, Toast.LENGTH_SHORT)
                         .show();
                 currentToolbarTitle = R.string.most_popular;
                 intent = new Intent(getActivity(), MainActivity.class);
@@ -165,16 +163,12 @@ public class TopRatedHotelFragment extends Fragment
                 startActivity(intent);
                 break;
             case R.id.top_rated:
-                Toast.makeText(getActivity(), "Top Rated selected", Toast.LENGTH_SHORT)
+                Toast.makeText(getActivity(), R.string.top_rated_currently_selected, Toast.LENGTH_SHORT)
                         .show();
-                currentToolbarTitle = R.string.top_rated;
-                intent = new Intent(getActivity(), TopRatedHotelActivity.class);
-                intent.putExtra(EXTRA_HOTEL_RATING, TOP_RATED_HOTEL);
-                intent.putExtra(EXTRA_HOTEL_SORTED, SORTED_TOP_RATED);
-                startActivity(intent);
+                item.setVisible(false);
                 break;
             case R.id.favorite:
-                Toast.makeText(getActivity(), "FavoritesActivity selected", Toast.LENGTH_SHORT)
+                Toast.makeText(getActivity(), R.string.favorites_selected, Toast.LENGTH_SHORT)
                         .show();
                 currentToolbarTitle = R.string.favorites;
                 intent = new Intent(getActivity(), FavoritesActivity.class);
@@ -207,7 +201,6 @@ public class TopRatedHotelFragment extends Fragment
             dataManager.addAccessTokenListener(this);
             dataManager.fetchAccessToken();
         } else {
-            Timber.i("Sheila got token");
             dataManager.addHotelOffersSearchListener(this);
             dataManager.fetchHotelOffers(hotelRating);
         }

@@ -1,8 +1,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.design.widget.CoordinatorLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <android.support.design.widget.CoordinatorLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -48,9 +46,8 @@
                     android:layout_marginLeft="@dimen/list_toolbar_side_margin"
                     android:layout_marginRight="@dimen/list_toolbar_side_margin"
                     android:background="@color/colorPrimary"
-                    android:elevation="4dp"
                     app:layout_collapseMode="pin"
-                    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+                    app:theme="@style/ThemeOverlay.AppCompat.Light">
                 </android.support.v7.widget.Toolbar>
 
             </android.support.design.widget.CollapsingToolbarLayout>

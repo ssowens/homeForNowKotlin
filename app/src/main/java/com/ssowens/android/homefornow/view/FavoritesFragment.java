@@ -117,25 +117,23 @@ public class FavoritesFragment extends Fragment {
         Intent intent;
         switch (item.getItemId()) {
             case R.id.most_popular:
-                    Toast.makeText(getActivity(), "Most Popular selected", Toast.LENGTH_SHORT)
-                            .show();
-                    currentToolbarTitle = R.string.most_popular;
-                    intent = new Intent(getActivity(), MainActivity.class);
-                    startActivity(intent);
+                Toast.makeText(getActivity(), R.string.popular_selected, Toast.LENGTH_SHORT)
+                        .show();
+                currentToolbarTitle = R.string.most_popular;
+                intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
                 break;
             case R.id.top_rated:
-                    Toast.makeText(getActivity(), "Top Rated selected", Toast.LENGTH_SHORT)
-                            .show();
-                    currentToolbarTitle = R.string.top_rated;
-                    intent = new Intent(getActivity(), TopRatedHotelActivity.class);
-                    startActivity(intent);
+                Toast.makeText(getActivity(), R.string.top_rated_selected, Toast.LENGTH_SHORT)
+                        .show();
+                currentToolbarTitle = R.string.top_rated;
+                intent = new Intent(getActivity(), TopRatedHotelActivity.class);
+                startActivity(intent);
                 break;
             case R.id.favorite:
-                    Toast.makeText(getActivity(), "FavoritesActivity selected", Toast.LENGTH_SHORT)
-                            .show();
-                    currentToolbarTitle = R.string.favorites;
-                    intent = new Intent(getActivity(), FavoritesActivity.class);
-                    startActivity(intent);
+                Toast.makeText(getActivity(), R.string.favorites_currently_selected, Toast.LENGTH_SHORT)
+                        .show();
+                item.setVisible(false);
                 break;
             default:
                 return super.onOptionsItemSelected(item);

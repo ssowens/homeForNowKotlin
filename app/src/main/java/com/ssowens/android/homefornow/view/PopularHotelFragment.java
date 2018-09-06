@@ -130,9 +130,7 @@ public class PopularHotelFragment extends Fragment
     @Override
     public void onAccessTokenFinished() {
         if (dataManager.getTokenString() == null) {
-            Timber.i("Sheila missing token");
         } else {
-            Timber.i("Sheila got token");
             dataManager.addHotelOffersSearchListener(this);
             dataManager.fetchHotelOffers(hotelRating);
         }
@@ -148,20 +146,14 @@ public class PopularHotelFragment extends Fragment
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
 
-        //item.setVisible(false); TODO
         switch (item.getItemId()) {
             case R.id.most_popular:
-//                Toast.makeText(getActivity(), "Most Popular selected", Toast.LENGTH_SHORT)
-//                        .show();
-//                currentToolbarTitle = R.string.most_popular;
-//                intent = new Intent(getActivity(), MainActivity.class);
-//                intent.putExtra(EXTRA_HOTEL_RATING, POPULAR_HOTEL);
-//                intent.putExtra(EXTRA_HOTEL_SORTED, SORTED_POPULAR);
-//                startActivity(intent);
+                Toast.makeText(getActivity(), R.string.popular_currently_selected, Toast.LENGTH_SHORT)
+                        .show();
                 item.setVisible(false);
                 break;
             case R.id.top_rated:
-                Toast.makeText(getActivity(), "Top Rated selected", Toast.LENGTH_SHORT)
+                Toast.makeText(getActivity(), R.string.top_rated_selected, Toast.LENGTH_SHORT)
                         .show();
                 currentToolbarTitle = R.string.top_rated;
                 intent = new Intent(getActivity(), TopRatedHotelActivity.class);
@@ -170,7 +162,7 @@ public class PopularHotelFragment extends Fragment
                 startActivity(intent);
                 break;
             case R.id.favorite:
-                Toast.makeText(getActivity(), "FavoritesActivity selected", Toast.LENGTH_SHORT)
+                Toast.makeText(getActivity(), R.string.favorites_selected, Toast.LENGTH_SHORT)
                         .show();
                 currentToolbarTitle = R.string.favorites;
                 intent = new Intent(getActivity(), FavoritesActivity.class);
@@ -203,7 +195,6 @@ public class PopularHotelFragment extends Fragment
             dataManager.addAccessTokenListener(this);
             dataManager.fetchAccessToken();
         } else {
-            Timber.i("Sheila got token");
             dataManager.addHotelOffersSearchListener(this);
             dataManager.fetchHotelOffers(hotelRating);
         }
