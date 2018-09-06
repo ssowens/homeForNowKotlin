@@ -10,7 +10,7 @@ import com.ssowens.android.homefornow.R;
 
 import timber.log.Timber;
 
-import static com.ssowens.android.homefornow.view.TopRatedHotelFragment.EXTRA_HOTEL_TYPE;
+import static com.ssowens.android.homefornow.view.TopRatedHotelFragment.EXTRA_HOTEL_RATING;
 import static com.ssowens.android.homefornow.view.TopRatedHotelFragment.POPULAR_HOTEL;
 
 public class MainActivity extends SingleFragmentActivity {
@@ -27,8 +27,8 @@ public class MainActivity extends SingleFragmentActivity {
     @Override
     protected Fragment createFragment() {
         if (isOnline()) {
-            int hotel_rating = getIntent().getIntExtra(EXTRA_HOTEL_TYPE, POPULAR_HOTEL);
-            return TopRatedHotelFragment.newInstance(hotel_rating);
+            int hotelRating = getIntent().getIntExtra(EXTRA_HOTEL_RATING, POPULAR_HOTEL);
+            return PopularHotelFragment.newInstance(hotelRating);
         } else {
             Toast.makeText(this, getString(R.string.no_internet_service),
                     Toast.LENGTH_SHORT).show();

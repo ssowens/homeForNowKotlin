@@ -448,6 +448,10 @@ public class DataManager {
         return hotelList;
     }
 
+    public List<Hotel> getPopularHotelsList() {
+        return hotelList;
+    }
+
     public HotelDetailData getHotelDetailData() {
         return hotelDetail;
     }

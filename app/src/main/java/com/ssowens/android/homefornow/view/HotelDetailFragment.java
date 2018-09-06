@@ -51,7 +51,7 @@ import timber.log.Timber;
 
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_ID;
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_PHOTO_ID;
-import static com.ssowens.android.homefornow.view.TopRatedHotelFragment.EXTRA_HOTEL_TYPE;
+import static com.ssowens.android.homefornow.view.TopRatedHotelFragment.EXTRA_HOTEL_RATING;
 import static com.ssowens.android.homefornow.view.TopRatedHotelFragment.POPULAR_HOTEL;
 import static com.ssowens.android.homefornow.view.TopRatedHotelFragment.TOP_RATED_HOTEL;
 
@@ -183,7 +183,7 @@ public class HotelDetailFragment extends Fragment
                         .show();
                 currentToolbarTitle = R.string.most_popular;
                 intent = new Intent(getActivity(), MainActivity.class);
-                intent.putExtra(EXTRA_HOTEL_TYPE, POPULAR_HOTEL);
+                intent.putExtra(EXTRA_HOTEL_RATING, POPULAR_HOTEL);
                 startActivity(intent);
                 break;
             case R.id.top_rated:
@@ -191,7 +191,7 @@ public class HotelDetailFragment extends Fragment
                         .show();
                 currentToolbarTitle = R.string.top_rated;
                 intent = new Intent(getActivity(), TopRatedHotelActivity.class);
-                intent.putExtra(EXTRA_HOTEL_TYPE, TOP_RATED_HOTEL);
+                intent.putExtra(EXTRA_HOTEL_RATING, TOP_RATED_HOTEL);
                 startActivity(intent);
                 break;
             case R.id.favorite:
