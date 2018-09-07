@@ -19,7 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.ssowens.android.homefornow.R;
-import com.ssowens.android.homefornow.databinding.FragmentTopRatedHotelsBinding;
+import com.ssowens.android.homefornow.databinding.FragmentPopularHotelsBinding;
 import com.ssowens.android.homefornow.listeners.AccessTokenListener;
 import com.ssowens.android.homefornow.listeners.HotelImageListener;
 import com.ssowens.android.homefornow.listeners.HotelOffersSearchListener;
@@ -32,18 +32,15 @@ import java.util.List;
 
 import timber.log.Timber;
 
-/**
- * Created by Sheila Owens on 8/8/18.
- */
-public class TopRatedHotelFragment extends Fragment
+public class PopularHotelFragment extends Fragment
         implements HotelOffersSearchListener, HotelImageListener,
         AccessTokenListener {
 
-    private TopRatedHotelsAdapter topRatedHotelsAdapter;
+    private PopularHotelsAdapter popularHotelsAdapter;
     private DataManager dataManager;
     private int currentToolbarTitle;
     private Toolbar toolbar;
-    FragmentTopRatedHotelsBinding fragmentTopRatedHotelsBinding;
+    FragmentPopularHotelsBinding popularHotelsBinding;
     public static final String EXTRA_HOTEL_RATING = "hotelRating";
     public static final int POPULAR_HOTEL = 2;
     public static final int TOP_RATED_HOTEL = 4;
@@ -51,15 +48,14 @@ public class TopRatedHotelFragment extends Fragment
     public static final String SORTED_TOP_RATED = "toprated";
     public static final String SORTED_FAVORITES = "favorites";
     public static final String EXTRA_HOTEL_SORTED = "sorted";
-    public static final String EXTRA_CURRENT_TOOLBAR_TITLE = "";
     private int hotelRating;
-    private String hotelSort;
+    private MenuItem menuItem;
 
-    public static TopRatedHotelFragment newInstance(int hotelRating) {
+    public static PopularHotelFragment newInstance(int hotelRating) {
         Bundle args = new Bundle();
         args.putInt(String.valueOf(EXTRA_HOTEL_RATING), hotelRating);
 
-        TopRatedHotelFragment fragment = new TopRatedHotelFragment();
+        PopularHotelFragment fragment = new PopularHotelFragment();
         fragment.setArguments(args);
         fragment.setRetainInstance(true);
         return fragment;
@@ -79,27 +75,26 @@ public class TopRatedHotelFragment extends Fragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        fragmentTopRatedHotelsBinding =
+        popularHotelsBinding =
                 DataBindingUtil.inflate(inflater, R.layout
-                        .fragment_top_rated_hotels, container, false);
-        toolbar = fragmentTopRatedHotelsBinding.toolbar;
+                        .fragment_popular_hotels, container, false);
+        toolbar = popularHotelsBinding.toolbar;
 
         if (toolbar != null) {
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         }
 
-
-        fragmentTopRatedHotelsBinding.loadingSpinner.setVisibility(View.VISIBLE);
-        fragmentTopRatedHotelsBinding.recyclerView.setLayoutManager(new GridLayoutManager
+        popularHotelsBinding.loadingSpinner.setVisibility(View.VISIBLE);
+        popularHotelsBinding.recyclerView.setLayoutManager(new GridLayoutManager
                 (getActivity(), 1));
-        topRatedHotelsAdapter = new TopRatedHotelsAdapter(Collections.EMPTY_LIST);
-        fragmentTopRatedHotelsBinding.recyclerView.setAdapter(topRatedHotelsAdapter);
-        return fragmentTopRatedHotelsBinding.getRoot();
+        popularHotelsAdapter = new PopularHotelsAdapter(Collections.EMPTY_LIST);
+        popularHotelsBinding.recyclerView.setAdapter(popularHotelsAdapter);
+        return popularHotelsBinding.getRoot();
     }
 
     private void setTitleToolbar() {
         if (toolbar != null) {
-            toolbar.setTitle("Top Rated");
+                toolbar.setTitle("Most Popular");
         }
     }
 
@@ -127,9 +122,9 @@ public class TopRatedHotelFragment extends Fragment
 
     @Override
     public void onHotelOffersFinished() {
-        List<Hotel> hotelTopRatedHotelList = dataManager.getTopRatedHotelsList();
-        topRatedHotelsAdapter.setTopRatedHotelsList(hotelTopRatedHotelList);
-        fragmentTopRatedHotelsBinding.loadingSpinner.setVisibility(View.GONE);
+        List<Hotel> hotelTopRatedHotelList = dataManager.getPopularHotelsList();
+        popularHotelsAdapter.setPopularHotelsList(hotelTopRatedHotelList);
+        popularHotelsBinding.loadingSpinner.setVisibility(View.GONE);
     }
 
     @Override
@@ -144,28 +139,27 @@ public class TopRatedHotelFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
         setTitleToolbar();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
+
         switch (item.getItemId()) {
             case R.id.most_popular:
-                Toast.makeText(getActivity(), R.string.popular_selected, Toast.LENGTH_SHORT)
-                        .show();
-                currentToolbarTitle = R.string.most_popular;
-                intent = new Intent(getActivity(), MainActivity.class);
-                intent.putExtra(EXTRA_HOTEL_RATING, POPULAR_HOTEL);
-                intent.putExtra(EXTRA_HOTEL_SORTED, SORTED_POPULAR);
-                startActivity(intent);
-                break;
-            case R.id.top_rated:
-                Toast.makeText(getActivity(), R.string.top_rated_currently_selected, Toast.LENGTH_SHORT)
+                Toast.makeText(getActivity(), R.string.popular_currently_selected, Toast.LENGTH_SHORT)
                         .show();
                 item.setVisible(false);
+                break;
+            case R.id.top_rated:
+                Toast.makeText(getActivity(), R.string.top_rated_selected, Toast.LENGTH_SHORT)
+                        .show();
+                currentToolbarTitle = R.string.top_rated;
+                intent = new Intent(getActivity(), TopRatedHotelActivity.class);
+                intent.putExtra(EXTRA_HOTEL_RATING, TOP_RATED_HOTEL);
+                intent.putExtra(EXTRA_HOTEL_SORTED, SORTED_TOP_RATED);
+                startActivity(intent);
                 break;
             case R.id.favorite:
                 Toast.makeText(getActivity(), R.string.favorites_selected, Toast.LENGTH_SHORT)
@@ -194,7 +188,7 @@ public class TopRatedHotelFragment extends Fragment
     @Override
     public void onHotelImageFinished() {
         List<Photo> photoList = dataManager.getPhotoList();
-        topRatedHotelsAdapter.setHotelPhotoList(photoList);
+        popularHotelsAdapter.setHotelPhotoList(photoList);
 
         if (dataManager.getTokenString() == null) {
             // Get Access Token
@@ -206,4 +200,5 @@ public class TopRatedHotelFragment extends Fragment
         }
 
     }
+
 }

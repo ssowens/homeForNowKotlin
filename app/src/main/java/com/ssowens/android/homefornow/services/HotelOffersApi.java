@@ -31,7 +31,6 @@ public interface HotelOffersApi {
                                                 @Query("radiusUnit") String radiusUnit,
                                                 @Query("includeClosed") String includeClosed,
                                                 @Query("bestRateOnly") String bestRateOnly,
-                                                @Query("view") String view,
                                                 @Query("sort") String sort,
                                                 @Query("rating") int rating);
 
@@ -44,6 +43,5 @@ public interface HotelOffersApi {
 
     @GET("v1/shopping/hotels/{hotelId}/hotel-offers")
     Call<HotelDetailResponse> hotelOffersSearchById(@Header("Authorization") String authorization,
-                                                    @Path("hotelId") String hotelId,
-                                                    @Query("view") String view);
+                                                    @Path("hotelId") String hotelId);
 }

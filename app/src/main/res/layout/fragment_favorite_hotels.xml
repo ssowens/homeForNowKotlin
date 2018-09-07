@@ -42,9 +42,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:contentScrim="?attr/colorPrimary"
-                    app:expandedTitleGravity="top"
                     app:expandedTitleMarginEnd="64dp"
                     app:expandedTitleMarginStart="48dp"
+                    app:expandedTitleGravity="top"
                     app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
                     <android.support.v7.widget.Toolbar
@@ -56,11 +56,12 @@
                         android:layout_marginRight="@dimen/list_toolbar_side_margin"
                         android:background="@color/colorPrimary"
                         app:layout_collapseMode="pin"
-                        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+                        app:theme="@style/ThemeOverlay.AppCompat.Light">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textSize="12sp"
                             android:background="@color/colorAccent"
                             tools:text="For Test Purposes"/>
 
@@ -77,7 +78,6 @@
                 android:indeterminateTintMode="src_atop"
                 android:visibility="gone"/>
         </android.support.design.widget.CoordinatorLayout>
-
 
     </android.support.constraint.ConstraintLayout>
 </layout>

@@ -6,6 +6,9 @@ import android.widget.Toast;
 
 import com.ssowens.android.homefornow.R;
 
+import static com.ssowens.android.homefornow.view.TopRatedHotelFragment.EXTRA_HOTEL_RATING;
+import static com.ssowens.android.homefornow.view.TopRatedHotelFragment.POPULAR_HOTEL;
+
 /**
  * Created by Sheila Owens on 8/8/18.
  */
@@ -19,7 +22,8 @@ public class TopRatedHotelActivity extends SingleFragmentActivity {
     @Override
     protected Fragment createFragment() {
         if (isOnline()) {
-            return TopRatedHotelFragment.newInstance();
+            int hotel_rating = getIntent().getIntExtra(EXTRA_HOTEL_RATING, POPULAR_HOTEL);
+            return TopRatedHotelFragment.newInstance(hotel_rating);
         } else {
             Toast.makeText(this, getString(R.string.no_internet_service),
                     Toast.LENGTH_SHORT).show();

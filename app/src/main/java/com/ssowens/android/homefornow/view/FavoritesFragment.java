@@ -2,6 +2,7 @@ package com.ssowens.android.homefornow.view;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -13,8 +14,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.ssowens.android.homefornow.R;
 import com.ssowens.android.homefornow.databinding.FragmentFavoriteHotelsBinding;
@@ -30,23 +35,31 @@ import timber.log.Timber;
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_HOTEL_ID;
 import static com.ssowens.android.homefornow.view.HotelDetailActivity.ARG_PHOTO_ID;
 import static com.ssowens.android.homefornow.view.HotelDetailFragment.FAVORITES_KEY;
-import static com.ssowens.android.homefornow.view.PhotoFragment.EXTRA_CURRENT_TOOLBAR_TITLE;
+import static com.ssowens.android.homefornow.view.TopRatedHotelFragment.EXTRA_CURRENT_TOOLBAR_TITLE;
 
 
 public class FavoritesFragment extends Fragment {
 
     private static final String DATABASE_NAME = "favorites_db";
+    public static final String ARG_ONLINE = "online";
     private AppDatabase appDatabase;
-    private FragmentFavoriteHotelsBinding favoriteHotelsBinding;
     private Toolbar toolbar;
     private FavoriteAdapter favoriteAdapter;
+    private int currentToolbarTitle;
+    private String hotelId;
+    private String photoId;
+    private boolean isOnline;
 
 
-    public static FavoritesFragment newInstance(String hotelId, String photoId) {
+    public static FavoritesFragment newInstance(String hotelId,
+                                                String photoId,
+                                                boolean isOnline)
+
+    {
         Bundle args = new Bundle();
         args.putString(ARG_HOTEL_ID, hotelId);
         args.putString(ARG_PHOTO_ID, photoId);
-
+        args.putBoolean(ARG_ONLINE, isOnline);
         FavoritesFragment fragment = new FavoritesFragment();
         fragment.setArguments(args);
         return fragment;
@@ -58,9 +71,11 @@ public class FavoritesFragment extends Fragment {
         setHasOptionsMenu(true);
         Bundle args = getArguments();
         if (args != null) {
-            String hotelId = args.getString(ARG_HOTEL_ID);
-            String photoId = args.getString(ARG_PHOTO_ID);
+            hotelId = args.getString(ARG_HOTEL_ID);
+            photoId = args.getString(ARG_PHOTO_ID);
+            isOnline = args.getBoolean(ARG_ONLINE); // Set a default value
         }
+        setHasOptionsMenu(true);
         appDatabase = AppDatabase.getInstance(getContext());
         setupViewModel();
     }
@@ -70,9 +85,8 @@ public class FavoritesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        favoriteHotelsBinding =
-                DataBindingUtil.inflate(inflater, R.layout
-                        .fragment_favorite_hotels, container, false);
+        FragmentFavoriteHotelsBinding favoriteHotelsBinding = DataBindingUtil.inflate(inflater, R.layout
+                .fragment_favorite_hotels, container, false);
         toolbar = favoriteHotelsBinding.toolbar;
         if (savedInstanceState == null) {
             toolbar.setTitle(R.string.favorites);
@@ -80,7 +94,7 @@ public class FavoritesFragment extends Fragment {
             int currentToolbarTitle = savedInstanceState.getInt(EXTRA_CURRENT_TOOLBAR_TITLE,
                     R.string.toolbar_title);
         }
-        if (toolbar != null) {
+        if (toolbar != null && isOnline) {
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
             ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled
                     (true);
@@ -90,7 +104,48 @@ public class FavoritesFragment extends Fragment {
         favoriteAdapter = new FavoriteAdapter(Collections.EMPTY_LIST);
         favoriteHotelsBinding.recyclerView.setAdapter(favoriteAdapter);
         return favoriteHotelsBinding.getRoot();
+    }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_fragment_photo, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.most_popular:
+                Toast.makeText(getActivity(), R.string.popular_selected, Toast.LENGTH_SHORT)
+                        .show();
+                currentToolbarTitle = R.string.most_popular;
+                intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.top_rated:
+                Toast.makeText(getActivity(), R.string.top_rated_selected, Toast.LENGTH_SHORT)
+                        .show();
+                currentToolbarTitle = R.string.top_rated;
+                intent = new Intent(getActivity(), TopRatedHotelActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.favorite:
+                Toast.makeText(getActivity(), R.string.favorites_currently_selected, Toast.LENGTH_SHORT)
+                        .show();
+                item.setVisible(false);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        updateToolbarTitle();
+        return true;
+    }
+
+    private void updateToolbarTitle() {
+        if (currentToolbarTitle != 0) {
+            toolbar.setTitle(currentToolbarTitle);
+        }
     }
 
     @Override

@@ -14,7 +14,7 @@
     <string name="loading_text">Loading . . . .</string>
     <string name="top_rated_hotels">Top Rated Hotels</string>
     <string name="favorite_icon_unselected">Favorites unselected</string>
-    <string name="create_db_instance">"Creating new database instance</string>
+    <string name="create_db_instance">Creating new database instance</string>
     <string name="get_db_instance">Getting the database instance</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
@@ -22,4 +22,10 @@
     <string name="update_now">Update Now</string>
     <string name="preference_file_favs">favs</string>
     <string name="mapview_ondestroy_error">Error while attempting MapView.onDestroy(), ignoring exception</string>
+    <string name="popular_selected">Most Popular selected</string>
+    <string name="top_rated_selected">Top Rated selected</string>
+    <string name="favorites_selected">Favorites selected</string>
+    <string name="popular_currently_selected">Most Popular currently selected</string>
+    <string name="top_rated_currently_selected">Top Rated currently selected</string>
+    <string name="favorites_currently_selected">Favorites currently selected</string>
 </resources>
