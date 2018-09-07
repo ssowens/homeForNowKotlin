@@ -3,9 +3,7 @@ package com.ssowens.android.homefornow.view;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.ssowens.android.homefornow.databinding.FavoritesCardViewItemBinding;
 import com.ssowens.android.homefornow.db.Favorite;
@@ -54,13 +52,6 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
             super(itemBinding.getRoot());
             this.binding = itemBinding;
 
-            binding.mediaImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(v.getContext(), "Clicked + " + binding.getModel()
-                            .getHotelName(), Toast.LENGTH_LONG).show();
-                }
-            });
         }
     }
 
