@@ -6,10 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.ssowens.android.homefornow.databinding.PopularCardViewItemBinding;
-import com.ssowens.android.homefornow.models.Data;
 import com.ssowens.android.homefornow.models.Hotel;
 import com.ssowens.android.homefornow.models.Offers;
 import com.ssowens.android.homefornow.models.Photo;
@@ -61,9 +59,6 @@ public class PopularHotelsAdapter extends RecyclerView.Adapter<PopularHotelsAdap
             binding.mediaImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(v.getContext(), "Photo => " + binding.getPhoto().getId()
-                                    + "Hotel id=> " + binding.getModel().getHotelId(),
-                            Toast.LENGTH_LONG).show();
 
                     Intent intent = new Intent(v.getContext(), HotelDetailActivity.class);
                     intent.putExtra(ARG_HOTEL_ID, binding.getModel().getHotelId());
