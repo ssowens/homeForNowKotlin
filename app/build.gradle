@@ -99,5 +99,5 @@ dependencies {
     // Google Play Services for Maps
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
     // Google Play Services for Ads
-    freeImplementation 'com.google.android.gms:play-services-ads:15.0.1'
+    implementation 'com.google.android.gms:play-services-ads:15.0.1'
 }
