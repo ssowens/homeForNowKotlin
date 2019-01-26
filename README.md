@@ -1,4 +1,4 @@
-# homeForNow
+# homeForNow (converting to Kotlin)
 
 Project Details: https://github.com/ssowens/Capstone-Project
 
